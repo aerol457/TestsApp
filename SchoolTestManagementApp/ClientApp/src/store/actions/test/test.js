@@ -154,7 +154,7 @@ export const getTestById = (idTest) => {
         },
       })
       .then((res) => {
-        dispatch(createQuestionsToTest(res.data.test.question, res.data.test));
+        dispatch(setFullTest(res.data.test, res.data.test.question));
       })
       .catch((err) => console.log(err));
   };
@@ -222,103 +222,6 @@ export const updateViewQuestion = (questionLists, id) => {
 export const orderViewQuestion = () => {
   return {
     type: actionTypes.ORDER_VIEW_QUESTION,
-  };
-};
-
-export const createQuestionsToTest = (questions, test) => {
-  const questionList = questions.map((q) => {
-    if (q.questionType === "option" || q.questionType === "image") {
-      const question = {
-        option1: "",
-        option2: "",
-        option3: "",
-        option4: "",
-        answerPosition: "",
-        content1: "",
-        questionType: "",
-        value: 0,
-        idTest: -1,
-      };
-      let numberOne = Math.round(Math.random() * 4) + 1;
-      let indexs = [];
-      for (let i = 1; i < 5; i++) {
-        if (i !== numberOne) {
-          indexs.push(i);
-        }
-      }
-      question["option" + indexs[0]] = q.option1;
-      question["option" + indexs[1]] = q.option2;
-      question["option" + indexs[2]] = q.option3;
-      question["option" + numberOne] = q.answer1;
-      question.answerPosition = numberOne;
-      question.value = q.value;
-      question.content1 = q.content1;
-      question.questionType = q.questionType;
-      question.imageUrl = q.imageUrl;
-      question.idTest = q.idTest;
-      return question;
-    } else {
-      const question = {
-        option1: "",
-        option2: "",
-        option3: "",
-        option4: "",
-        option5: "",
-        answerPosition1: "",
-        answerPosition2: "",
-        answerPosition3: "",
-        content1: "",
-        content2: "",
-        content3: "",
-        questionType: "",
-        value: 0,
-        idTest: -1,
-      };
-      const numberThree = Math.floor(Math.random() * 5) + 1;
-      let numberOne = numberThree;
-      let numberTwo = numberThree;
-      do {
-        numberOne = Math.floor(Math.random() * 5) + 1;
-      } while (numberOne === numberThree);
-      do {
-        numberTwo = Math.floor(Math.random() * 5) + 1;
-      } while (numberTwo === numberThree || numberTwo === numberOne);
-      question["option" + numberOne] = q.answer1;
-      question["option" + numberTwo] = q.answer2;
-      let indexs = [];
-      if (q.answer3 === "") {
-        for (let i = 1; i < 6; i++) {
-          if (i !== numberOne && i !== numberTwo) {
-            indexs.push(i);
-          }
-        }
-        question["option" + indexs[0]] = q.option1;
-        question["option" + indexs[1]] = q.option2;
-        question["option" + indexs[2]] = q.option3;
-      } else {
-        question["option" + numberThree] = q.answer3;
-        question.answerPosition3 = numberThree;
-        for (let i = 1; i < 6; i++) {
-          if (i !== numberOne && i !== numberTwo && i !== numberThree) {
-            indexs.push(i);
-          }
-        }
-        question["option" + indexs[0]] = q.option1;
-        question["option" + indexs[1]] = q.option2;
-      }
-      question.answerPosition1 = numberOne;
-      question.answerPosition2 = numberTwo;
-      question.value = q.value;
-      question.content1 = q.content1;
-      question.content2 = q.content2;
-      question.content3 = q.content3;
-      question.questionType = q.questionType;
-      question.idTest = q.idTest;
-      return question;
-    }
-  });
-  return (dispatch) => {
-    dispatch(setFullTest(test, questionList));
   };
 };
 

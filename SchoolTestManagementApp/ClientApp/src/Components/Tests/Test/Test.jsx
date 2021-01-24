@@ -8,6 +8,7 @@ import ImageQuestion from "./ImageQuestion/ImageQuestion";
 import CheckQuestion from "./CheckQuestion/CheckQuestion";
 import OptionQuestion from "./OptionQuestion/OptionQuestion";
 import { DashboardContext } from "../../../context/TeacherContext/DashboardContext";
+import { TestContext } from "../../../context/StudentContext/TestContext";
 import {
   getClassroomForPublishTest,
   publishTest,
@@ -16,6 +17,8 @@ const Test = () => {
   const [questionsView, setQuestionsView] = useState([]);
   const [question, setQuestion] = useState();
   const [position, setPosition] = useState(0);
+  const [startTest, setStartTest] = useState(false);
+  const [timer, setTimer] = useState(null);
   const [page, setPage] = useState(1);
   const [houres, setHoures] = useState(0);
   const [minutes, setMinutes] = useState(0);
@@ -31,11 +34,13 @@ const Test = () => {
   const userProfile = useSelector((state) => state.auth.userProfile);
   const classrooms = useSelector((state) => state.general.classrooms);
   const dashboardContext = useContext(DashboardContext);
+  const testContext = useContext(TestContext);
 
   const dispatch = useDispatch();
 
   const createQuestions = () => {
-    const questionsViewList = questions.map((q, i) => {
+    //HAndle
+    const questionsViewList = testContext.questions.map((q, i) => {
       return (
         <div className="test-container" key={i}>
           {q.questionType === "option" ? (
@@ -50,6 +55,101 @@ const Test = () => {
     });
     setQuestion(questionsViewList[position]);
     setQuestionsView(questionsViewList);
+  };
+
+  const createQuestionsToTest = () => {
+    const questionList = questions.map((q) => {
+      if (q.questionType === "option" || q.questionType === "image") {
+        const question = {
+          option1: "",
+          option2: "",
+          option3: "",
+          option4: "",
+          answerPosition: "",
+          content1: "",
+          questionType: "",
+          value: 0,
+          idTest: -1,
+        };
+        let numberOne = Math.round(Math.random() * 4) + 1;
+        let indexs = [];
+        for (let i = 1; i < 5; i++) {
+          if (i !== numberOne) {
+            indexs.push(i);
+          }
+        }
+        question["option" + indexs[0]] = q.option1;
+        question["option" + indexs[1]] = q.option2;
+        question["option" + indexs[2]] = q.option3;
+        question["option" + numberOne] = q.answer1;
+        question.answerPosition = numberOne;
+        question.value = q.value;
+        question.content1 = q.content1;
+        question.questionType = q.questionType;
+        question.imageUrl = q.imageUrl;
+        question.idTest = q.idTest;
+        return question;
+      } else {
+        const question = {
+          option1: "",
+          option2: "",
+          option3: "",
+          option4: "",
+          option5: "",
+          answerPosition1: "",
+          answerPosition2: "",
+          answerPosition3: "",
+          content1: "",
+          content2: "",
+          content3: "",
+          questionType: "",
+          value: 0,
+          idTest: -1,
+        };
+        const numberThree = Math.floor(Math.random() * 5) + 1;
+        let numberOne = numberThree;
+        let numberTwo = numberThree;
+        do {
+          numberOne = Math.floor(Math.random() * 5) + 1;
+        } while (numberOne === numberThree);
+        do {
+          numberTwo = Math.floor(Math.random() * 5) + 1;
+        } while (numberTwo === numberThree || numberTwo === numberOne);
+        question["option" + numberOne] = q.answer1;
+        question["option" + numberTwo] = q.answer2;
+        let indexs = [];
+        if (q.answer3 === "") {
+          for (let i = 1; i < 6; i++) {
+            if (i !== numberOne && i !== numberTwo) {
+              indexs.push(i);
+            }
+          }
+          question["option" + indexs[0]] = q.option1;
+          question["option" + indexs[1]] = q.option2;
+          question["option" + indexs[2]] = q.option3;
+        } else {
+          question["option" + numberThree] = q.answer3;
+          question.answerPosition3 = numberThree;
+          for (let i = 1; i < 6; i++) {
+            if (i !== numberOne && i !== numberTwo && i !== numberThree) {
+              indexs.push(i);
+            }
+          }
+          question["option" + indexs[0]] = q.option1;
+          question["option" + indexs[1]] = q.option2;
+        }
+        question.answerPosition1 = numberOne;
+        question.answerPosition2 = numberTwo;
+        question.value = q.value;
+        question.content1 = q.content1;
+        question.content2 = q.content2;
+        question.content3 = q.content3;
+        question.questionType = q.questionType;
+        question.idTest = q.idTest;
+        return question;
+      }
+    });
+    testContext.initQuestions(questionList);
   };
 
   const handleNextQuestion = () => {
@@ -79,7 +179,12 @@ const Test = () => {
     let timerMinutes = minutes;
     let timerSeconds = 0;
     let stopTimer = true;
-    const timer = setInterval(function () {
+    let timerLocal = null;
+    const intervalTimer = setInterval(function () {
+      if (timerLocal === null) {
+        timerLocal = intervalTimer;
+        setTimer(intervalTimer);
+      }
       if (stopTimer) {
         if (timerSeconds === 0) {
           timerSeconds = 60;
@@ -98,14 +203,18 @@ const Test = () => {
         setMinutes(timerMinutes);
         setHoures(timerHoures);
       } else {
-        clearInterval(timer);
         endTest();
       }
     }, 1000);
   };
 
+  const onStartTest = () => {
+    setStartTest(true);
+    startTimer();
+  };
+
   const endTest = () => {
-    //End Test
+    clearInterval(timer);
   };
 
   const initialTimer = () => {
@@ -165,6 +274,10 @@ const Test = () => {
     initialTimer();
     userProfile.idProfession && dispatch(getClassroomForPublishTest(test.id));
   }, [questions, getClassroomForPublishTest]);
+
+  useEffect(() => {
+    createQuestionsToTest();
+  }, []);
 
   return (
     <div className="test-struct">
@@ -255,9 +368,18 @@ const Test = () => {
               </>
             ) : (
               <>
-                <Button outlined>START TEST</Button>
-                <Button outlined>CANCLE TEST</Button>
-                <Button outlined>END TEST</Button>
+                {!startTest ? (
+                  <>
+                    <Button outlined clicked={onStartTest}>
+                      START TEST
+                    </Button>
+                    <Button clicked={dashboardContext.viewTests}>
+                      RETURN TO TESTS
+                    </Button>
+                  </>
+                ) : (
+                  <Button clicked={endTest}>END TEST</Button>
+                )}
               </>
             )}
           </div>

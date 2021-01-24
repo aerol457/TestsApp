@@ -15,6 +15,7 @@ import authReducer from "./store/reducers/auth/auth";
 import studentReducer from "./store/reducers/student/student";
 import ModalContextProvider from "./context/TeacherContext/ModalContext";
 import DashboardContextProvider from "./context/TeacherContext/DashboardContext";
+import TestContextProvider from "./context/StudentContext/TestContext";
 
 function saveToLocalStorage(state) {
   try {
@@ -62,9 +63,11 @@ const app = (
   <Provider store={store}>
     <DashboardContextProvider>
       <ModalContextProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <TestContextProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </TestContextProvider>
       </ModalContextProvider>
     </DashboardContextProvider>
   </Provider>
