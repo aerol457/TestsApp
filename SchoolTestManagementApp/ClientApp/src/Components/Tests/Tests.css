@@ -1,0 +1,142 @@
+.dashboard-content-center-top {
+  display: flex;
+  justify-content: space-between;
+  height: 13vh;
+  align-items: center;
+  padding: 20px 10px;
+  width: 85%;
+}
+
+.dashboard-content-center-top-search label {
+  font-size: 24px;
+  margin-bottom: 0;
+}
+
+.dashboard-content-center-top-search input {
+  margin: 0 15px;
+  padding: 3px;
+  margin-bottom: 10px;
+}
+
+.dashboard-content-center-top-search button {
+  padding: 3px 10px;
+}
+
+.student-search-error {
+  padding-left: 40px;
+  height: 10px;
+}
+
+.dashboard-content-center-bottom {
+  height: calc(100% - 138px);
+}
+
+.test-list {
+  width: 80%;
+  height: 85%;
+  list-style: none;
+}
+
+.test-list p {
+  text-align: center;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.test-list-item {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 2px solid rgb(126 149 190);
+  cursor: pointer;
+  color: rgb(126 149 190);
+}
+
+.test-list-item:hover {
+  background-color: gray;
+  color: white;
+}
+
+.test-list-item-details {
+  display: flex;
+  align-items: flex-end;
+  height: 0;
+  overflow: hidden;
+  transition: height 0.2s ease-out;
+}
+
+.test-list-item-details ul {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-column-gap: 0.6rem;
+  list-style: none;
+  padding: 5px 20px;
+}
+
+.test-list-item-details li {
+  margin-bottom: 2px;
+  color: black;
+  font-size: 17px;
+}
+
+.show-details {
+  height: 160px;
+}
+
+.test-list-item-details button {
+  width: 110px;
+  background: rgb(126 149 190);
+  padding: 3px 0;
+  transition: all 0.3s linear;
+}
+
+.test-list-item-details button:hover,
+.test-list-item-details button:active {
+  color: white;
+}
+
+.pagination-content {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.pagination > li > a,
+.pagination > li > span {
+  padding: 6px 12px;
+  margin-left: -1px;
+  line-height: 1.42857143;
+  color: #337ab7;
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+.pagination > .active > a,
+.pagination > .active > a:focus,
+.pagination > .active > a:hover,
+.pagination > .active > span,
+.pagination > .active > span:focus,
+.pagination > .active > span:hover {
+  z-index: 3;
+  color: #fff;
+  cursor: default;
+  background-color: #4065ce;
+  border-color: #337ab7;
+}
+
+@media (min-width: 1100px) {
+  .dashboard-content-center-top {
+    width: 90%;
+  }
+
+  .dashboard-content-center-top {
+    padding: 20px 30px;
+  }
+
+  .test-list {
+    margin-left: 70px;
+  }
+}

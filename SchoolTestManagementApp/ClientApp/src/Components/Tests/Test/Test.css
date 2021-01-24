@@ -1,0 +1,99 @@
+.test-struct {
+  width: 100%;
+  height: 100%;
+}
+
+.test-publish-classes-list {
+  display: flex;
+  flex-flow: column;
+}
+
+.test-view-details {
+  height: 22%;
+  padding: 10px 45px;
+  background: #f2f3f5;
+  display: flex;
+  justify-content: space-between;
+}
+
+.test-view-details-col-1 {
+  width: 70%;
+  display: flex;
+}
+
+.test-view-details-col-1 div {
+  padding: 0 15px;
+}
+
+.test-view-details-col-2 {
+  position: relative;
+}
+
+.test-view-details-controls {
+  display: flex;
+  flex-flow: column;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.test-view-details-controls Button:last-child {
+  margin-top: 10px;
+}
+.test-view-questions-container {
+  height: 78%;
+  display: flex;
+}
+
+.test-view-question-content {
+  width: 100%;
+  height: 100%;
+  flex: 0.9;
+}
+
+.test-view-question-content > div {
+  width: 85%;
+  margin: 0 auto;
+}
+
+.test-view-question-page {
+  padding: 10px;
+}
+
+.test-view-question-page p {
+  width: fit-content;
+  margin: auto;
+  font-size: 23px;
+  font-weight: 400;
+}
+
+.test-container {
+  width: 100%;
+  margin: 50px 0;
+  padding: 20px 10px;
+}
+
+.question-navigation {
+  display: flex;
+  flex: 0.05;
+}
+
+.navigate-arrow {
+  font-size: 50px;
+  display: flex;
+  margin: auto;
+  cursor: pointer;
+}
+
+.navigate-arrow-disable {
+  color: gray;
+  font-size: 50px;
+  display: flex;
+  margin: auto;
+  cursor: pointer;
+  cursor: not-allowed;
+}
+
+.navigate-arrow:hover {
+  color: #7e95be;
+}

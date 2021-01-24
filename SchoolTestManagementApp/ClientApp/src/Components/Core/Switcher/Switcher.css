@@ -1,0 +1,39 @@
+.switcher {
+  display: flex;
+  align-items: center;
+}
+
+.switcher .checkbox {
+  opacity: 0;
+  cursor: pointer;
+}
+
+.toggle-btn {
+  width: 30px;
+  height: 16px;
+  background-color: #ccd9e5c2;
+  border-radius: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px;
+  position: relative;
+  transform: scale(1.5);
+}
+
+.toggle-btn .ball {
+  background-color: #212529;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  height: 12px;
+  width: 12px;
+  transform: translateX(0px);
+  transition: transform 0.2s linear;
+}
+
+.checkbox:checked + .ball {
+  transform: translateX(13px);
+}

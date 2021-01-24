@@ -1,0 +1,22 @@
+.card-container {
+  width: 100%;
+}
+
+.card-details {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-details h1 {
+  color: #7e95be;
+}
+
+.card-content-details {
+  padding-top: 15px;
+}
+
+.card-tests {
+  width: 100%;
+  height: 40vh;
+  position: relative;
+}

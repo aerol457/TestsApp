@@ -1,0 +1,24 @@
+.test-create-layout {
+  width: 100%;
+}
+
+.test-create-form {
+  width: 80%;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-flow: column;
+}
+
+.test-create-form input {
+  margin-bottom: 26px;
+}
+
+.test-create-form select {
+  margin-bottom: 26px;
+}
+
+.test-create-form Button {
+  width: 20%;
+  margin: 20px auto;
+}

@@ -1,0 +1,174 @@
+import axios from "axios";
+import * as actionTypes from "../../actions/general/actionTypes";
+import { authLogout } from "../index";
+
+export const actionStart = () => {
+  return {
+    type: actionTypes.ACTION_START_GENERAL,
+  };
+};
+
+export const actionSuccess = () => {
+  return {
+    type: actionTypes.ACTION_SUCCESS_GENERAL,
+  };
+};
+
+export const initGeneral = () => {
+  return {
+    type: actionTypes.INIT_GENERAL,
+  };
+};
+
+export const actionFail = (error) => {
+  console.log(error);
+  return {
+    type: actionTypes.ACTION_FAIL_GENERAL,
+    error: error,
+  };
+};
+
+export const fetchInitialProfession = (professions) => {
+  return {
+    type: actionTypes.INITIAL_PROFESSION,
+    data: professions,
+  };
+};
+
+export const getAllProfessions = () => {
+  return (dispatch) => {
+    dispatch(actionStart());
+    axios
+      .get("https://localhost:44356/api/profession")
+      .then((resData) => {
+        dispatch(fetchInitialProfession(resData.data.professions));
+        dispatch(actionSuccess());
+      })
+      .catch((err) => dispatch(actionFail(err.message)));
+  };
+};
+
+export const getProfessionById = (idProfession) => {
+  return (dispatch) => {
+    dispatch(actionStart());
+    axios
+      .get(`https://localhost:44356/api/profession/${idProfession}`)
+      .then((resData) => {
+        dispatch(setProfession(resData.data.profession.name));
+        dispatch(actionSuccess());
+      })
+      .catch((err) => dispatch(actionFail(err.message)));
+  };
+};
+
+export const setProfession = (profession) => {
+  return {
+    type: actionTypes.GET_PROFESSION_BY_ID,
+    data: profession,
+  };
+};
+
+export const fetchInitialClassrooms = (classes) => {
+  return {
+    type: actionTypes.INITIAL_CLASSROOM,
+    data: classes,
+  };
+};
+
+export const getAllClassrooms = () => {
+  return (dispatch) => {
+    dispatch(actionStart());
+    axios
+      .get("https://localhost:44356/api/Class")
+      .then((resData) => {
+        dispatch(fetchInitialClassrooms(resData.data.classrooms));
+        dispatch(actionSuccess());
+      })
+      .catch((err) => dispatch(actionFail(err.message)));
+  };
+};
+
+export const getClassroomById = (idClass) => {
+  return (dispatch) => {
+    dispatch(actionStart());
+    axios
+      .get(`https://localhost:44356/api/Class/${idClass}`)
+      .then((resData) => {
+        dispatch(setClassroom(resData.data.classroom.name));
+        dispatch(actionSuccess());
+      })
+      .catch((err) => dispatch(actionFail(err.message)));
+  };
+};
+
+export const setClassroom = (classroom) => {
+  return {
+    type: actionTypes.GET_CLASSROOM_BY_ID,
+    data: classroom,
+  };
+};
+
+export const getClassroomByIdTeacher = () => {
+  const idUser = localStorage.getItem("idUser");
+  return (dispatch) => {
+    if (!idUser) {
+      dispatch(authLogout());
+    } else {
+      dispatch(actionStart());
+      axios
+        .get(`https://localhost:44356/api/TeacherClass/${idUser}`)
+        .then((resData) => {
+          dispatch(setClassrooms(resData.data.classrooms));
+          dispatch(actionSuccess());
+        })
+        .catch((err) => dispatch(actionFail(err.message)));
+    }
+  };
+};
+
+export const getClassroomForPublishTest = (idTest) => {
+  const idUser = localStorage.getItem("idUser");
+  return (dispatch) => {
+    if (!idTest) {
+      return;
+    }
+    if (!idUser) {
+      dispatch(authLogout());
+    } else {
+      dispatch(actionStart());
+      axios
+        .get(`https://localhost:44356/api/TeacherClass/${idUser}`)
+        .then((resData) => {
+          const allClassrooms = resData.data.classrooms;
+          axios
+            .get(
+              `https://localhost:44356/api/TeacherClass/GetClassroomsAssignToTest/${idTest}`
+            )
+            .then((res) => {
+              const classrooms = allClassrooms.map((c) => {
+                return { ...c, isAssign: false };
+              });
+              res.data.classrooms.map((id) => {
+                classrooms.forEach((c) => {
+                  if (c.id === id) {
+                    c.isAssign = true;
+                  }
+                });
+              });
+              dispatch(setClassrooms(classrooms));
+              dispatch(actionSuccess());
+            });
+        })
+        .catch((err) => {
+          dispatch(actionFail(err.message));
+        });
+    }
+  };
+};
+
+export const setClassrooms = (classrooms) => {
+  return {
+    type: actionTypes.GET_CLASSROOM_BY_ID_TEACHER,
+    data: classrooms,
+  };
+};
