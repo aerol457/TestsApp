@@ -46,13 +46,14 @@
 .test-list-item {
   margin-bottom: 10px;
   padding: 10px;
-  border: 2px solid rgb(126 149 190);
+  border: 2px solid #787bca;
   cursor: pointer;
-  color: rgb(126 149 190);
+  color: #787bca;
 }
 
+.test-list-item-show,
 .test-list-item:hover {
-  background-color: gray;
+  background: #5794c9;
   color: white;
 }
 
@@ -84,16 +85,8 @@
   height: 160px;
 }
 
-.test-list-item-details button {
-  width: 110px;
-  background: rgb(126 149 190);
-  padding: 3px 0;
-  transition: all 0.3s linear;
-}
-
-.test-list-item-details button:hover,
-.test-list-item-details button:active {
-  color: white;
+.btn-test {
+  width: 13vw;
 }
 
 .pagination-content {

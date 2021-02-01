@@ -5,7 +5,7 @@ export const ModalContext = React.createContext({
   stateSecondModal: false,
   showSecondModal: () => {},
   hideSecondModal: () => {},
-  cancel: () => {},
+  cancel: (extras = null) => {},
   show: () => {},
 });
 
@@ -13,7 +13,10 @@ const ModalContextProvider = (props) => {
   const [stateModal, setStateModal] = useState(false);
   const [stateSecondModal, setStateSecondModal] = useState(false);
 
-  const handleCancelModal = () => {
+  const handleCancelModal = (extras = null) => {
+    if (!extras) {
+      extras();
+    }
     setStateModal(false);
   };
 

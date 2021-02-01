@@ -8,10 +8,9 @@ import Button from "../Core/Button/Button";
 import Backdrop from "../Core/Backdrop/Backdrop";
 import Modal from "../Core/Modal/Modal";
 import TestCreate from "./TestCreate/TestCreate";
-import ErrorMessage from "../Core/ErrorMessage/ErrorMessage";
+// import ErrorMessage from "../Core/HandleError/HandleError";
 import { ModalContext } from "../../context/TeacherContext/ModalContext";
 import { DashboardContext } from "../../context/TeacherContext/DashboardContext";
-
 import {
   getAllTest,
   findMyTests,
@@ -58,75 +57,109 @@ const Tests = () => {
   };
 
   const designList = (slice) => {
-    const postDataView = Object.keys(slice).map((i) => (
-      <li
-        className="test-list-item"
-        key={i}
-        onClick={() => onToggleTestDetails(i, slice)}
-      >
-        <h4>{slice[i].name}</h4>
-        <div
+    const postDataView = Object.keys(slice).map((i) => {
+      let isView = true;
+      if (
+        slice[i].studentTest.length > 0 &&
+        userDetails.userType === "student"
+      ) {
+        const currentDate = new Date();
+        const submmitedDate = new Date(slice[i].dateOfSubmission);
+        const isValid = currentDate > submmitedDate;
+        if (slice[i].studentTest[0].isDone || isValid) {
+          isView = false;
+        }
+      }
+      return (
+        <li
           className={
-            !slice[i].show
-              ? "test-list-item-details"
-              : "test-list-item-details show-details"
+            slice[i].show
+              ? "test-list-item test-list-item-show"
+              : "test-list-item"
           }
+          key={i}
+          onClick={() => onToggleTestDetails(i, slice)}
         >
-          <ul>
-            <li>
-              Id Test:
-              <br />
-              {slice[i].idTest}
-            </li>
-            {userDetails.userType === "student" && (
+          <h4>{slice[i].name}</h4>
+          <div
+            className={
+              !slice[i].show
+                ? "test-list-item-details"
+                : "test-list-item-details show-details"
+            }
+          >
+            <ul>
               <li>
-                Teacher Name:
+                Id Test:
                 <br />
-                {slice[i].idUserNavigation.name}
+                {slice[i].idTest}
               </li>
+              {userDetails.userType === "student" && (
+                <li>
+                  Teacher Name:
+                  <br />
+                  {slice[i].idUserNavigation.name}
+                </li>
+              )}
+              <li>
+                Quantity of questions:
+                <br />
+                {slice[i].quantityOfQuestions}
+              </li>
+              <li>
+                Profession Name:
+                <br />
+                {slice[i].professionName}
+              </li>
+              <li>
+                Time:
+                <br />
+                {Math.round(+slice[i].time)} min.
+              </li>
+              <li>
+                Created Date:
+                <br />
+                {
+                  slice[i].dateOfDistribution
+                    .toString()
+                    .replaceAll("-", "/")
+                    .split("T")[0]
+                }
+              </li>
+              <li>
+                Submitted Date:
+                <br />
+                {
+                  slice[i].dateOfSubmission
+                    .toString()
+                    .replaceAll("-", "/")
+                    .split("T")[0]
+                }
+              </li>
+              {userDetails.userType === "student" && (
+                <li>
+                  Grade:
+                  <br />
+                  {slice[i].studentTest[0].grade}
+                </li>
+              )}
+            </ul>
+            {isView && (
+              <div className="btn-test">
+                <Button
+                  outlinedWhite
+                  clicked={(e) => handleViewTest(e, slice[i].id)}
+                >
+                  {userDetails.userType === "teacher"
+                    ? "VIEW TEST"
+                    : "START TEST"}
+                </Button>
+              </div>
             )}
-            <li>
-              Quantity of questions:
-              <br />
-              {slice[i].quantityOfQuestions}
-            </li>
-            <li>
-              Profession Name:
-              <br />
-              {slice[i].professionName}
-            </li>
-            <li>
-              Time:
-              <br />
-              {Math.round(+slice[i].time)} min.
-            </li>
-            <li>
-              Created Date:
-              <br />
-              {
-                slice[i].dateOfDistribution
-                  .toString()
-                  .replaceAll("-", "/")
-                  .split("T")[0]
-              }
-            </li>
-            <li>
-              Submitted Date:
-              <br />
-              {
-                slice[i].dateOfSubmission
-                  .toString()
-                  .replaceAll("-", "/")
-                  .split("T")[0]
-              }
-            </li>
-          </ul>
-          <Button clicked={(e) => handleViewTest(e, slice[i].id)}>
-            VIEW TEST
-          </Button>
-        </div>
-      </li>
-    ));
+          </div>
+        </li>
+      );
+    });
     setPageCount(Math.ceil(tests.length / perPage));
     setPostData(postDataView);
   };
@@ -180,13 +213,15 @@ const Tests = () => {
             <Button>SEARCH</Button>
           </form>
           <div className="student-search-error">
-            {error && <ErrorMessage>{error}</ErrorMessage>}
+            {/*{error && <ErrorMessage>{error}</ErrorMessage>}*/}
           </div>
         </div>
         <div className="dashboard-content-center-top-btn">
-          <Button clicked={modalContext.show} outlined>
-            +ADD
-          </Button>
+          {userDetails.userType === "teacher" && (
+            <Button clicked={modalContext.show} outlined>
+              +ADD
+            </Button>
+          )}
         </div>
       </div>
 

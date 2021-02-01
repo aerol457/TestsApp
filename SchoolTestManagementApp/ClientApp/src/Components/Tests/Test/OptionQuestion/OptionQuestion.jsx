@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoPrimitiveDot } from "react-icons/go";
 
 import "./OptionQuestion.css";
 
-const OptionQuestion = ({ question, index }) => {
-  const [checkOption1, setCheckOption1] = useState(true);
+const OptionQuestion = ({
+  question,
+  index,
+  setUserAnswer,
+  setCurrentQuestion,
+}) => {
+  const [checkOption1, setCheckOption1] = useState(false);
   const [checkOption2, setCheckOption2] = useState(false);
   const [checkOption3, setCheckOption3] = useState(false);
   const [checkOption4, setCheckOption4] = useState(false);
@@ -16,17 +21,40 @@ const OptionQuestion = ({ question, index }) => {
     setCheckOption4(false);
     switch (identifier) {
       case "opt1":
+        setUserAnswer(question.option1.id);
         return setCheckOption1(true);
       case "opt2":
+        setUserAnswer(question.option2.id);
         return setCheckOption2(true);
       case "opt3":
+        setUserAnswer(question.option3.id);
         return setCheckOption3(true);
       case "opt4":
+        setUserAnswer(question.option4.id);
         return setCheckOption4(true);
-      default:
-        return setCheckOption1(true);
     }
   };
+
+  useEffect(() => {
+    setCurrentQuestion(question);
+    if (question.userAnswer !== "") {
+      setUserAnswer(question.userAnswer);
+      switch (question.userAnswer) {
+        case question.option1.id:
+          setCheckOption1(true);
+          break;
+        case question.option2.id:
+          setCheckOption2(true);
+          break;
+        case question.option3.id:
+          setCheckOption3(true);
+          break;
+        case question.option4.id:
+          setCheckOption4(true);
+          break;
+      }
+    }
+  }, [question]);
 
   return (
     <>
@@ -53,7 +81,7 @@ const OptionQuestion = ({ question, index }) => {
               )}
             </div>
             <div className="option-div">
-              <div>{question.option1}</div>
+              <div>{question.option1.content}</div>
             </div>
           </label>
         </div>
@@ -73,7 +101,7 @@ const OptionQuestion = ({ question, index }) => {
               )}
             </div>
             <div className="option-div">
-              <div>{question.option2}</div>
+              <div>{question.option2.content}</div>
             </div>
           </label>
         </div>
@@ -93,7 +121,7 @@ const OptionQuestion = ({ question, index }) => {
               )}
             </div>
             <div className="option-div">
-              <div>{question.option3}</div>
+              <div>{question.option3.content}</div>
             </div>
           </label>
         </div>
@@ -113,7 +141,7 @@ const OptionQuestion = ({ question, index }) => {
               )}
             </div>
             <div className="option-div">
-              <div>{question.option4}</div>
+              <div>{question.option4.content}</div>
             </div>
           </label>
         </div>

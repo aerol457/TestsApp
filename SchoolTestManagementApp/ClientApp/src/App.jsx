@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
-import { Route, Switch, useHistory } from "react-router";
+import { Route, Switch } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 
 // import Home from "./Pages/Home/Home";
-import Login from "./Pages/Login/Login";
-import SignUp from "./Pages/SignUp/SignUp";
+import Auth from "./Pages/Auth/Auth";
 import TeacherDashboard from "./Pages/Teacher/Dashboard";
 import StudentDashboard from "./Pages/Student/Dashboard";
-import Layout from "./Components/Core/Layout/Layout";
+import Layout from "./hoc/Layout/Layout";
 import { authCheckState } from "./store/actions/index";
 
 function App() {
@@ -25,8 +24,7 @@ function App() {
         <Switch>
           {!isAuth && (
             <>
-              <Route path="/login" component={Login} />
-              <Route path="/sign-up" component={SignUp} />
+              <Route path="/" component={Auth} />
             </>
           )}
           {userDetails.userType === "teacher" ? (

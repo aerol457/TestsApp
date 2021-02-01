@@ -17,10 +17,10 @@ namespace SchoolTestManagementApp.Models
 
         public virtual DbSet<Classroom> Classroom { get; set; }
         public virtual DbSet<ClassroomTest> ClassroomTest { get; set; }
-        public virtual DbSet<DetailsTestArchive> DetailsTestArchive { get; set; }
+        public virtual DbSet<Option> Option { get; set; }
         public virtual DbSet<Profession> Profession { get; set; }
         public virtual DbSet<Question> Question { get; set; }
-        public virtual DbSet<QuestionsTestArchive> QuestionsTestArchive { get; set; }
+        public virtual DbSet<QuestionOption> QuestionOption { get; set; }
         public virtual DbSet<StudentTest> StudentTest { get; set; }
         public virtual DbSet<TeacherClassroom> TeacherClassroom { get; set; }
         public virtual DbSet<Test> Test { get; set; }
@@ -51,27 +51,10 @@ namespace SchoolTestManagementApp.Models
                     .HasConstraintName("FK_ClassroomTest_Test");
             });
 
-            modelBuilder.Entity<DetailsTestArchive>(entity =>
+            modelBuilder.Entity<Option>(entity =>
             {
-                entity.HasKey(e => e.IdTest)
-                    .HasName("PK__DetailsT__9F3A11B27A8D7838");
-
-                entity.Property(e => e.IdTest)
-                    .HasMaxLength(10)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.DateOfDistribution).HasColumnType("datetime");
-
-                entity.Property(e => e.DateOfSubmission).HasColumnType("datetime");
-
-                entity.Property(e => e.Name)
+                entity.Property(e => e.Content)
                     .IsRequired()
-                    .HasMaxLength(15)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ProfessionName)
-                    .IsRequired()
-                    .HasMaxLength(20)
                     .IsUnicode(false);
             });
 
@@ -85,14 +68,6 @@ namespace SchoolTestManagementApp.Models
 
             modelBuilder.Entity<Question>(entity =>
             {
-                entity.Property(e => e.Answer1)
-                    .IsRequired()
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Answer2).IsUnicode(false);
-
-                entity.Property(e => e.Answer3).IsUnicode(false);
-
                 entity.Property(e => e.Content1)
                     .IsRequired()
                     .IsUnicode(false);
@@ -102,12 +77,6 @@ namespace SchoolTestManagementApp.Models
                 entity.Property(e => e.Content3).IsUnicode(false);
 
                 entity.Property(e => e.ImageUrl).IsUnicode(false);
-
-                entity.Property(e => e.Option1).IsUnicode(false);
-
-                entity.Property(e => e.Option2).IsUnicode(false);
-
-                entity.Property(e => e.Option3).IsUnicode(false);
 
                 entity.Property(e => e.QuestionType)
                     .IsRequired()
@@ -121,47 +90,19 @@ namespace SchoolTestManagementApp.Models
                     .HasConstraintName("FK_Question_Test");
             });
 
-            modelBuilder.Entity<QuestionsTestArchive>(entity =>
+            modelBuilder.Entity<QuestionOption>(entity =>
             {
-                entity.Property(e => e.Answer1)
-                    .IsRequired()
-                    .IsUnicode(false);
+                entity.HasOne(d => d.IdOptionNavigation)
+                    .WithMany(p => p.QuestionOption)
+                    .HasForeignKey(d => d.IdOption)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_QuestionOption_Option");
 
-                entity.Property(e => e.Answer2).IsUnicode(false);
-
-                entity.Property(e => e.Answer3).IsUnicode(false);
-
-                entity.Property(e => e.Content1)
-                    .IsRequired()
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Content2).IsUnicode(false);
-
-                entity.Property(e => e.Content3).IsUnicode(false);
-
-                entity.Property(e => e.IdQuestion)
-                    .IsRequired()
-                    .HasMaxLength(10)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.IdTest)
-                    .IsRequired()
-                    .HasMaxLength(10)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Option1)
-                    .IsRequired()
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Option2)
-                    .IsRequired()
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Option3).IsUnicode(false);
-
-                entity.Property(e => e.QuestionType)
-                    .IsRequired()
-                    .IsUnicode(false);
+                entity.HasOne(d => d.IdQuestionNavigation)
+                    .WithMany(p => p.QuestionOption)
+                    .HasForeignKey(d => d.IdQuestion)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_QuestionOption_Question");
             });
 
             modelBuilder.Entity<StudentTest>(entity =>

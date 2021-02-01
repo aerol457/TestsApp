@@ -13,5 +13,6 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.QuestionServi
         Task<bool> DeleteQuestion(int idQuestion);
         Question GetQuestionById(int idQuestion);
         void GetAllQuestionByIdTest(int idTest);
+        Task<int> CheckQuestionsTest(Test test, int idStudent);
     }
 }

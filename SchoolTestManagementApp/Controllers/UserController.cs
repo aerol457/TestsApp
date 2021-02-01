@@ -50,17 +50,18 @@ namespace SchoolTestManagementApp.Controllers
                 }
                 Auth auth = new Auth(_config);
                 var tokenString = auth.GenerateJSONWebToken(authUser.Email, authUser.DateJoined);
-                return Ok(new { user = authUser, token = tokenString, expiresIn = 3600 * 24 });
+                return Ok(new { success = true,  user = authUser, token = tokenString, expiresIn = 3600 * 24 });
             }
-            return NotFound();
+            return Json(new { success= false });
         }
 
         [HttpPost]
         public async Task<IActionResult> SignUp([FromForm] User user)
         {
-            var createdUser = await _service.Add(user);
-            if (createdUser != null)
+            var isValid = _service.ValidateUser(user);
+            if(isValid == null)
             {
+                var createdUser = await _service.Add(user); 
                 if (createdUser.UserType == "teacher")
                 {
                     _serviceProfession.getProfessionById((int)createdUser.IdProfession);
@@ -74,18 +75,7 @@ namespace SchoolTestManagementApp.Controllers
                 var tokenString = auth.GenerateJSONWebToken(createdUser.Email, createdUser.DateJoined);
                 return CreatedAtAction(nameof(SignUp), new { user = createdUser, token = tokenString, expiresIn = 3600 * 24 });
             }
-            return BadRequest();
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
-        {
-            var updatedUser = await _service.Update(id, user);
-            if(updatedUser != null)
-            {
-                return Ok(new { user = updatedUser });
-            }
-            return NotFound();
+            return Json(new {errors= isValid });
         }
 
         [HttpGet("{id}")]
@@ -103,9 +93,21 @@ namespace SchoolTestManagementApp.Controllers
                 {
                     _serviceClass.getClassById((int)user.IdClassroom);
                 }
-                return Ok(new { user });
+                return Ok(new { success=true, user });
             }
-            return NotFound();
+            return Json(new { success = false });
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
+        {
+            var updatedUser = await _service.Update(id, user);
+            if(updatedUser != null)
+            {
+                return Ok(new { success = true, user = updatedUser });
+            }
+            return Json(new { success = false});
+        }
+
     }
 }

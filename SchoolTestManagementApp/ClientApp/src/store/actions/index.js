@@ -12,6 +12,8 @@ export {
   getTestById,
   publishTest,
   initTest,
+  insertUserAnswer,
+  finishTest,
 } from "./test/test";
 
 export {
@@ -29,6 +31,8 @@ export {
   signUp,
   authCheckState,
   getUserProfile,
+  resetError,
+  authFail,
 } from "./auth/auth";
 
 export {

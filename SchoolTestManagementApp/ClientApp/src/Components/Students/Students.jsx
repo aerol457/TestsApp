@@ -7,7 +7,7 @@ import "./Students.css";
 import Modal from "../../Components/Core/Modal/Modal";
 import Backdrop from "../../Components/Core/Backdrop/Backdrop";
 import Button from "../../Components/Core/Button/Button";
-import ErrorMessage from "../Core/ErrorMessage/ErrorMessage";
+// import ErrorMessage from "../Core/HandleError/HandleError";
 import Card from "../Core/Card/Card";
 import Spinner from "../Core/Spinner/Spinner";
 import CardInfo from "../Core/Card/CardInfo/CardInfo";
@@ -133,7 +133,7 @@ const Students = () => {
           <Button>SEARCH</Button>
         </div>
         <div className="student-search-error">
-          {error && <ErrorMessage>Sorry, Can't find student</ErrorMessage>}
+          {/*error && <ErrorMessage>Sorry, Can't find student</ErrorMessage>*/}
         </div>
       </form>
       {postData.length === 0 ? (

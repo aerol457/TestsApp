@@ -123,7 +123,7 @@ export const addTest = (test) => {
     dispatch(actionStart());
     test.idUser = idUser;
     axios
-      .post(`https://localhost:44356/api/Test/${idUser}`, test, {
+      .post("https://localhost:44356/api/Test", test, {
         headers: {
           Authorization: "Bearer " + token,
         },
@@ -154,7 +154,7 @@ export const getTestById = (idTest) => {
         },
       })
       .then((res) => {
-        dispatch(setFullTest(res.data.test, res.data.test.question));
+        dispatch(createQuestionsToTest(res.data.test, res.data.test.question));
       })
       .catch((err) => console.log(err));
   };
@@ -230,11 +230,10 @@ export const publishTest = (idTest, classrooms) => {
     idClassrooms: classrooms,
     idTest,
   };
-  console.log(publish);
   return (dispatch) => {
     dispatch(actionStart());
     axios
-      .post("https://localhost:44356/api/Test", publish)
+      .post("https://localhost:44356/api/Test/PublishTest", publish)
       .then((res) => {
         if (res.status === 403 || res.status === 400) {
           return dispatch(actionFail());
@@ -242,5 +241,171 @@ export const publishTest = (idTest, classrooms) => {
         dispatch(actionSuccess());
       })
       .catch((err) => actionFail(err));
+  };
+};
+
+const createQuestionsToTest = (test, questions) => {
+  const questionList = questions.map((q) => {
+    if (q.questionType === "option" || q.questionType === "image") {
+      const question = {
+        id: -1,
+        option1: {
+          content: "",
+          id: -1,
+        },
+        option2: {
+          content: "",
+          id: -1,
+        },
+        option3: {
+          content: "",
+          id: -1,
+        },
+        option4: {
+          content: "",
+          id: -1,
+        },
+        content1: "",
+        questionType: "",
+        userAnswer1: 0,
+        value: 0,
+        idTest: -1,
+      };
+      let numberOne = Math.round(Math.random() * 4) + 1;
+      let indexs = [];
+      for (let i = 1; i < 5; i++) {
+        if (i !== numberOne) {
+          indexs.push(i);
+        }
+      }
+      const getDistractors = q.questionOption
+        .filter((o) => o.type !== 2)
+        .map((v) => v.idOptionNavigation);
+      const getAnswer = q.questionOption
+        .filter((o) => o.type !== 1)
+        .map((v) => v.idOptionNavigation);
+      question["option" + indexs[0]] = getDistractors[0];
+      question["option" + indexs[1]] = getDistractors[1];
+      question["option" + indexs[2]] = getDistractors[2];
+      question["option" + numberOne] = getAnswer[0];
+      question.value = q.value;
+      question.content1 = q.content1;
+      question.questionType = q.questionType;
+      question.imageUrl = q.imageUrl;
+      question.idTest = q.idTest;
+      question.id = q.id;
+      return question;
+    } else {
+      const question = {
+        id: -1,
+        option1: {
+          content: "",
+          id: -1,
+        },
+        option2: {
+          content: "",
+          id: -1,
+        },
+        option3: {
+          content: "",
+          id: -1,
+        },
+        option4: {
+          content: "",
+          id: -1,
+        },
+        option5: {
+          content: "",
+          id: -1,
+        },
+        userAnswer1: 0,
+        userAnswer2: 0,
+        content1: "",
+        content2: "",
+        content3: "",
+        questionType: "",
+        value: 0,
+        idTest: -1,
+      };
+      const numberOne = Math.floor(Math.random() * 5) + 1;
+      let numberTwo = numberOne;
+      do {
+        numberTwo = Math.floor(Math.random() * 5) + 1;
+      } while (numberOne === numberTwo);
+
+      const getDistractors = q.questionOption
+        .filter((o) => o.type !== 2)
+        .map((v) => v.idOptionNavigation);
+      const getAnswers = q.questionOption
+        .filter((o) => o.type !== 1)
+        .map((v) => v.idOptionNavigation);
+      let indexs = [];
+      for (let i = 1; i < 6; i++) {
+        if (i !== numberOne && i !== numberTwo) {
+          indexs.push(i);
+        }
+      }
+      question["option" + numberOne] = getAnswers[0];
+      question["option" + numberTwo] = getAnswers[1];
+      question["option" + indexs[0]] = getDistractors[0];
+      question["option" + indexs[1]] = getDistractors[1];
+      question["option" + indexs[2]] = getDistractors[2];
+      question.value = q.value;
+      question.content1 = q.content1;
+      question.content2 = q.content2;
+      question.content3 = q.content3;
+      question.questionType = q.questionType;
+      question.idTest = q.idTest;
+      question.id = q.id;
+      return question;
+    }
+  });
+  return (dispatch) => {
+    dispatch(setFullTest(test, questionList));
+  };
+};
+
+export const insertUserAnswer = (answer, multipleAnswers, question) => {
+  return {
+    type: actionTypes.INSERT_USER_ANSWER,
+    answer,
+    multipleAnswers,
+    question,
+  };
+};
+
+export const finishTest = (questions, idTest) => {
+  const questionList = questions.map((q) => {
+    return { id: q.id, userAnswer1: q.userAnswer1, userAnswer2: q.userAnswer2 };
+  });
+  const test = {
+    id: idTest,
+    questionList,
+  };
+  return (dispatch) => {
+    const idStudent = localStorage.getItem("idUser");
+    const token = localStorage.getItem("token");
+    dispatch(actionStart());
+    axios
+      .post(`https://localhost:44356/api/Test/FinishTest/${idStudent}`, test, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((res) => {
+        if (res.data.success === false) {
+        } else {
+          dispatch(setGrade(res.data.grade));
+        }
+        dispatch(actionSuccess());
+      })
+      .catch((err) => actionFail(err));
+  };
+};
+
+const setGrade = (grade) => {
+  return {
+    type: actionTypes.FINISH_TEST,
+    grade,
   };
 };

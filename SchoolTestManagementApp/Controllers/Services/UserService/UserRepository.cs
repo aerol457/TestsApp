@@ -17,34 +17,35 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherServic
 {
     public class UserRepository : IUserRepository
     {
-        private readonly ExamDataContext context;
+        private readonly ExamDataContext _context;
         private readonly IWebHostEnvironment webHostEnvironment;
         public UserRepository(ExamDataContext context, IWebHostEnvironment hostEnvironment)
         {
-            this.context = context;
+            this._context = context;
             this.webHostEnvironment = hostEnvironment;
+        }
+
+        public List<string> ValidateUser(User user)
+        {
+            Validators validate = new Validators(_context);
+            return validate.ValidateUser(user);
         }
 
         public async Task<User> Add(User user)
         {
             try
             {
-                var isExits = context.User.Where(t => t.Email == user.Email).FirstOrDefault();
-                if (isExits == null)
-                {
-                    Auth encryptPass = new Auth(null);
-                    var salt = encryptPass.CreateSalt(10);
-                    var hash = encryptPass.GenerateSHA256Hash(user.PasswordHash, salt);
-                    user.PasswordSalt = salt;
-                    user.PasswordHash = hash;
-                    user.DateJoined = DateTime.Now;
-                    SaveImage image = new SaveImage(webHostEnvironment);
-                    image.Save(user.ImageFile, user.ImageUrl);
-                    context.User.Add(user);
-                    await context.SaveChangesAsync();
-                    return user;
-                }
-                return null;
+                Auth encryptPass = new Auth(null);
+                var salt = encryptPass.CreateSalt(10);
+                var hash = encryptPass.GenerateSHA256Hash(user.PasswordHash, salt);
+                user.PasswordSalt = salt;
+                user.PasswordHash = hash;
+                user.DateJoined = DateTime.Now;
+                SaveImage image = new SaveImage(webHostEnvironment);
+                image.Save(user.ImageFile, user.ImageUrl);
+                _context.User.Add(user);
+                await _context.SaveChangesAsync();
+                return user;
             }
             catch(Exception ex)
             {
@@ -57,7 +58,7 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherServic
         {
             try
             {
-                return context.User.FirstOrDefault(t => t.Id == idUser);
+                return _context.User.FirstOrDefault(t => t.Id == idUser);
             }
             catch (Exception ex)
             {
@@ -70,7 +71,7 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherServic
         {
             try
             {
-                var oldUser = context.User.FirstOrDefault(t => t.Id == idUser);
+                var oldUser = _context.User.FirstOrDefault(t => t.Id == idUser);
                 if (oldUser != null)
                 {
                     oldUser.IdCard = user.IdCard;
@@ -80,7 +81,7 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherServic
                     oldUser.PhoneNumber = user.PhoneNumber;
                     oldUser.ImageUrl= user.ImageUrl;
                     oldUser.IdProfession = user.IdProfession;
-                    await context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                     return oldUser;
                 }
                 return null;
@@ -98,7 +99,7 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherServic
             {
                 Auth encryptPass = new Auth(null);
                 bool isAuth = false; ;
-                var userIsExits = context.User.FirstOrDefault(t => t.Email == email);
+                var userIsExits = _context.User.FirstOrDefault(t => t.Email == email);
                 if (userIsExits != null)
                 {
                     isAuth = encryptPass.CheckPassword(userIsExits.PasswordHash, userIsExits.PasswordSalt, password);

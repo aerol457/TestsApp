@@ -9,7 +9,7 @@
   height: 100%;
   padding: 10px 20px;
   text-align: center;
-  background: #7e95be;
+  background: linear-gradient(#5794c9, #787bca);
   flex: 0.5;
 }
 
@@ -28,7 +28,7 @@
   width: 70px;
   overflow: hidden;
   right: 0;
-  background: #7e95be;
+  background: linear-gradient(#5794c9, #787bca);
   transition: all 0.5s linear;
 }
 

@@ -1,7 +1,7 @@
 ﻿import React, { useState } from "react";
 
 import "./Layout.css";
-import NavMenu from "../../NavMenu/NavMenu";
+import NavMenu from "../../Components/NavMenu/NavMenu";
 
 const Layout = ({ children }) => {
   const [showNav, setShowNav] = useState(false);

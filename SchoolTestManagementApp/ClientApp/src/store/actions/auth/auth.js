@@ -15,10 +15,16 @@ const actionSuccess = () => {
   };
 };
 
-const authFail = (error) => {
+export const authFail = (error = null) => {
   return {
     type: actionTypes.AUTH_FAIL,
     error: error,
+  };
+};
+
+export const resetError = () => {
+  return {
+    type: actionTypes.RESET_ERROR,
   };
 };
 
@@ -41,20 +47,24 @@ const checkAuthTimeout = (expirationTime) => {
 export const auth = (user) => {
   return (dispatch) => {
     dispatch(actionStart());
-    axios.post("https://localhost:44356/api/User/Auth", user).then((res) => {
-      if (res.status === 403 || res.status === 400) {
-        return dispatch(authFail("Validation Failed"));
-      }
-      const expirationDate = new Date(
-        new Date().getTime() + res.data.expiresIn * 1000
-      );
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("idUser", res.data.user.id);
-      localStorage.setItem("expirationDate", expirationDate);
-      dispatch(authSuccess(res.data.token, res.data.user.id));
-      dispatch(checkAuthTimeout(res.data.expiresIn));
-      dispatch(setProfileSuccess(res.data.user));
-    });
+    axios
+      .post("https://localhost:44356/api/User/Auth", user)
+      .then((res) => {
+        if (res.data.success === false) {
+          return dispatch(authFail("E-Mail/password not corret!"));
+        }
+        const expirationDate = new Date(
+          new Date().getTime() + res.data.expiresIn * 1000
+        );
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("idUser", res.data.user.id);
+        localStorage.setItem("expirationDate", expirationDate);
+        dispatch(authSuccess(res.data.token, res.data.user.id));
+        dispatch(checkAuthTimeout(res.data.expiresIn));
+        dispatch(setProfileSuccess(res.data.user));
+        dispatch(actionSuccess());
+      })
+      .catch(() => dispatch(authFail()));
   };
 };
 
@@ -67,6 +77,10 @@ export const signUp = (user) => {
   } else {
     formData.append("idProfession", user.idProfession);
   }
+  if (user.imageUrl !== "" && user.image !== "") {
+    formData.append("imageFile", user.image, user.imageUrl);
+    formData.append("imageUrl", user.imageUrl);
+  }
   formData.append("name", user.name);
   formData.append("idCard", user.idCard);
   formData.append("email", user.email);
@@ -74,35 +88,29 @@ export const signUp = (user) => {
   formData.append("passwordHash", user.passwordHash);
   formData.append("city", user.city);
   formData.append("address", user.address);
-  formData.append("imageUrl", user.imageUrl);
-  formData.append("imageFile", user.image, user.imageUrl);
   formData.append("userType", user.userType);
 
   return (dispatch) => {
-    if (user.passwordHash !== user.confirmPassword) {
-      return dispatch(authFail("Password not match"));
-    } else {
-      dispatch(actionStart());
-      axios
-        .post("https://localhost:44356/api/User", formData)
-        .then((res) => {
-          if (res.status === 403 || res.status === 400) {
-            return dispatch(authFail("Email Or Password Invaild"));
-          }
-          token = res.data.token;
-          expiresIn = res.data.expiresIn;
-          const expirationDate = new Date(
-            new Date().getTime() + expiresIn * 1000
-          );
-          localStorage.setItem("token", token);
-          localStorage.setItem("idUser", res.data.id);
-          localStorage.setItem("expirationDate", expirationDate);
-          dispatch(authSuccess(token, res.data.id));
-          dispatch(setProfileSuccess(res.data.user));
-          dispatch(checkAuthTimeout(expiresIn));
-        })
-        .catch((err) => dispatch(authFail(err)));
-    }
+    dispatch(actionStart());
+    axios
+      .post("https://localhost:44356/api/User", formData)
+      .then((res) => {
+        if (res.data.errors) {
+          return dispatch(authFail(res.data.errors));
+        }
+        token = res.data.token;
+        expiresIn = res.data.expiresIn;
+        const expirationDate = new Date(
+          new Date().getTime() + expiresIn * 1000
+        );
+        localStorage.setItem("token", token);
+        localStorage.setItem("idUser", res.data.id);
+        localStorage.setItem("expirationDate", expirationDate);
+        dispatch(authSuccess(token, res.data.id));
+        dispatch(setProfileSuccess(res.data.user));
+        dispatch(checkAuthTimeout(expiresIn));
+      })
+      .catch(() => dispatch(authFail()));
   };
 };
 
@@ -158,9 +166,7 @@ export const getUserProfile = () => {
         dispatch(setProfileSuccess(res.data.user));
         dispatch(actionSuccess());
       })
-      .catch((err) => {
-        dispatch(authFail(err));
-      });
+      .catch(() => dispatch(authFail()));
   };
 };
 

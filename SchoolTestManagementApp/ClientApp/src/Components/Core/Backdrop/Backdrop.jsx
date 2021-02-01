@@ -1,14 +1,9 @@
-import React, { useContext } from "react";
+import React from "react";
 
 import "./Backdrop.css";
-import { ModalContext } from "../../../context/TeacherContext/ModalContext";
 
-const Backdrop = () => {
-  const modalContext = useContext(ModalContext);
-
-  return modalContext.stateModal ? (
-    <div className="backdrop" onClick={modalContext.cancel}></div>
-  ) : null;
+const Backdrop = ({ clicked }) => {
+  return <div className="backdrop" onClick={clicked}></div>;
 };
 
 export default Backdrop;

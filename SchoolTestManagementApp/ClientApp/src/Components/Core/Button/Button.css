@@ -1,26 +1,44 @@
 .btn-outlined {
-  color: #7e95be;
+  width: 100%;
+  color: #13c7d5;
   background: none;
-  border: 3px solid rgb(126 149 190);
+  border: 3px solid #13c7d5;
   padding: 5px 10px;
   transition: all 0.3s linear;
 }
 .btn-outlined:hover,
 .btn-outlined:active {
-  background: rgb(126 149 190);
+  background: #13c7d5;
   color: white;
 }
 
-.btn-filled {
-  background: rgb(126 149 190);
+.btn-outlined-white {
+  width: 100%;
+  color: white;
+  background: none;
+  border: 3px solid white;
   padding: 5px 10px;
   transition: all 0.3s linear;
 }
+.btn-outlined-white:hover,
+.btn-outlined-white:active {
+  border: 3px solid #13c7d5;
+  color: #13c7d5;
+}
 
-.btn-filled:hover,
+.btn-filled {
+  width: 100%;
+  background-color: #13c7d5;
+  padding: 5px 10px;
+  color: white;
+  border: 1px solid white;
+  transition: all 0.3s linear;
+}
+
+/* .btn-filled:hover,
 .btn-filled:active {
   color: white;
-}
+} */
 
 .btn-filled-red {
   padding: 5px 10px;

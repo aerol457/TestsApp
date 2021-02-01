@@ -29,7 +29,6 @@ namespace SchoolTestManagementApp.Models
         public string UserType { get; set; }
         [NotMappedAttribute]
         public IFormFile ImageFile { get; set; }
-
         public virtual Classroom IdClassroomNavigation { get; set; }
         public virtual Profession IdProfessionNavigation { get; set; }
         public virtual ICollection<TeacherClassroom> TeacherClassroom { get; set; }

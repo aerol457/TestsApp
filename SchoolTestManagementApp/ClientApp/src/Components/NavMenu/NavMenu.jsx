@@ -22,18 +22,14 @@ const NavMenu = ({ show, clicked }) => {
           </div>
         </div>
         <div className={show ? "nav-items show-nav" : "nav-items"}>
-          <div className="nav-items-left">
-            <NavItem link="/" title="Home" clicked={clicked} />
-          </div>
           <div className="nav-items-right">
             {isAuth ? (
               <>
-                <NavItem link="/login" title="Login" clicked={clicked} />
-                <NavItem link="/sign-up" title="Sign Up" clicked={clicked} />
+                <NavItem link="/" title="Home" clicked={clicked} />
               </>
             ) : (
               <NavItem
-                link="/login"
+                link="/"
                 title="Logout"
                 clicked={() => dispatch(authLogout())}
               />

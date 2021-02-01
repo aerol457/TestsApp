@@ -99,6 +99,36 @@ const testReducer = (state = initialTest, action) => {
         questions: action.questions,
         test: action.test,
       });
+    case actionTypes.INSERT_USER_ANSWER:
+      const questions = [...state.questions];
+      let updatedQuestions = questions.map((q) => {
+        if (q.id === action.question.id) {
+          if (
+            action.question.questionType === "option" ||
+            action.question.questionType === "image"
+          ) {
+            q.userAnswer1 = action.answer;
+          } else {
+            if (action.multipleAnswers.length > 0) {
+              q.userAnswer1 = action.multipleAnswers[0];
+              if (action.multipleAnswers.length === 2) {
+                q.userAnswer2 = action.multipleAnswers[1];
+              } else {
+                q.userAnswer2 = 0;
+              }
+            } else {
+              q.userAnswer1 = 0;
+              q.userAnswer2 = 0;
+            }
+          }
+        }
+        return q;
+      });
+      return updateState(state, { questions: updatedQuestions });
+    case actionTypes.FINISH_TEST:
+      let updateTestGrade = { ...state.test };
+      updateTestGrade.grade = action.grade;
+      return updateState(state, { test: updateTestGrade });
     default:
       return state;
   }

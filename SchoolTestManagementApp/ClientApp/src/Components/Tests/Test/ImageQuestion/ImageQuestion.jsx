@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoPrimitiveDot } from "react-icons/go";
 
 import "./ImageQuestion.css";
 
-const ImageQuestion = ({ question, index }) => {
+const ImageQuestion = ({
+  question,
+  index,
+  setCurrentQuestion,
+  setUserAnswer,
+}) => {
   const [checkOption1, setCheckOption1] = useState(true);
   const [checkOption2, setCheckOption2] = useState(false);
   const [checkOption3, setCheckOption3] = useState(false);
@@ -16,17 +21,40 @@ const ImageQuestion = ({ question, index }) => {
     setCheckOption4(false);
     switch (identifier) {
       case "opt1":
+        setUserAnswer(question.option1.id);
         return setCheckOption1(true);
       case "opt2":
+        setUserAnswer(question.option2.id);
         return setCheckOption2(true);
       case "opt3":
+        setUserAnswer(question.option3.id);
         return setCheckOption3(true);
       case "opt4":
+        setUserAnswer(question.option4.id);
         return setCheckOption4(true);
-      default:
-        return setCheckOption1(true);
     }
   };
+
+  useEffect(() => {
+    setCurrentQuestion(question);
+    if (question.userAnswer !== "") {
+      setUserAnswer(question.userAnswer);
+      switch (question.userAnswer) {
+        case question.option1.id:
+          setCheckOption1(true);
+          break;
+        case question.option2.id:
+          setCheckOption2(true);
+          break;
+        case question.option3.id:
+          setCheckOption3(true);
+          break;
+        case question.option4.id:
+          setCheckOption4(true);
+          break;
+      }
+    }
+  }, [question]);
 
   return (
     <div className="image-question">

@@ -1,22 +1,22 @@
-import React, { useContext } from "react";
+import React from "react";
 import { ImCancelCircle } from "react-icons/im";
 
 import "./Modal.css";
-import { ModalContext } from "../../../context/TeacherContext/ModalContext";
+import Backdrop from "../Backdrop/Backdrop";
 
-const Modal = ({ children }) => {
-  const modalContext = useContext(ModalContext);
-
+const Modal = ({ children, clicked, show }) => {
   return (
-    <div className="modal-layout">
-      <div className="modal-cancel">
-        <ImCancelCircle
-          className="modal-cancel-btn"
-          onClick={modalContext.cancel}
-        />
+    show && (
+      <div>
+        <Backdrop clicked={clicked} />
+        <div className="modal-layout">
+          <div className="modal-cancel">
+            <ImCancelCircle className="modal-cancel-btn" onClick={clicked} />
+          </div>
+          <div className="modal-container">{children}</div>
+        </div>
       </div>
-      <div className="modal-container">{children}</div>
-    </div>
+    )
   );
 };
 

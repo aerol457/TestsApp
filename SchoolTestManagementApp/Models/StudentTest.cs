@@ -13,7 +13,6 @@ namespace SchoolTestManagementApp.Models
         public bool IsDone { get; set; }
         [NotMapped]
         public List<int> IdClassrooms { get; set; }
-
         public virtual Test IdTestNavigation { get; set; }
     }
 }
