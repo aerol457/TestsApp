@@ -1,0 +1,19 @@
+.search-content {
+  display: flex;
+}
+
+.search-content label {
+  font-size: 24px;
+  margin-bottom: 0;
+  color: #5794c9;
+}
+
+.search-content input {
+  width: 15vw;
+  padding: 3px;
+  margin: 0 10px;
+}
+
+.search-error {
+  padding-left: 3vw;
+}

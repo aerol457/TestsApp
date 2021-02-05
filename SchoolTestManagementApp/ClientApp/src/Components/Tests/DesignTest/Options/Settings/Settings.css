@@ -1,0 +1,38 @@
+.settings {
+  width: 80%;
+  height: 52vh;
+  margin: 0 auto;
+  padding: 4vh 0px;
+}
+
+.settings-attr {
+  display: grid;
+  padding-top: 2vh;
+}
+
+.settings-attr-input {
+  cursor: pointer;
+  border: 2px solid black;
+}
+
+.settings-attr-input-error {
+  border: 2px solid red;
+}
+
+.settings-attr label {
+  margin-bottom: 0;
+  color: #3d4652;
+  font-weight: 400;
+}
+
+.settings-attr span {
+  height: 2vh;
+}
+
+.settings-attr select {
+  padding: 3px;
+}
+
+.settings-btn {
+  float: right;
+}

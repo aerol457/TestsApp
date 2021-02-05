@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 
 import "./CardInfo.css";
 
-import Table from "../../Table/Table";
+import Table from "./Table/Table";
 
 const CardInfo = () => {
   const student = useSelector((state) => state.student.student);

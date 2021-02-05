@@ -4,6 +4,7 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import "./Dashboard.css";
 import Profile from "../../Components/Profile/Profile";
 import TestDesign from "../../Components/Tests/TestCreate/TestDesign/TestDesign";
+import DesignTest from "../../Components/Tests/DesignTest/DesignTest";
 import Students from "../../Components/Students/Students";
 import Tests from "../../Components/Tests/Tests";
 import { DashboardContext } from "../../context/TeacherContext/DashboardContext";
@@ -39,7 +40,7 @@ const Dashboard = () => {
         {dashboardContext.stateDashboard === "students" ? (
           <Students />
         ) : dashboardContext.stateDashboard === "designTest" ? (
-          <TestDesign />
+          <DesignTest />
         ) : dashboardContext.stateDashboard === "tests" ? (
           <Tests />
         ) : dashboardContext.stateDashboard === "testView" ? (
@@ -57,12 +58,15 @@ const Dashboard = () => {
               : "dashboard-content-right"
           }
         >
-          <AiOutlineArrowLeft
-            className={
-              showActions ? "toggle-left show-toggle-left" : "toggle-left"
-            }
-            onClick={() => onToggleActions()}
-          />
+          <span className="toggle-left" onClick={() => onToggleActions()}>
+            <AiOutlineArrowLeft
+              className={
+                showActions
+                  ? "toggle-left-content show-toggle-left-content"
+                  : "toggle-left-content"
+              }
+            />
+          </span>
           {showActions && (
             <div className="dashboard-content-right-directions">
               <ul>

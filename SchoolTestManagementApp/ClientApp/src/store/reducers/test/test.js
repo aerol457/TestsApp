@@ -15,7 +15,9 @@ const testReducer = (state = initialTest, action) => {
     case actionTypes.ACTION_START_TEST:
       return updateState(state, { loading: true, error: null });
     case actionTypes.ACTION_SUCCESS_TEST:
-      return updateState(state, { loading: false, error: null });
+      return updateState(state, { loading: false });
+    case actionTypes.RESET_ERROR_TEST:
+      return updateState(state, { error: null });
     case actionTypes.ACTION_FAIL_TEST:
       return updateState(state, { loading: false, error: action.error });
     case actionTypes.INIT_TEST:
@@ -25,8 +27,6 @@ const testReducer = (state = initialTest, action) => {
         test: {},
         questions: [],
       });
-    case actionTypes.ACTION_FAIL_TIMER:
-      return updateState(state, { loading: false, error: null });
     case actionTypes.INITIAL_SEARCH_TEST:
       return updateState(state, { search: [] });
     case actionTypes.SET_TESTS:
@@ -36,6 +36,13 @@ const testReducer = (state = initialTest, action) => {
       });
     case actionTypes.ADD_TEST_DETAILS:
       return updateState(state, { test: action.data, questions: [] });
+    case actionTypes.UPDATE_TEST_DETAILS:
+      const updateTestDetails = { ...state.test };
+      updateTestDetails.name = action.test.name;
+      updateTestDetails.professionName = action.test.professionName;
+      updateTestDetails.time = action.test.time;
+      updateTestDetails.dateOfSubmission = action.test.dateOfSubmission;
+      return updateState(state, { test: updateTestDetails, questions: [] });
     case actionTypes.ADD_TEST:
       const updateTests = [...state.tests];
       updateTests.push(action.data);
@@ -55,18 +62,18 @@ const testReducer = (state = initialTest, action) => {
         test: updatedTest,
       });
     case actionTypes.UPDATE_QUESTION:
-      const updatedQuestionsList = state.questions.filter(
-        (q) => q.position !== action.id
+      const updatedQuestion = [...state.questions];
+      const updateTestGrade = { ...state.test };
+      const index = state.questions.findIndex(
+        (q) => q.position === action.question.position
       );
-      const test = { ...state.test };
-      updatedQuestionsList.push(action.data);
+      updatedQuestion[index] = action.question;
       let updatedGrade = 0;
-      updatedQuestionsList.map((q) => (updatedGrade = updatedGrade + +q.value));
-      console.log(updatedGrade);
-      test.grade = updatedGrade;
+      updatedQuestion.forEach((q) => (updatedGrade = updatedGrade + +q.value));
+      updateTestGrade.grade = updatedGrade;
       return updateState(state, {
-        questions: [...updatedQuestionsList],
-        test: test,
+        questions: updatedQuestion,
+        test: updateTestGrade,
       });
     case actionTypes.UPDATE_VIEW_QUESTION:
       return updateState(state, { questions: action.data });
@@ -126,9 +133,9 @@ const testReducer = (state = initialTest, action) => {
       });
       return updateState(state, { questions: updatedQuestions });
     case actionTypes.FINISH_TEST:
-      let updateTestGrade = { ...state.test };
-      updateTestGrade.grade = action.grade;
-      return updateState(state, { test: updateTestGrade });
+      let getGrade = { ...state.test };
+      getGrade.grade = action.grade;
+      return updateState(state, { test: getGrade });
     default:
       return state;
   }

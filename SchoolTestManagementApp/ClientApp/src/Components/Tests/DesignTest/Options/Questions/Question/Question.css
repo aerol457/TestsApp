@@ -1,0 +1,28 @@
+.question {
+  width: 100%;
+  padding: 10px;
+  overflow-y: scroll;
+  border: 2px solid white;
+}
+
+.question div {
+  display: grid;
+}
+
+.question-input {
+  padding: 3px;
+  border: 2px solid black;
+}
+
+.question-input-error {
+  border: 2px solid red;
+}
+
+.question span {
+  height: 2vh;
+}
+
+.question-btn {
+  float: right;
+  padding-top: 2vh;
+}

@@ -4,7 +4,11 @@ import "./Login.css";
 
 import Button from "../../../Components/Core/Button/Button";
 import Spinner from "../../../Components/Core/Spinner/Spinner";
-import { auth, resetError, authFail } from "../../../store/actions/index";
+import {
+  auth,
+  actionAuthSuccess,
+  authFail,
+} from "../../../store/actions/index";
 import { DashboardContext } from "../../../context/TeacherContext/DashboardContext";
 import {
   required,
@@ -59,11 +63,11 @@ const Login = ({ stateAuth, updateState }) => {
     let timer;
     if (error && stateAuth !== "signup") {
       timer = setTimeout(() => {
-        dispatch(resetError());
+        dispatch(actionAuthSuccess());
       }, 2000);
     }
     return () => clearTimeout(timer);
-  }, [error, resetError]);
+  }, [error, actionAuthSuccess]);
 
   return (
     <div className="login-content">

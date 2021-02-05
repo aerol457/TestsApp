@@ -4,14 +4,15 @@ import { useDispatch, useSelector } from "react-redux";
 
 import "./TestDesign.css";
 
-import CheckQuestion from "../../../CheckQuestion/CheckQuestion";
-import OptionQuestion from "../../../OptionQuestion/OptionQuestion";
-import ImageQuestion from "../../../ImageQuestion/ImageQuestion";
-import BlankQuestion from "../../../BlankQuestion/BlankQuestion";
-import QuestionCard from "../../../Core/Card/QuestionCard/QuestionCard";
+// import CheckQuestion from "../../../CheckQuestion/CheckQuestion";
+// import OptionQuestion from "../../../OptionQuestion/OptionQuestion";
+// import ImageQuestion from "../../../ImageQuestion/ImageQuestion";
+// import BlankQuestion from "../../../BlankQuestion/BlankQuestion";
+import QuestionCard from "../../DesignTest/Options/Questions/Question/Card/Card";
 import Modal from "../../../Core/Modal/Modal";
 import Backdrop from "../../../Core/Backdrop/Backdrop";
 import Button from "../../../Core/Button/Button";
+import TestDesignView from "./TestDesignView/TestDesignView";
 import { ModalContext } from "../../../../context/TeacherContext/ModalContext";
 import { DashboardContext } from "../../../../context/TeacherContext/DashboardContext";
 import {
@@ -66,6 +67,8 @@ const TestDesign = () => {
   const [partialQuestionList, setPartialQuestionList] = useState([]);
   const perPage = useState(4)[0];
   const [currentLocation, setCurrentLocation] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [submitTest, setSubmitTest] = useState(false);
 
   const modalContext = useContext(ModalContext);
   const dashboardContext = useContext(DashboardContext);
@@ -169,6 +172,19 @@ const TestDesign = () => {
     dashboardContext.viewTests();
   };
 
+  const handleShowModal = (state) => {
+    setShowModal(true);
+    if (state === "add") {
+      setSubmitTest(true);
+    } else {
+      setSubmitTest(false);
+    }
+  };
+
+  const handleCancelModal = () => {
+    setShowModal(false);
+  };
+
   useEffect(() => {
     dispatch(orderViewQuestion());
     inititalContent();
@@ -176,30 +192,24 @@ const TestDesign = () => {
 
   return (
     <div className="test">
-      {modalContext.stateModal &&
-        (!modalContext.stateSecondModal ? (
-          <div className="test-modal-confirm">
-            <Backdrop show clicked={modalContext.cancel} />
-            <Modal>
-              <p>
-                You are about to upload your test to your list, Are you confirm?
-              </p>
-              <Button clicked={handleConfirmAddTest}>CONFIRE</Button>
-            </Modal>
-          </div>
-        ) : (
-          <div className="test-modal-cancel">
-            <Backdrop show clicked={modalContext.cancel} />
-            <Modal>
-              <p>
-                ' You are about to cancel your test and will cause a data lost,
-                Are you confirm?
-              </p>
-              <Button clicked={modalContext.cancel}>CANCEL</Button>
-              <Button clicked={handleConfirmCancelTest}>CONFIRE</Button>
-            </Modal>
-          </div>
-        ))}
+      {showModal && (
+        <div className="test-modal-confirm">
+          <Modal show={showModal} clicked={handleCancelModal}>
+            <p>
+              {submitTest
+                ? "You are about to upload your test to your list, Are you confirm?"
+                : "You are about to cancel your test and will cause a data lost, Are you confirm?"}
+            </p>
+            <Button
+              clicked={
+                submitTest ? handleConfirmAddTest : handleConfirmCancelTest
+              }
+            >
+              CONFIRE
+            </Button>
+          </Modal>
+        </div>
+      )}
       <div className="test-config">
         <div className="question-config">
           <select
@@ -213,11 +223,18 @@ const TestDesign = () => {
               </option>
             ))}
           </select>
-          <Button outlined clicked={handleAddNewQuestion}>
-            NEW QUESTION
-          </Button>
+          <span>
+            <Button outlined clicked={handleAddNewQuestion}>
+              NEW QUESTION
+            </Button>
+          </span>
         </div>
         <div className="config-content">
+          <div>
+            <TestDesignView />
+          </div>
+        </div>
+        {/*        <div className="config-content">
           {questionContent.questionType === "complete" ? (
             <BlankQuestion
               questionContent={questionContent}
@@ -239,7 +256,7 @@ const TestDesign = () => {
               newQuestion={handleAddNewQuestion}
             />
           )}
-        </div>
+        </div>*/}
       </div>
       <div className="question-lists-view">
         <div className="question-navigation-test-design">

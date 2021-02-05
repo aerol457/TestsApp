@@ -9,7 +9,7 @@ const actionStart = () => {
   };
 };
 
-const actionSuccess = () => {
+export const actionAuthSuccess = () => {
   return {
     type: actionTypes.ACTION_SUCCESS,
   };
@@ -19,12 +19,6 @@ export const authFail = (error = null) => {
   return {
     type: actionTypes.AUTH_FAIL,
     error: error,
-  };
-};
-
-export const resetError = () => {
-  return {
-    type: actionTypes.RESET_ERROR,
   };
 };
 
@@ -62,7 +56,7 @@ export const auth = (user) => {
         dispatch(authSuccess(res.data.token, res.data.user.id));
         dispatch(checkAuthTimeout(res.data.expiresIn));
         dispatch(setProfileSuccess(res.data.user));
-        dispatch(actionSuccess());
+        dispatch(actionAuthSuccess());
       })
       .catch(() => dispatch(authFail()));
   };
@@ -164,7 +158,7 @@ export const getUserProfile = () => {
       .get(`https://localhost:44356/api/User/${idUser}`)
       .then((res) => {
         dispatch(setProfileSuccess(res.data.user));
-        dispatch(actionSuccess());
+        dispatch(actionAuthSuccess());
       })
       .catch(() => dispatch(authFail()));
   };

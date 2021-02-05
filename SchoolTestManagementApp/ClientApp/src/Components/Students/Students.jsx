@@ -4,96 +4,81 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 import "./Students.css";
 
-import Modal from "../../Components/Core/Modal/Modal";
-import Backdrop from "../../Components/Core/Backdrop/Backdrop";
-import Button from "../../Components/Core/Button/Button";
-// import ErrorMessage from "../Core/HandleError/HandleError";
-import Card from "../Core/Card/Card";
+import Modal from "../Core/Modal/Modal";
+import Button from "../Core/Button/Button";
+import Card from "./Card/Card";
 import Spinner from "../Core/Spinner/Spinner";
-import CardInfo from "../Core/Card/CardInfo/CardInfo";
-import { ModalContext } from "../../context/TeacherContext/ModalContext";
+import CardInfo from "./Card/CardInfo/CardInfo";
 import {
   getAllStudentsByIdTeacher,
   getAllTestsByIdStudent,
   clearStudentAndTests,
+  searchStudent,
+  resetErrorStudent,
 } from "../../store/actions/index";
+import Search from "../Search/Search";
 
 const Students = () => {
-  const [postData, setPostData] = useState([]);
-  const setPartionData = useState([])[1];
-  const [offset, setOffset] = useState(12);
-  const [rightDisable, setRightDisable] = useState(false);
-  const [leftDisable, setLeftDisable] = useState(true);
   const [searchInput, setSearchInput] = useState("");
-  const [error, setError] = useState(false);
+  const [postData, setPostData] = useState([]);
   const perPage = useState(12)[0];
+  const [offset, setOffset] = useState(perPage);
+  const [page, setPage] = useState(1);
+  const [position, setPosition] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+
   const students = useSelector((state) => state.student.students);
   const loading = useSelector((state) => state.student.loading);
-  const modalContext = useContext(ModalContext);
+  const error = useSelector((state) => state.student.error);
   const dispatch = useDispatch();
 
-  const onShowDetails = (studentInfo) => {
-    dispatch(getAllTestsByIdStudent(studentInfo));
-    modalContext.show();
+  const handleNextStudents = () => {
+    let updatePage = page + 1;
+    if (updatePage <= totalPages) {
+      let updateOffset = offset + perPage;
+      setOffset(updateOffset);
+      setPage(updatePage);
+      setPosition(position + 1);
+    }
   };
 
-  const designPageCard = (slice, range = offset) => {
-    const postDataView = Object.keys(slice).map((i, index) => (
-      <Card key={index} clicked={onShowDetails} studentInfo={slice[i]} />
-    ));
-    setPostData(postDataView);
-    setPartionData(slice);
-    setOffset(range);
-  };
-
-  const handlePageClick = (side) => {
-    let partionStudents = [];
-    let range = offset;
-    if (side === "right" && range < students.length && range !== 1) {
-      range = range + perPage;
-      partionStudents = students.slice(offset, offset + perPage);
-      designPageCard(partionStudents, range);
-      if (range >= students.length) {
-        setLeftDisable(false);
-        setRightDisable(true);
-      }
-    } else if (side === "left" && range - perPage !== 0 && range !== 1) {
-      range = range - perPage;
-      partionStudents = students.slice(
-        offset - perPage - perPage,
-        offset - perPage
-      );
-      designPageCard(partionStudents, range);
-      if (range === perPage) {
-        setLeftDisable(true);
-        setRightDisable(false);
-      }
+  const handlePrevStudents = () => {
+    let updatePage = page - 1;
+    if (updatePage >= 0) {
+      let updateOffset = offset - perPage;
+      setOffset(updateOffset);
+      setPage(updatePage);
+      setPosition(position - 1);
     }
   };
 
   const onHandleSearchClick = (event) => {
     event.preventDefault();
-    const filteredData = students.filter(
-      (student) => student.id === +searchInput
-    );
-    if (filteredData.length === 0) {
-      setSearchInput("");
-      setError(true);
-      setTimeout(() => {
-        setError(false);
-      }, 2000);
-      designPageCard(students.slice(0, perPage), 12);
-      setLeftDisable(true);
-      setRightDisable(false);
-    } else {
-      designPageCard(filteredData, 1);
-      setLeftDisable(true);
-      setRightDisable(true);
-    }
+    dispatch(searchStudent(searchInput));
   };
 
-  const onHandlerInputChange = (event) => {
+  const handlerInputChange = (event) => {
     setSearchInput(event.target.value);
+  };
+
+  const handleShowModal = (studentInfo) => {
+    dispatch(getAllTestsByIdStudent(studentInfo));
+    setShowModal(true);
+  };
+
+  const handleCancelModal = () => {
+    dispatch(clearStudentAndTests());
+    setShowModal(false);
+  };
+
+  const designPageCard = () => {
+    const start = perPage * position;
+    const slice = students.slice(start, offset);
+    const postDataView = Object.keys(slice).map((i, index) => (
+      <Card key={index} clicked={handleShowModal} studentInfo={slice[i]} />
+    ));
+    setPostData(postDataView);
   };
 
   useEffect(() => {
@@ -101,47 +86,57 @@ const Students = () => {
   }, [getAllStudentsByIdTeacher]);
 
   useEffect(() => {
-    designPageCard(students.slice(0, perPage));
-  }, [students]);
+    if (students) {
+      designPageCard();
+    }
+    if (totalPages === 0) {
+      let pages = 0;
+      let extras = 0;
+      pages = Math.round(students.length / perPage);
+      if (pages !== 0) {
+        extras = students.length % perPage;
+      } else {
+        pages = 1;
+      }
+      setTotalPages(pages + extras);
+    }
+  }, [students, page]);
 
   useEffect(() => {
-    !modalContext.stateModal && dispatch(clearStudentAndTests());
-  }, [modalContext.stateModal]);
+    let timer;
+    if (error) {
+      timer = setTimeout(() => {
+        dispatch(resetErrorStudent());
+      }, 2000);
+    }
+    return () => clearTimeout(timer);
+  }, [error]);
+
   return (
     <div className="students-content">
-      {modalContext.stateModal && (
-        <div>
-          <Backdrop />
-          <Modal>
-            <CardInfo />
-          </Modal>
-        </div>
+      {showModal && (
+        <Modal clicked={handleCancelModal} show={showModal}>
+          <CardInfo />
+        </Modal>
       )}
-      <form
-        className="students-search"
-        onSubmit={(event) => onHandleSearchClick(event)}
-      >
-        <div>
-          <label>ID:</label>
-          <input
-            type="text"
-            name="id"
-            placeholder="Insert Id to search.."
-            onChange={(event) => onHandlerInputChange(event)}
-            value={searchInput}
+
+      <div className="students-top">
+        <div className="students-top-search">
+          <Search
+            input={searchInput}
+            setInput={handlerInputChange}
+            submitForm={onHandleSearchClick}
+            error={error}
           />
-          <Button>SEARCH</Button>
         </div>
-        <div className="student-search-error">
-          {/*error && <ErrorMessage>Sorry, Can't find student</ErrorMessage>*/}
-        </div>
-      </form>
+      </div>
+
       {postData.length === 0 ? (
         <p
           style={{
             margin: "6vh 0 0 2vw",
-            "font-size": "30px",
-            "font-weight": "400",
+            fontSize: "30px",
+            fontWeight: "400",
           }}
         >
           Sorry, Not found students are related.
@@ -151,10 +146,10 @@ const Students = () => {
           <div className="navigate-students">
             <button
               className={
-                leftDisable ? "navigate-btn disable-btn" : "navigate-btn"
+                page === 1 ? "navigate-btn disable-btn" : "navigate-btn"
               }
             >
-              <IoIosArrowBack onClick={() => handlePageClick("left")} />
+              <IoIosArrowBack onClick={handlePrevStudents} />
             </button>
           </div>
           <div className="students-cards">
@@ -163,10 +158,12 @@ const Students = () => {
           <div className="navigate-students">
             <button
               className={
-                rightDisable ? "navigate-btn disable-btn" : "navigate-btn"
+                page === totalPages
+                  ? "navigate-btn disable-btn"
+                  : "navigate-btn"
               }
             >
-              <IoIosArrowForward onClick={() => handlePageClick("right")} />
+              <IoIosArrowForward onClick={handleNextStudents} />
             </button>
           </div>
         </div>

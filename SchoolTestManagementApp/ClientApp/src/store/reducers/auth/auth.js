@@ -19,8 +19,6 @@ const authReducer = (state = initialState, action) => {
       return updateState(state, { token: action.token, idUser: action.idUser });
     case actionTypes.AUTH_FAIL:
       return updateState(state, { loading: false, error: action.error });
-    case actionTypes.RESET_ERROR:
-      return updateState(state, { error: null, loading: false });
     case actionTypes.AUTH_LOGOUT:
       return updateState(state, { token: null, idUser: null, userProfile: {} });
     case actionTypes.SET_USER_DETAILS:

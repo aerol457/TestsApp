@@ -8,9 +8,14 @@ const actionStart = () => {
   };
 };
 
-const actionSuccess = () => {
+export const actionTestSuccess = () => {
   return {
     type: actionTypes.ACTION_SUCCESS_TEST,
+  };
+};
+export const resetErrorTest = () => {
+  return {
+    type: actionTypes.RESET_ERROR_TEST,
   };
 };
 
@@ -27,12 +32,6 @@ const actionFail = (error) => {
   };
 };
 
-export const triggerErrorTimer = () => {
-  return {
-    type: actionTypes.ACTION_FAIL_TIMER,
-  };
-};
-
 export const getAllTest = ({ userType, id }) => {
   const token = localStorage.getItem("token");
   let url = `https://localhost:44356/api/Test/all-tests/${id}`;
@@ -41,38 +40,35 @@ export const getAllTest = ({ userType, id }) => {
   }
   return (dispatch) => {
     dispatch(actionStart());
-    try {
-      axios
-        .get(url, {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        })
-        .then((res) => {
-          dispatch(setTests(res.data.tests));
-          dispatch(actionSuccess());
-        })
-        .catch((err) => actionFail(err));
-    } catch (err) {
-      dispatch(actionFail(err));
-    }
+    axios
+      .get(url, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((res) => {
+        dispatch(setTests(res.data.tests));
+        dispatch(actionTestSuccess());
+      })
+      .catch(() => dispatch(actionFail()));
   };
 };
 
 const setTests = (tests) => {
   return {
     type: actionTypes.SET_TESTS,
-    tests: tests,
+    tests,
   };
 };
 
-export const findMyTests = (searchInput) => {
+export const findMyTests = (searchInput, user) => {
   const token = localStorage.getItem("token");
   return (dispatch) => {
+    dispatch(actionStart());
     if (searchInput === "") {
-      dispatch(getAllTest());
+      dispatch(getAllTest(user));
+      dispatch(actionFail("Can't find Test"));
     } else {
-      dispatch(actionStart());
       axios
         .get(`https://localhost:44356/api/Test/${searchInput}`, {
           headers: {
@@ -81,13 +77,16 @@ export const findMyTests = (searchInput) => {
         })
         .then((res) => {
           if (res.data.success == "false") {
-            dispatch(getAllTest());
-            dispatch(actionFail("Not Found Test"));
+            console.log("failed");
+            dispatch(getAllTest(user));
+            dispatch(actionFail("Can't find Test"));
           } else {
-            dispatch(setTests(res.data.test));
+            console.log("success");
+            dispatch(setTests([res.data.test]));
           }
+          dispatch(actionTestSuccess());
         })
-        .catch((err) => actionFail(err));
+        .catch(() => dispatch(actionFail()));
     }
   };
 };
@@ -102,6 +101,13 @@ export const addTestDetails = (test) => {
   return {
     type: actionTypes.ADD_TEST_DETAILS,
     data: test,
+  };
+};
+
+export const updateTestDetails = (test) => {
+  return {
+    type: actionTypes.UPDATE_TEST_DETAILS,
+    test,
   };
 };
 
@@ -137,9 +143,9 @@ export const addTest = (test) => {
           .then((res) => {});
         dispatch(updatedTestsState(test));
         dispatch(clearTest());
-        dispatch(actionSuccess());
+        dispatch(actionTestSuccess());
       })
-      .catch((err) => console.log(err));
+      .catch(() => dispatch(actionFail()));
   };
 };
 
@@ -156,7 +162,7 @@ export const getTestById = (idTest) => {
       .then((res) => {
         dispatch(createQuestionsToTest(res.data.test, res.data.test.question));
       })
-      .catch((err) => console.log(err));
+      .catch(() => dispatch(actionFail()));
   };
 };
 
@@ -198,8 +204,7 @@ export const deleteQuestion = (id) => {
 export const updateQuestion = (question) => {
   return {
     type: actionTypes.UPDATE_QUESTION,
-    data: question,
-    id: question.position,
+    question,
   };
 };
 
@@ -238,9 +243,9 @@ export const publishTest = (idTest, classrooms) => {
         if (res.status === 403 || res.status === 400) {
           return dispatch(actionFail());
         }
-        dispatch(actionSuccess());
+        dispatch(actionTestSuccess());
       })
-      .catch((err) => actionFail(err));
+      .catch(() => dispatch(actionFail()));
   };
 };
 
@@ -397,9 +402,9 @@ export const finishTest = (questions, idTest) => {
         } else {
           dispatch(setGrade(res.data.grade));
         }
-        dispatch(actionSuccess());
+        dispatch(actionTestSuccess());
       })
-      .catch((err) => actionFail(err));
+      .catch(() => dispatch(actionFail()));
   };
 };
 

@@ -9,9 +9,15 @@ const actionStart = () => {
   };
 };
 
-const actionSuccess = () => {
+const actionSuccessStudent = () => {
   return {
     type: actionTypes.ACTION_SUCCESS_STUDENT,
+  };
+};
+
+export const resetErrorStudent = () => {
+  return {
+    type: actionTypes.RESET_ERROR_STUDENT,
   };
 };
 
@@ -53,7 +59,7 @@ export const getAllStudentsByIdTeacher = () => {
         )
         .then((res) => {
           dispatch(setStudents(res.data.students));
-          dispatch(actionSuccess());
+          dispatch(actionSuccessStudent());
         })
         .catch((err) => actionFail(err));
     }
@@ -75,12 +81,13 @@ export const getAllTestsByIdStudent = (student) => {
     }
     dispatch(actionStart());
     axios
-      .get(
-        `https://localhost:44356/api/StudentTest/allStudentTests/${student.id}`
-      )
+      .get(`https://localhost:44356/api/StudentTest/GetTests/${student.id}`)
       .then((res) => {
+        if (res.data.success === false) {
+          return dispatch(actionFail());
+        }
         dispatch(setTests(res.data.tests, student));
-        dispatch(actionSuccess());
+        dispatch(actionSuccessStudent());
       })
       .catch((err) => actionFail(err));
   };
@@ -91,5 +98,33 @@ const setTests = (tests, student) => {
     type: actionTypes.GET_ALL_STUDENT_TESTS,
     tests,
     student,
+  };
+};
+
+export const searchStudent = (idCard) => {
+  const token = localStorage.getItem("token");
+  return (dispatch) => {
+    if (idCard === "") {
+      dispatch(getAllStudentsByIdTeacher());
+      dispatch(actionFail("Can't find student"));
+    } else {
+      dispatch(actionStart());
+      axios
+        .get(`https://localhost:44356/api/User/GetStudent/${idCard}`, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+        .then((res) => {
+          if (res.data.success == "false") {
+            dispatch(getAllStudentsByIdTeacher());
+            dispatch(actionFail("Can't find student"));
+          } else {
+            dispatch(setStudents([res.data.student]));
+          }
+          dispatch(actionSuccessStudent());
+        })
+        .catch(() => dispatch(actionFail()));
+    }
   };
 };

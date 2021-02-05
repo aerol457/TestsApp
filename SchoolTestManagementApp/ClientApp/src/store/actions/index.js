@@ -14,6 +14,8 @@ export {
   initTest,
   insertUserAnswer,
   finishTest,
+  resetErrorTest,
+  updateTestDetails,
 } from "./test/test";
 
 export {
@@ -31,7 +33,7 @@ export {
   signUp,
   authCheckState,
   getUserProfile,
-  resetError,
+  actionAuthSuccess,
   authFail,
 } from "./auth/auth";
 
@@ -40,4 +42,6 @@ export {
   getAllTestsByIdStudent,
   clearStudentAndTests,
   clearAll,
+  searchStudent,
+  resetErrorStudent,
 } from "./student/student";

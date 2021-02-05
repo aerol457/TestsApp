@@ -98,6 +98,17 @@ namespace SchoolTestManagementApp.Controllers
             return Json(new { success = false });
         }
 
+        [HttpGet("[action]/{id}")]
+        public IActionResult GetStudent(string id)
+         {
+            var student = _service.GetStudentByIdCard(id);
+            if(student != null)
+            {
+                return Ok(new { success = false, student });
+            }
+            return Json(new { success = false });
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
         {

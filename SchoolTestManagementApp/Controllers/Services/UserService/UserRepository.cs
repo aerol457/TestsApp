@@ -117,5 +117,9 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherServic
             }
         }
 
+        public User GetStudentByIdCard(string idCard)
+        {
+            return _context.User.Where(u => u.IdCard == idCard).FirstOrDefault();
+        }
     }
 }

@@ -2,7 +2,7 @@ import React from "react";
 
 import "./Card.css";
 
-import Button from "../Button/Button";
+import Button from "../../Core/Button/Button";
 
 const Card = ({ clicked, studentInfo }) => {
   return (

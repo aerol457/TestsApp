@@ -1,0 +1,101 @@
+.questions {
+  width: 100%;
+  height: 100%;
+}
+
+.questions-design {
+  height: 50%;
+  position: relative;
+  border-radius: 0 20px 0 0;
+  background: #3d4652cc;
+}
+
+.questions-design-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tabs {
+  width: 100%;
+  height: 4vh;
+  display: flex;
+}
+
+.tabs div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.tab-active {
+  color: white;
+}
+
+.tabs div:hover {
+  color: white;
+}
+
+.questions-grade {
+  width: 40%;
+  padding: 10px;
+  line-height: 20px;
+}
+
+.questions-grade span {
+  font-size: 20px;
+  color: white;
+}
+
+.question-config- {
+  height: calc(100% - 4vh);
+  padding: 10px;
+  display: flex;
+}
+
+.questions-view {
+  height: 45%;
+  display: flex;
+}
+
+.navigate-questions {
+  flex: 0.1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-navigate {
+  cursor: pointer;
+  color: #3d4652;
+  font-size: 35px;
+  transition: all 0.1s linear;
+}
+
+.icon-navigate:hover {
+  font-size: 42px;
+}
+
+.icon-navigate-disabled {
+  color: #3d4652;
+  font-size: 35px;
+  pointer-events: none;
+}
+
+.questions-layout {
+  display: grid;
+  flex: 0.8 1;
+  padding: 10px;
+  justify-content: left;
+  grid-column-gap: 2vw;
+  grid-row-gap: 2vh;
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto auto;
+}
+
+.questions-btn {
+  display: flex;
+  float: right;
+}
+
+.questions-btn Button:last-child {
+  margin-left: 10px;
+}

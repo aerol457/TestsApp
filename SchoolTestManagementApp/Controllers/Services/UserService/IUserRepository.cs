@@ -13,6 +13,7 @@ namespace SchoolTestManagementApp.Data.Services.UserService
         Task<User> Add(User user);
         Task<User> Update(int idUser, User user);
         User GetUserById(int idUser);
+        User GetStudentByIdCard(string idCard);
         User AuthenticateUser(string email, string password);
         List<string> ValidateUser(User user);
     }

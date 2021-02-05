@@ -13,11 +13,12 @@ import "./SignUp.css";
 import Button from "../../../Components/Core/Button/Button";
 import Switcher from "../../../Components/Core/Switcher/Switcher";
 import Spinner from "../../../Components/Core/Spinner/Spinner";
+import InputImage from "../../../Components/Core/InputImage/InputImage";
 import {
   signUp,
   getAllProfessions,
   getAllClassrooms,
-  resetError,
+  actionAuthSuccess,
   authFail,
 } from "../../../store/actions/index";
 
@@ -160,13 +161,13 @@ const SignUp = ({ stateAuth, updateState }) => {
       });
       setValidateInputs(validators);
       timer = setTimeout(() => {
-        dispatch(resetError());
+        dispatch(actionAuthSuccess());
       }, 10000);
     }
     return () => {
       clearTimeout(timer);
     };
-  }, [error, resetError]);
+  }, [error, actionAuthSuccess]);
 
   useEffect(() => {
     dispatch(getAllProfessions());
@@ -183,26 +184,11 @@ const SignUp = ({ stateAuth, updateState }) => {
         <div className="signup-user-type-title">
           <h5>{isStudent ? "STUDENT" : "TEACHER"}</h5>
         </div>
-        <div className="signup-profile-preview">
-          <div className="input-file">
-            <div className="signup-img-container">
-              <label className="signup-img-label">
-                <input
-                  type="file"
-                  name="imageUrl"
-                  accept="image/*"
-                  onChange={(e) => showPreview(e)}
-                />
-                <img
-                  src={
-                    imageBlob === "" ? "/Images/profileDefault.png" : imageBlob
-                  }
-                  alt="img question"
-                />
-              </label>
-            </div>
-          </div>
-        </div>
+        <InputImage
+          blob={imageBlob}
+          defaultImg="profileDefault.png"
+          click={showPreview}
+        />
         <div>
           <div className="signup-tuggle">
             <Switcher clicked={setIsStudent} position={isStudent} />

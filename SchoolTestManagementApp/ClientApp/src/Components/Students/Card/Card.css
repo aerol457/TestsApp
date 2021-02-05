@@ -1,7 +1,7 @@
 .card-content {
   width: 200px;
   height: 160px;
-  margin: 10px;
+  margin: auto;
   box-shadow: 4px 2px 5px 0px rgba(0, 0, 0, 0.5);
   transition: all 0.3s linear;
 }
@@ -43,10 +43,11 @@
   text-transform: capitalize;
 }
 
-.card-img button {
+.card-img Button {
+  width: 56%;
   position: absolute;
   top: 35%;
-  left: 24%;
+  left: 23%;
   transform: scale(0);
   transition: all 0.3s linear;
 }

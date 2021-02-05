@@ -1,39 +1,48 @@
-.dashboard-content-center-top {
+.tests-layout {
+  width: calc(100% - 70px);
+  height: 100%;
+}
+
+.tests-top {
+  height: 13vh;
+  width: 100%;
   display: flex;
   justify-content: space-between;
-  height: 13vh;
   align-items: center;
   padding: 20px 10px;
-  width: 85%;
 }
 
-.dashboard-content-center-top-search label {
-  font-size: 24px;
-  margin-bottom: 0;
+.tests-top-search {
+  height: 10vh;
+  padding: 10px;
+  position: relative;
 }
 
-.dashboard-content-center-top-search input {
-  margin: 0 15px;
-  padding: 3px;
-  margin-bottom: 10px;
+.tests-bottom {
+  width: 100%;
+  height: calc(100% - 13vh);
 }
 
-.dashboard-content-center-top-search button {
-  padding: 3px 10px;
+.tests-bottom-layout {
+  width: 80%;
+  height: 100%;
+  margin: 0 auto;
 }
 
-.student-search-error {
-  padding-left: 40px;
-  height: 10px;
+.tests-bottom-top {
+  height: 5vh;
+  padding-bottom: 10px;
+  position: relative;
 }
 
-.dashboard-content-center-bottom {
-  height: calc(100% - 138px);
+.tests-add-btn {
+  position: absolute;
+  right: 0;
 }
 
 .test-list {
-  width: 80%;
   height: 85%;
+  padding-left: 0;
   list-style: none;
 }
 
@@ -46,9 +55,9 @@
 .test-list-item {
   margin-bottom: 10px;
   padding: 10px;
-  border: 2px solid #787bca;
+  border: 2px solid #5794c9;
   cursor: pointer;
-  color: #787bca;
+  color: #5794c9;
 }
 
 .test-list-item-show,
@@ -101,10 +110,11 @@
   padding: 6px 12px;
   margin-left: -1px;
   line-height: 1.42857143;
-  color: #337ab7;
+  color: #5794c9;
   text-decoration: none;
   background-color: #fff;
   border: 1px solid #ddd;
+  cursor: pointer;
 }
 
 .pagination > .active > a,
@@ -115,21 +125,21 @@
 .pagination > .active > span:hover {
   z-index: 3;
   color: #fff;
-  cursor: default;
-  background-color: #4065ce;
-  border-color: #337ab7;
+  cursor: pointer;
+  background-color: #5794c9;
+  border-color: #5794c9;
 }
 
-@media (min-width: 1100px) {
-  .dashboard-content-center-top {
+/* @media (min-width: 1100px) {
+  .tests-content-center-top {
     width: 90%;
   }
 
-  .dashboard-content-center-top {
+  .tests-content-center-top {
     padding: 20px 30px;
   }
 
   .test-list {
     margin-left: 70px;
   }
-}
+} */

@@ -17,7 +17,9 @@ const studentReducer = (state = initialState, action) => {
     case actionTypes.ACTION_FAIL_STUDENT:
       return updateState(state, { loading: false, error: action.error });
     case actionTypes.ACTION_SUCCESS_STUDENT:
-      return updateState(state, { loading: false, error: null });
+      return updateState(state, { loading: false });
+    case actionTypes.RESET_ERROR_STUDENT:
+      return updateState(state, { error: null });
     case actionTypes.CLEAR_TESTS_STUDENT:
       return updateState(state, { student: {}, tests: [] });
     case actionTypes.INIT_STUDENT:

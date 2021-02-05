@@ -3,27 +3,19 @@
   width: calc(100% - 70px);
 }
 
-.students-search {
-  justify-content: flex-end;
-  align-items: flex-start;
+.students-top {
   width: 100%;
-  height: 100px;
+  height: 13vh;
   display: flex;
-  flex-flow: column;
-  padding: 0 20px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 10px;
 }
 
-.students-search label {
-  font-size: 24px;
-}
-
-.students-search input {
-  margin: 10px 15px;
-  padding: 3px;
-}
-
-.students-search button {
-  padding: 3px 10px;
+.students-top-search {
+  height: 10vh;
+  padding: 10px;
+  position: relative;
 }
 
 .student-search-error {
@@ -32,14 +24,14 @@
 }
 
 .student-layout {
-  display: flex;
   width: 100%;
-  height: calc(100% - 100px);
+  height: calc(100% - 13vh);
+  display: flex;
 }
 
 .navigate-students {
+  padding: 10px;
   display: flex;
-  height: 77vh;
   flex: 0.5 1;
 }
 
@@ -63,14 +55,20 @@
 }
 
 .students-cards {
-  height: 59vh;
-  margin: auto;
+  height: 100%;
+  align-content: center;
+  justify-content: center;
   padding: 10px 20px;
-  overflow: hidden;
+  overflow-y: auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  grid-template-rows: 21ch auto minmax(471px, 76px);
-  grid-row-gap: 0.5rem;
-  grid-column-gap: 22px;
-  flex: 8;
+  grid-row-gap: 2vh;
+  grid-auto-flow: row;
+  flex: 8 1;
+}
+
+@media (min-width: 925px) {
+  .students-cards {
+    grid-column-gap: 2vw;
+    grid-auto-flow: column;
+  }
 }

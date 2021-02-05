@@ -31,31 +31,24 @@ namespace SchoolTestManagementApp.Controllers
             var isSuccess= await _service.AddStudentTest(studentTest);
             if (isSuccess)
             {
-                return CreatedAtAction(nameof(CreateStudentTest), new { id = studentTest.Id }, studentTest);
+                return Ok(new { success=true,id = studentTest.Id });
             }
-            return BadRequest();
+            return Json(new { success = false });
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateStudentTest(int id, [FromBody] StudentTest studentTest)
         {
             var updatedStudentTest = await _service.UpdateStudentTest(id, studentTest);
-            if (updatedStudentTest)
-            {
-                return Ok();
-            }
-            return NotFound();
+            return Json(new { success = updatedStudentTest });
+
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStudentTest(int id)
         {
             var isReqSuccess = await _service.DeleteStudentTest(id);
-            if (isReqSuccess)
-            {
-                return Ok();
-            }
-            return NotFound();
+            return Json(new { success = isReqSuccess });
         }
 
         [HttpGet("{id}")]
@@ -65,12 +58,12 @@ namespace SchoolTestManagementApp.Controllers
             if (test != null)
             {
                 _serviceUser.GetUserById(test.IdUser);
-                return Ok(new { test});
+                return Ok(new { success= true,test});
             }
-            return NotFound();
+            return Json(new { success = false });
         }
 
-        [HttpGet("allTests/{id}")]
+        [HttpGet("GetTests/{id}")]
         public IActionResult GetAllStudentTestsById(int id)
         {
             var listTestStudent = _service.GetAllTests(id);
@@ -84,9 +77,9 @@ namespace SchoolTestManagementApp.Controllers
                     tests.Add(test);
 
                 }
-                return Ok(new { tests });
+                return Ok(new {success= true, tests });
             }
-            return NotFound();
+            return Json(new { success = false });
         }
     }
 }
