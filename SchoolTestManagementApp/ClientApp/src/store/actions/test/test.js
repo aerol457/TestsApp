@@ -77,11 +77,9 @@ export const findMyTests = (searchInput, user) => {
         })
         .then((res) => {
           if (res.data.success == "false") {
-            console.log("failed");
             dispatch(getAllTest(user));
             dispatch(actionFail("Can't find Test"));
           } else {
-            console.log("success");
             dispatch(setTests([res.data.test]));
           }
           dispatch(actionTestSuccess());
@@ -100,7 +98,7 @@ export const initialSearchTest = () => {
 export const addTestDetails = (test) => {
   return {
     type: actionTypes.ADD_TEST_DETAILS,
-    data: test,
+    test,
   };
 };
 
@@ -188,6 +186,7 @@ export const updatedTestsState = (test) => {
 };
 
 export const addQuestion = (question) => {
+  console.log(question);
   return {
     type: actionTypes.ADD_QUESTION,
     data: question,
@@ -227,25 +226,6 @@ export const updateViewQuestion = (questionLists, id) => {
 export const orderViewQuestion = () => {
   return {
     type: actionTypes.ORDER_VIEW_QUESTION,
-  };
-};
-
-export const publishTest = (idTest, classrooms) => {
-  const publish = {
-    idClassrooms: classrooms,
-    idTest,
-  };
-  return (dispatch) => {
-    dispatch(actionStart());
-    axios
-      .post("https://localhost:44356/api/Test/PublishTest", publish)
-      .then((res) => {
-        if (res.status === 403 || res.status === 400) {
-          return dispatch(actionFail());
-        }
-        dispatch(actionTestSuccess());
-      })
-      .catch(() => dispatch(actionFail()));
   };
 };
 

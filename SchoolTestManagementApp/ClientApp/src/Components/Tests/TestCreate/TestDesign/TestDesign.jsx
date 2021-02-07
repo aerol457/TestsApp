@@ -13,7 +13,7 @@ import Modal from "../../../Core/Modal/Modal";
 import Backdrop from "../../../Core/Backdrop/Backdrop";
 import Button from "../../../Core/Button/Button";
 import TestDesignView from "./TestDesignView/TestDesignView";
-import { ModalContext } from "../../../../context/TeacherContext/ModalContext";
+// import { ModalContext } from "../../../../context/TeacherContext/ModalContext";
 import { DashboardContext } from "../../../../context/TeacherContext/DashboardContext";
 import {
   updateViewQuestion,
@@ -70,7 +70,7 @@ const TestDesign = () => {
   const [showModal, setShowModal] = useState(false);
   const [submitTest, setSubmitTest] = useState(false);
 
-  const modalContext = useContext(ModalContext);
+  // const modalContext = useContext(ModalContext);
   const dashboardContext = useContext(DashboardContext);
   const questionList = useSelector((state) => state.test.questions);
   const testDetails = useSelector((state) => state.test.test);
@@ -162,13 +162,13 @@ const TestDesign = () => {
         questionList: questionList,
       })
     );
-    modalContext.cancel();
+    // modalContext.cancel();
     dashboardContext.viewTests();
   };
 
   const handleConfirmCancelTest = () => {
     dispatch(clearTest());
-    modalContext.cancel();
+    // modalContext.cancel();
     dashboardContext.viewTests();
   };
 

@@ -37,7 +37,6 @@
   letter-spacing: 2px;
   color: white;
   background-color: #3d4652;
-  cursor: pointer;
 }
 
 .icon-option {
@@ -53,7 +52,7 @@
   border-radius: 3px 0 0 3px;
 }
 
-.test-design-title:hover {
+.test-design-title-active {
   background-color: #fcfcfc;
   color: #3d4652;
 }

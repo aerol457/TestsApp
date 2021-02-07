@@ -3,17 +3,17 @@ import { useSelector } from "react-redux";
 
 import "./TestDesignView.css";
 import Button from "../../../../Core/Button/Button";
-import { ModalContext } from "../../../../../context/TeacherContext/ModalContext";
+// import { ModalContext } from "../../../../../context/TeacherContext/ModalContext";
 
 const TestDesignView = () => {
   const [error, setError] = useState(false);
-  const modalContext = useContext(ModalContext);
+  // const modalContext = useContext(ModalContext);
   const testDetails = useSelector((state) => state.test.test);
   const questionsList = useSelector((state) => state.test.questions);
 
   const handleCancelTest = () => {
-    modalContext.showSecondModal();
-    modalContext.show();
+    // modalContext.showSecondModal();
+    // modalContext.show();
   };
 
   const handleAddTest = () => {
@@ -23,8 +23,8 @@ const TestDesignView = () => {
         setError(false);
       }, 2000);
     } else {
-      modalContext.hideSecondModal();
-      modalContext.show();
+      // modalContext.hideSecondModal();
+      // modalContext.show();
     }
   };
 

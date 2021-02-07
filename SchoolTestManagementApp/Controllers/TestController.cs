@@ -78,6 +78,10 @@ namespace SchoolTestManagementApp.Controllers
                 {
                     question.IdTest = idTest;
                     await _serviceQuestion.AddQuestion(question);
+                    if(test.IdClassrooms.Count != 0)
+                    {
+                        await _serviceStudentTest.PublishTest(test);
+                    }
                 }
                 return CreatedAtAction(nameof(CreateTest), new { idTest });
             }
@@ -95,16 +99,16 @@ namespace SchoolTestManagementApp.Controllers
             return Ok();
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> PublishTest([FromBody] StudentTest studentTest)
-        {
-            bool isSuccess = await _serviceStudentTest.AddStudentTest(studentTest);
-            if (isSuccess)
-            {
-                return Ok();
-            }
-            return NotFound();
-        }
+        //[HttpPost("[action]")]
+        //public async Task<IActionResult> PublishTest([FromBody] StudentTest studentTest)
+        //{
+        //    bool isSuccess = await _serviceStudentTest.PublishTest(studentTest);
+        //    if (isSuccess)
+        //    {
+        //        return Ok();
+        //    }
+        //    return NotFound();
+        //}
 
         [HttpPost("[action]/{idStudent}")]
         public async Task<IActionResult> FinishTest([FromBody] Test test, [FromRoute]int idStudent)

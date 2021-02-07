@@ -10,7 +10,6 @@ import OptionQuestion from "./OptionQuestion/OptionQuestion";
 import { DashboardContext } from "../../../context/TeacherContext/DashboardContext";
 import {
   getClassroomForPublishTest,
-  publishTest,
   insertUserAnswer,
   finishTest,
 } from "../../../store/actions/index";
@@ -159,7 +158,7 @@ const Test = () => {
     }
     const filterClassrooms = classToPublish.filter((id) => id !== -1);
     if (filterClassrooms.length > 0) {
-      dispatch(publishTest(test.id, filterClassrooms));
+      // dispatch(publishTest(test.id, filterClassrooms));
     }
     dashboardContext.viewTests();
   };

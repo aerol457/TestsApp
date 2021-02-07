@@ -25,16 +25,16 @@ namespace SchoolTestManagementApp.Controllers
             this._serviceUser = serviceUser;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateStudentTest([FromBody] StudentTest studentTest)
-        {
-            var isSuccess= await _service.AddStudentTest(studentTest);
-            if (isSuccess)
-            {
-                return Ok(new { success=true,id = studentTest.Id });
-            }
-            return Json(new { success = false });
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> CreateStudentTest([FromBody] StudentTest studentTest)
+        //{
+        //    var isSuccess= await _service.AddStudentTest(studentTest);
+        //    if (isSuccess)
+        //    {
+        //        return Ok(new { success=true,id = studentTest.Id });
+        //    }
+        //    return Json(new { success = false });
+        //}
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateStudentTest(int id, [FromBody] StudentTest studentTest)

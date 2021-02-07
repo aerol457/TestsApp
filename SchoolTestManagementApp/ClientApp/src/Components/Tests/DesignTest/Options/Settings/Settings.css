@@ -5,6 +5,16 @@
   padding: 4vh 0px;
 }
 
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.settings-reset-btn {
+  display: flex;
+  align-items: center;
+}
+
 .settings-attr {
   display: grid;
   padding-top: 2vh;

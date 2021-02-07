@@ -35,14 +35,17 @@ const testReducer = (state = initialTest, action) => {
         search: action.tests,
       });
     case actionTypes.ADD_TEST_DETAILS:
-      return updateState(state, { test: action.data, questions: [] });
+      return updateState(state, { test: action.test, questions: [] });
     case actionTypes.UPDATE_TEST_DETAILS:
-      const updateTestDetails = { ...state.test };
-      updateTestDetails.name = action.test.name;
-      updateTestDetails.professionName = action.test.professionName;
-      updateTestDetails.time = action.test.time;
-      updateTestDetails.dateOfSubmission = action.test.dateOfSubmission;
-      return updateState(state, { test: updateTestDetails, questions: [] });
+      return updateState(state, {
+        test: {
+          ...state.test,
+          name: action.test.name,
+          professionName: action.test.professionName,
+          time: action.test.time,
+          dateOfSubmission: action.test.dateOfSubmission,
+        },
+      });
     case actionTypes.ADD_TEST:
       const updateTests = [...state.tests];
       updateTests.push(action.data);
@@ -57,6 +60,7 @@ const testReducer = (state = initialTest, action) => {
     case actionTypes.ADD_QUESTION:
       const updatedTest = { ...state.test };
       updatedTest.grade = +updatedTest.grade + +action.data.value;
+      console.log(updatedTest);
       return updateState(state, {
         questions: state.questions.concat(action.data),
         test: updatedTest,

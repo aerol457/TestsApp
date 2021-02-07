@@ -13,7 +13,7 @@ import testReducer from "./store/reducers/test/test";
 import generalReducer from "./store/reducers/general/general";
 import authReducer from "./store/reducers/auth/auth";
 import studentReducer from "./store/reducers/student/student";
-import ModalContextProvider from "./context/TeacherContext/ModalContext";
+import TestDesignContextProvider from "./context/TeacherContext/TestDesignContext";
 import DashboardContextProvider from "./context/TeacherContext/DashboardContext";
 import TestContextProvider from "./context/StudentContext/TestContext";
 
@@ -62,13 +62,13 @@ store.subscribe(() => saveToLocalStorage(store.getState()));
 const app = (
   <Provider store={store}>
     <DashboardContextProvider>
-      <ModalContextProvider>
+      <TestDesignContextProvider>
         <TestContextProvider>
           <BrowserRouter>
             <App />
           </BrowserRouter>
         </TestContextProvider>
-      </ModalContextProvider>
+      </TestDesignContextProvider>
     </DashboardContextProvider>
   </Provider>
 );

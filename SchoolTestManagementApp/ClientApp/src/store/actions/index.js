@@ -10,7 +10,6 @@ export {
   addTest,
   clearTest,
   getTestById,
-  publishTest,
   initTest,
   insertUserAnswer,
   finishTest,

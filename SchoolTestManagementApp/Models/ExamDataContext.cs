@@ -150,6 +150,10 @@ namespace SchoolTestManagementApp.Models
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
+                entity.Property(e => e.PassingGrade)
+                    .IsRequired()
+                    .IsUnicode(false);
+
                 entity.HasOne(d => d.IdUserNavigation)
                     .WithMany(p => p.Test)
                     .HasForeignKey(d => d.IdUser)

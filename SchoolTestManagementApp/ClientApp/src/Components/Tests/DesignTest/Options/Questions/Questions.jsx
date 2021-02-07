@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
@@ -7,6 +7,7 @@ import "./Questions.css";
 import Question from "./Question/Question";
 import Card from "./Question/Card/Card";
 import Button from "../../../../Core/Button/Button";
+import { TestDesignContext } from "../../../../../context/TeacherContext/TestDesignContext";
 
 const Questions = () => {
   const [questionType, setQuestionType] = useState("option");
@@ -20,6 +21,7 @@ const Questions = () => {
 
   const questions = useSelector((state) => state.test.questions);
   const test = useSelector((state) => state.test.test);
+  const testDesignContext = useContext(TestDesignContext);
 
   const handleNextQuestions = () => {
     let updatePage = page + 1;
@@ -76,7 +78,7 @@ const Questions = () => {
     if (questions) {
       designPageCard();
     }
-  }, [page]);
+  }, [page, questions.length]);
 
   return (
     <div className="questions">
@@ -124,7 +126,13 @@ const Questions = () => {
             onClick={handlePrevQuestions}
           />
         </div>
-        <div className="questions-layout">{questionsView}</div>
+        {questionsView.length > 0 ? (
+          <div className="questions-layout">{questionsView}</div>
+        ) : (
+          <div className="questions-list-empty">
+            <p>Your questions list is empty, You can start to add.</p>
+          </div>
+        )}
         <div className="navigate-questions">
           <IoIosArrowForward
             className={
@@ -136,8 +144,8 @@ const Questions = () => {
       </div>
 
       <div className="questions-btn">
-        <Button>BACK</Button>
-        <Button>NEXT</Button>
+        <Button clicked={testDesignContext.viewSettings}>BACK</Button>
+        <Button clicked={testDesignContext.viewPublish}>NEXT</Button>
       </div>
     </div>
   );

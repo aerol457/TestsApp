@@ -15,11 +15,11 @@ namespace SchoolTestManagementApp.Data.Services.StudentSideServices.StudentTestS
             this.context = context;
         }
 
-        public async Task<bool> AddStudentTest(StudentTest studentTest)
+        public async Task<bool> PublishTest(Test test)
         {
             try
             {
-                foreach(int idClass in studentTest.IdClassrooms)
+                foreach(int idClass in test.IdClassrooms)
                 {
                     foreach(User s in context.User)
                     {
@@ -27,7 +27,7 @@ namespace SchoolTestManagementApp.Data.Services.StudentSideServices.StudentTestS
                         {
                         StudentTest student = new StudentTest();
                             student.IdUser = s.Id;
-                            student.IdTest = studentTest.IdTest;
+                            student.IdTest = test.Id;
                             student.Grade = 0;
                             student.IsDone = false;
                             context.StudentTest.Add(student);
@@ -35,7 +35,7 @@ namespace SchoolTestManagementApp.Data.Services.StudentSideServices.StudentTestS
                     }
                     ClassroomTest classroomTest = new ClassroomTest();
                     classroomTest.IdClassroom = idClass;
-                    classroomTest.IdTest = studentTest.IdTest;
+                    classroomTest.IdTest = test.Id;
                     context.ClassroomTest.Add(classroomTest);
                 }
                 await context.SaveChangesAsync();
