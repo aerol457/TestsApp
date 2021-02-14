@@ -55,15 +55,9 @@
 .test-list-item {
   margin-bottom: 10px;
   padding: 10px;
-  border: 2px solid #5794c9;
+  border: 2px solid #3d4652;
   cursor: pointer;
-  color: #5794c9;
-}
-
-.test-list-item-show,
-.test-list-item:hover {
-  background: #5794c9;
-  color: white;
+  color: #3d4652;
 }
 
 .test-list-item-details {
@@ -86,16 +80,29 @@
 
 .test-list-item-details li {
   margin-bottom: 2px;
-  color: black;
   font-size: 17px;
 }
 
 .show-details {
-  height: 160px;
+  height: 20vh;
+}
+
+.test-title {
+  text-transform: capitalize;
 }
 
 .btn-test {
   width: 13vw;
+}
+
+.test-grade-state-pass {
+  color: green;
+  font-size: 24px;
+}
+
+.test-grade-state-fail {
+  color: red;
+  font-size: 24px;
 }
 
 .pagination-content {
@@ -110,7 +117,7 @@
   padding: 6px 12px;
   margin-left: -1px;
   line-height: 1.42857143;
-  color: #5794c9;
+  color: #3d4652;
   text-decoration: none;
   background-color: #fff;
   border: 1px solid #ddd;
@@ -126,8 +133,8 @@
   z-index: 3;
   color: #fff;
   cursor: pointer;
-  background-color: #5794c9;
-  border-color: #5794c9;
+  background-color: #3d4652;
+  border-color: #3d4652;
 }
 
 /* @media (min-width: 1100px) {

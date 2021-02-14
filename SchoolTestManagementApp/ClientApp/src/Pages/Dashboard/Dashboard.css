@@ -6,10 +6,10 @@
 }
 
 .dashboard-content-left {
-  height: 100%;
+  position: relative;
   padding: 10px 20px;
   text-align: center;
-  background: linear-gradient(#5794c9, #787bca);
+  background: linear-gradient(#3d4652, #6d6d6d);
   flex: 0.5;
 }
 
@@ -23,12 +23,12 @@
 }
 
 .dashboard-content-right {
-  position: fixed;
-  height: calc(100% - 82px);
   width: 70px;
+  height: 100%;
+  position: fixed;
   overflow: hidden;
   right: 0;
-  background: linear-gradient(#5794c9, #787bca);
+  background: linear-gradient(#3d4652, #6d6d6d);
   transition: all 0.5s linear;
 }
 
@@ -37,12 +37,12 @@
 }
 
 .toggle-left {
+  color: darkgray;
   font-size: 30px;
   margin: 20px;
 }
 
-.toggle-left :hover,
-.toggle-left :active {
+.toggle-left :hover {
   cursor: pointer;
   color: white;
 }
@@ -59,6 +59,7 @@
 }
 
 .dashboard-content-right-directions {
+  color: darkgray;
   text-align: center;
   margin-top: 20px;
   height: 100%;
@@ -75,9 +76,7 @@
   cursor: pointer;
 }
 
-.dashboard-content-right-directions li:hover,
-.dashboard-content-right-directions li:active,
-.dashboard-content-right-directions li.active {
+.dashboard-content-right-directions li:hover {
   color: white;
 }
 

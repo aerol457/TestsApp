@@ -11,54 +11,47 @@ import {
   validDate,
 } from "../../../../../utils/validators";
 import {
-  addTestDetails,
-  getAllProfessions,
-  updateTestDetails,
+  setTestDetails,
   clearTest,
+  initialNewTest,
 } from "../../../../../store/actions/index";
-import { TestDesignContext } from "../../../../../context/TeacherContext/TestDesignContext";
+import { TestDesignDashContext } from "../../../../../context/TestDesignDashContext";
+import { DashboardContext } from "../../../../../context/DashboardContext";
 
 const Settings = () => {
   const [testName, setTestName] = useState("");
-  const [testProfession, setTestProfession] = useState("");
-  const [testTime, setTestTime] = useState(0);
+  const [testTime, setTestTime] = useState(10);
   const [passingGrade, setPassingGrade] = useState(50);
   const [testDateSubmitted, setTestDateSubmitted] = useState("");
   const [isUpdate, setIsUpdate] = useState(true);
   const [errors, setErrors] = useState([false, false, false, false]);
 
-  const professions = useSelector((state) => state.general.professions);
   const test = useSelector((state) => state.test.test);
-  const testDesignContext = useContext(TestDesignContext);
+  const testDesignDashContext = useContext(TestDesignDashContext);
+  const dashboardContext = useContext(DashboardContext);
   const dispatch = useDispatch();
 
   const handleSubmitTestDetails = (e) => {
     e.preventDefault();
     if (validateForm()) {
+      const testDetails = {
+        name: testName,
+        time: +testTime,
+        dateOfSubmission: testDateSubmitted,
+        passingGrade,
+      };
       if (isUpdate) {
-        dispatch(
-          updateTestDetails({
-            name: testName,
-            professionName: testProfession,
-            time: +testTime,
-            dateOfSubmission: testDateSubmitted,
-            passingGrade,
-          })
-        );
+        dispatch(setTestDetails(testDetails));
       } else {
         dispatch(
-          addTestDetails({
-            name: testName,
-            professionName: testProfession,
-            time: +testTime,
-            dateOfSubmission: testDateSubmitted,
-            passingGrade,
+          setTestDetails({
+            ...testDetails,
             quantityOfQuestions: 0,
             grade: 0,
           })
         );
       }
-      testDesignContext.viewQuestions();
+      testDesignDashContext.viewQuestions();
     }
   };
 
@@ -94,33 +87,27 @@ const Settings = () => {
 
   const handleResetTest = () => {
     dispatch(clearTest());
+    dispatch(initialNewTest());
     setTestName("");
     setTestTime(0);
-    setTestProfession(professions[0].name.toLowerCase());
     setTestDateSubmitted("");
   };
 
-  useEffect(() => {
-    dispatch(getAllProfessions());
-  }, [getAllProfessions]);
-
-  useEffect(() => {
-    if (professions.length > 0 && !test.professionName) {
-      setTestProfession(professions[0].name.toLowerCase());
-    }
-  }, [professions]);
+  const handleCancel = () => {
+    dispatch(clearTest());
+    dashboardContext.viewTests();
+  };
 
   useEffect(() => {
     if (test.name) {
       setTestName(test.name);
-      setTestProfession(test.professionName);
       setTestTime(test.time);
       setTestDateSubmitted(test.dateOfSubmission);
       setIsUpdate(true);
     } else {
       setIsUpdate(false);
     }
-  }, []);
+  }, [test]);
 
   return (
     <div className="settings">
@@ -130,7 +117,7 @@ const Settings = () => {
           <Button clicked={handleResetTest}>RESET TEST</Button>
         </span>
       </div>
-      <form onSubmit={(e) => handleSubmitTestDetails(e)}>
+      <form>
         <div className="settings-attr">
           <label>Name:</label>
           <input
@@ -146,20 +133,6 @@ const Settings = () => {
           <span>{errors[0] && <Error error="Name too long/short" />}</span>
         </div>
         <div className="settings-attr">
-          <label>Profession:</label>
-          <select
-            value={testProfession}
-            onChange={(e) => setTestProfession(e.target.value)}
-          >
-            {professions.map((p) => (
-              <option key={p.id} value={p.name.toLowerCase()}>
-                {p.name.charAt(0).toUpperCase() + p.name.slice(1)}
-              </option>
-            ))}
-          </select>
-          <span></span>
-        </div>
-        <div className="settings-attr">
           <label>Time:</label>
           <input
             className={
@@ -169,6 +142,7 @@ const Settings = () => {
             }
             type="number"
             value={testTime}
+            min="10"
             max="300"
             onChange={(e) => setTestTime(e.target.value)}
           />
@@ -211,7 +185,8 @@ const Settings = () => {
           <span>{errors[3] && <Error error="Date invalid" />}</span>
         </div>
         <div className="settings-btn">
-          <Button>NEXT</Button>
+          <Button clicked={handleCancel}>CANCEL</Button>
+          <Button clicked={handleSubmitTestDetails}>NEXT</Button>
         </div>
       </form>
     </div>

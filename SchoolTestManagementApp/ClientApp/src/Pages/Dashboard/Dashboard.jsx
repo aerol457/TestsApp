@@ -3,15 +3,16 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 
 import "./Dashboard.css";
 import Profile from "../../Components/Profile/Profile";
-import TestDesign from "../../Components/Tests/TestCreate/TestDesign/TestDesign";
 import DesignTest from "../../Components/Tests/DesignTest/DesignTest";
 import Students from "../../Components/Students/Students";
 import Tests from "../../Components/Tests/Tests";
-import { DashboardContext } from "../../context/TeacherContext/DashboardContext";
+import { DashboardContext } from "../../context/DashboardContext";
 import Test from "../../Components/Tests/Test/Test";
+import { useSelector } from "react-redux";
 
 const Dashboard = () => {
   const [showActions, setShowActions] = useState(false);
+  const userDetails = useSelector((state) => state.auth.userProfile);
   const dashboardContext = useContext(DashboardContext);
 
   const onToggleActions = () => {
@@ -50,7 +51,8 @@ const Dashboard = () => {
         ) : null}
       </div>
       {(dashboardContext.stateDashboard === "students" ||
-        dashboardContext.stateDashboard === "tests") && (
+        (dashboardContext.stateDashboard === "tests" &&
+          userDetails.userType === "teacher")) && (
         <div
           className={
             showActions

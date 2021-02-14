@@ -5,19 +5,17 @@ import Spinner from "../Core/Spinner/Spinner";
 
 import "./Tests.css";
 import Button from "../Core/Button/Button";
-import Backdrop from "../Core/Backdrop/Backdrop";
-import Modal from "../Core/Modal/Modal";
 import Search from "../Search/Search";
-import TestCreate from "./TestCreate/TestCreate";
-import { DashboardContext } from "../../context/TeacherContext/DashboardContext";
+import { DashboardContext } from "../../context/DashboardContext";
 import {
   getAllTest,
   findMyTests,
-  clearTest,
   getTestById,
-  initGeneral,
   resetErrorTest,
+  initialNewTest,
+  startTest,
 } from "../../store/actions/index";
+import { TestDesignDashContext } from "../../context/TestDesignDashContext";
 
 const Tests = () => {
   const [pageCount, setPageCount] = useState(0);
@@ -25,15 +23,14 @@ const Tests = () => {
   const [offset, setOffset] = useState(0);
   const perPage = useState(7)[0];
   const [postData, setPostData] = useState([]);
-  const [showModal, setShowModal] = useState(false);
   const [searchInput, setSearchInput] = useState("");
 
   const userDetails = useSelector((state) => state.auth.userProfile);
-  const allTests = useSelector((state) => state.test.tests);
-  const tests = useSelector((state) => state.test.search);
+  const tests = useSelector((state) => state.test.tests);
   const error = useSelector((state) => state.test.error);
   const loading = useSelector((state) => state.test.loading);
   const dashboardContext = useContext(DashboardContext);
+  const testDesignDashContext = useContext(TestDesignDashContext);
   const dispatch = useDispatch();
 
   const onToggleTestDetails = (index, dataSlice) => {
@@ -54,6 +51,13 @@ const Tests = () => {
   const handleViewTest = (e, id) => {
     e.stopPropagation();
     dispatch(getTestById(id));
+    testDesignDashContext.viewSettings();
+    dashboardContext.viewTestDesign();
+  };
+
+  const handleStartTest = (e, id) => {
+    e.stopPropagation();
+    dispatch(startTest(id));
     dashboardContext.viewTest();
   };
 
@@ -81,7 +85,7 @@ const Tests = () => {
           key={i}
           onClick={() => onToggleTestDetails(i, slice)}
         >
-          <h4>{slice[i].name}</h4>
+          <h4 className="test-title">{slice[i].name}</h4>
           <div
             className={
               !slice[i].show
@@ -137,24 +141,47 @@ const Tests = () => {
                     .split("T")[0]
                 }
               </li>
-              {userDetails.userType === "student" && (
+              {userDetails.userType === "student" &&
+              slice[i].studentTest[0].isDone ? (
                 <li>
                   Grade:
                   <br />
                   {slice[i].studentTest[0].grade}
                 </li>
+              ) : null}
+              {userDetails.userType === "teacher" && (
+                <li>
+                  Passing Grade:
+                  <br />
+                  {slice[i].passingGrade}
+                </li>
               )}
             </ul>
-            {isView && (
+            {isView ? (
               <div className="btn-test">
-                <Button
-                  outlinedWhite
-                  clicked={(e) => handleViewTest(e, slice[i].id)}
-                >
-                  {userDetails.userType === "teacher"
-                    ? "VIEW TEST"
-                    : "START TEST"}
-                </Button>
+                {userDetails.userType === "teacher" ? (
+                  <Button
+                    outlined
+                    clicked={(e) => handleViewTest(e, slice[i].id)}
+                  >
+                    VIEW TEST
+                  </Button>
+                ) : (
+                  <Button
+                    outlined
+                    clicked={(e) => handleStartTest(e, slice[i].id)}
+                  >
+                    START TEST
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div>
+                {slice[i].studentTest[0].isPass ? (
+                  <span className="test-grade-state-pass">PASS</span>
+                ) : (
+                  <span className="test-grade-state-fail">FAIL</span>
+                )}
               </div>
             )}
           </div>
@@ -182,24 +209,21 @@ const Tests = () => {
     setSearchInput(event.target.value);
   };
 
-  const handleShowModal = () => {
+  const handleAddTest = () => {
+    dispatch(initialNewTest());
+    testDesignDashContext.viewSettings();
     dashboardContext.viewTestDesign();
-    // setShowModal(true);
-  };
-
-  const handleCancelModal = () => {
-    setShowModal(false);
   };
 
   useEffect(() => {
-    dispatch(getAllTest(userDetails));
-  }, [getAllTest, userDetails]);
+    if (userDetails) {
+      dispatch(getAllTest(userDetails));
+    }
+  }, [userDetails]);
 
   useEffect(() => {
     receivedData();
-    dispatch(clearTest());
-    dispatch(initGeneral());
-  }, [tests, allTests, clearTest]);
+  }, [tests]);
 
   useEffect(() => {
     let timer;
@@ -213,14 +237,6 @@ const Tests = () => {
 
   return (
     <div className="tests-layout">
-      {showModal && (
-        <>
-          <Modal show={showModal} clicked={handleCancelModal}>
-            <TestCreate />
-          </Modal>
-        </>
-      )}
-
       <div className="tests-top">
         <div className="tests-top-search">
           <Search
@@ -237,7 +253,7 @@ const Tests = () => {
           <div className="tests-bottom-top">
             {userDetails.userType === "teacher" && (
               <div className="tests-add-btn">
-                <Button clicked={handleShowModal} outlined>
+                <Button clicked={handleAddTest} outlined>
                   +ADD
                 </Button>
               </div>

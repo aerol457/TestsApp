@@ -2,9 +2,9 @@ import * as actionTypes from "../../actions/test/actionsTypes";
 import updateState from "../../utils/utility";
 
 const initialTest = {
-  search: [],
   tests: [],
   test: {},
+  classrooms: [],
   questions: [],
   loading: false,
   error: null,
@@ -22,29 +22,18 @@ const testReducer = (state = initialTest, action) => {
       return updateState(state, { loading: false, error: action.error });
     case actionTypes.INIT_TEST:
       return updateState(state, {
-        search: [],
         tests: [],
         test: {},
         questions: [],
       });
-    case actionTypes.INITIAL_SEARCH_TEST:
-      return updateState(state, { search: [] });
     case actionTypes.SET_TESTS:
       return updateState(state, {
         tests: action.tests,
-        search: action.tests,
       });
-    case actionTypes.ADD_TEST_DETAILS:
-      return updateState(state, { test: action.test, questions: [] });
-    case actionTypes.UPDATE_TEST_DETAILS:
+    case actionTypes.SET_TEST_DETAILS:
       return updateState(state, {
-        test: {
-          ...state.test,
-          name: action.test.name,
-          professionName: action.test.professionName,
-          time: action.test.time,
-          dateOfSubmission: action.test.dateOfSubmission,
-        },
+        test: { ...state.test, ...action.test },
+        questions: [],
       });
     case actionTypes.ADD_TEST:
       const updateTests = [...state.tests];
@@ -54,13 +43,13 @@ const testReducer = (state = initialTest, action) => {
       });
     case actionTypes.CLEAR_TEST:
       return updateState(state, {
+        classrooms: [],
         questions: [],
         test: {},
       });
     case actionTypes.ADD_QUESTION:
       const updatedTest = { ...state.test };
       updatedTest.grade = +updatedTest.grade + +action.data.value;
-      console.log(updatedTest);
       return updateState(state, {
         questions: state.questions.concat(action.data),
         test: updatedTest,
@@ -104,42 +93,35 @@ const testReducer = (state = initialTest, action) => {
         questions: updateIdList,
         test: updateTest,
       });
-    case actionTypes.SET_TEST_QUESTION:
+    case actionTypes.SET_FULL_TEST:
       return updateState(state, {
         loading: false,
         questions: action.questions,
         test: action.test,
+        classrooms: action.classrooms,
       });
     case actionTypes.INSERT_USER_ANSWER:
       const questions = [...state.questions];
-      let updatedQuestions = questions.map((q) => {
-        if (q.id === action.question.id) {
-          if (
-            action.question.questionType === "option" ||
-            action.question.questionType === "image"
-          ) {
-            q.userAnswer1 = action.answer;
-          } else {
-            if (action.multipleAnswers.length > 0) {
-              q.userAnswer1 = action.multipleAnswers[0];
-              if (action.multipleAnswers.length === 2) {
-                q.userAnswer2 = action.multipleAnswers[1];
-              } else {
-                q.userAnswer2 = 0;
-              }
-            } else {
-              q.userAnswer1 = 0;
-              q.userAnswer2 = 0;
-            }
-          }
-        }
-        return q;
-      });
-      return updateState(state, { questions: updatedQuestions });
+      if (action.answer) {
+        questions[action.index].userAnswer1 = action.answer;
+      } else {
+        questions[action.index].userAnswer1 = action.multipleAnswers[0] || 0;
+        questions[action.index].userAnswer2 = action.multipleAnswers[1] || 0;
+      }
+      return updateState(state, { questions: questions });
     case actionTypes.FINISH_TEST:
-      let getGrade = { ...state.test };
-      getGrade.grade = action.grade;
-      return updateState(state, { test: getGrade });
+      let tests = [...state.tests];
+      const updatedTests = tests.map((t) => {
+        if (t.id === action.test.id) {
+          t.studentTest[0].isPass = action.grade >= t.passingGrade;
+          t.studentTest[0].isDone = true;
+          t.studentTest[0].grade = action.grade;
+        }
+        return t;
+      });
+      return updateState(state, { tests: updatedTests });
+    case actionTypes.ADD_TEST_CLASSROOMS:
+      return updateState(state, { classrooms: action.classrooms });
     default:
       return state;
   }

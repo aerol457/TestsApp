@@ -36,7 +36,7 @@ export const getAllTest = ({ userType, id }) => {
   const token = localStorage.getItem("token");
   let url = `https://localhost:44356/api/Test/all-tests/${id}`;
   if (userType === "student") {
-    url = `https://localhost:44356/api/StudentTest/allTests/${id}`;
+    url = `https://localhost:44356/api/StudentTest/GetTests/${id}`;
   }
   return (dispatch) => {
     dispatch(actionStart());
@@ -64,11 +64,11 @@ const setTests = (tests) => {
 export const findMyTests = (searchInput, user) => {
   const token = localStorage.getItem("token");
   return (dispatch) => {
-    dispatch(actionStart());
     if (searchInput === "") {
       dispatch(getAllTest(user));
       dispatch(actionFail("Can't find Test"));
     } else {
+      dispatch(actionStart());
       axios
         .get(`https://localhost:44356/api/Test/${searchInput}`, {
           headers: {
@@ -95,29 +95,23 @@ export const initialSearchTest = () => {
   };
 };
 
-export const addTestDetails = (test) => {
+export const setTestDetails = (test) => {
   return {
-    type: actionTypes.ADD_TEST_DETAILS,
+    type: actionTypes.SET_TEST_DETAILS,
     test,
   };
 };
 
-export const updateTestDetails = (test) => {
-  return {
-    type: actionTypes.UPDATE_TEST_DETAILS,
-    test,
-  };
-};
-
-export const addTest = (test) => {
+export const addTest = (test, files) => {
   const formData = new FormData();
-  test.questionList.map((q) => {
-    if (q.questionType !== "image") {
-      return;
-    }
-    formData.append("images", q.imageFile, q.imageUrl);
+  files.map((f) => {
+    // formData.append("images", f.imageFile, f.imageUrl);
+    formData.append("images", f.imageFile);
   });
-
+  test = {
+    ...test,
+    Images: formData,
+  };
   return (dispatch) => {
     const idUser = localStorage.getItem("idUser");
     const token = localStorage.getItem("token");
@@ -133,12 +127,12 @@ export const addTest = (test) => {
         },
       })
       .then((res) => {
-        axios
-          .post(
-            "https://localhost:44356/api/Test/CreateQuestionImages",
-            formData
-          )
-          .then((res) => {});
+        // axios
+        //   .post(
+        //     "https://localhost:44356/api/Test/CreateQuestionImages",
+        //     formData
+        //   )
+        //   .then((res) => {});
         dispatch(updatedTestsState(test));
         dispatch(clearTest());
         dispatch(actionTestSuccess());
@@ -158,17 +152,32 @@ export const getTestById = (idTest) => {
         },
       })
       .then((res) => {
-        dispatch(createQuestionsToTest(res.data.test, res.data.test.question));
+        if (res.data.success === true) {
+          const classrooms = res.data.classrooms.map((c) => {
+            let isAssign = false;
+            res.data.assignClassrooms.forEach((cId) => {
+              if (cId === c.id) {
+                isAssign = true;
+              }
+            });
+            return { ...c, isAssign };
+          });
+          dispatch(
+            setFullTest(res.data.test, res.data.test.question, classrooms)
+          );
+        }
+        dispatch(actionTestSuccess());
       })
       .catch(() => dispatch(actionFail()));
   };
 };
 
-export const setFullTest = (test, questionsList) => {
+export const setFullTest = (test, questions, classrooms) => {
   return {
-    type: actionTypes.SET_TEST_QUESTION,
-    test: test,
-    questions: questionsList,
+    type: actionTypes.SET_FULL_TEST,
+    test,
+    questions,
+    classrooms,
   };
 };
 
@@ -186,7 +195,6 @@ export const updatedTestsState = (test) => {
 };
 
 export const addQuestion = (question) => {
-  console.log(question);
   return {
     type: actionTypes.ADD_QUESTION,
     data: question,
@@ -229,34 +237,56 @@ export const orderViewQuestion = () => {
   };
 };
 
+export const startTest = (idTest) => {
+  const token = localStorage.getItem("token");
+  return (dispatch) => {
+    dispatch(actionStart());
+    axios
+      .get(`https://localhost:44356/api/Test/GetFullTest/${idTest}`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((res) => {
+        if (res.data.success === true) {
+          dispatch(
+            createQuestionsToTest(res.data.test, res.data.test.question)
+          );
+        }
+        dispatch(actionTestSuccess());
+      })
+      .catch(() => dispatch(actionFail()));
+  };
+};
+
 const createQuestionsToTest = (test, questions) => {
   const questionList = questions.map((q) => {
-    if (q.questionType === "option" || q.questionType === "image") {
-      const question = {
+    let question = {
+      id: -1,
+      option1: {
+        content: "",
         id: -1,
-        option1: {
-          content: "",
-          id: -1,
-        },
-        option2: {
-          content: "",
-          id: -1,
-        },
-        option3: {
-          content: "",
-          id: -1,
-        },
-        option4: {
-          content: "",
-          id: -1,
-        },
-        content1: "",
-        questionType: "",
-        userAnswer1: 0,
-        value: 0,
-        idTest: -1,
-      };
-      let numberOne = Math.round(Math.random() * 4) + 1;
+      },
+      option2: {
+        content: "",
+        id: -1,
+      },
+      option3: {
+        content: "",
+        id: -1,
+      },
+      option4: {
+        content: "",
+        id: -1,
+      },
+      content1: "",
+      questionType: "",
+      userAnswer1: 0,
+      value: 0,
+      idTest: -1,
+    };
+    if (q.questionType === "option" || q.questionType === "image") {
+      let numberOne = Math.floor(Math.random() * 4) + 1;
       let indexs = [];
       for (let i = 1; i < 5; i++) {
         if (i !== numberOne) {
@@ -273,44 +303,17 @@ const createQuestionsToTest = (test, questions) => {
       question["option" + indexs[1]] = getDistractors[1];
       question["option" + indexs[2]] = getDistractors[2];
       question["option" + numberOne] = getAnswer[0];
-      question.value = q.value;
-      question.content1 = q.content1;
-      question.questionType = q.questionType;
       question.imageUrl = q.imageUrl;
-      question.idTest = q.idTest;
-      question.id = q.id;
-      return question;
     } else {
-      const question = {
-        id: -1,
-        option1: {
-          content: "",
-          id: -1,
-        },
-        option2: {
-          content: "",
-          id: -1,
-        },
-        option3: {
-          content: "",
-          id: -1,
-        },
-        option4: {
-          content: "",
-          id: -1,
-        },
+      question = {
+        ...question,
         option5: {
           content: "",
           id: -1,
         },
-        userAnswer1: 0,
         userAnswer2: 0,
-        content1: "",
         content2: "",
         content3: "",
-        questionType: "",
-        value: 0,
-        idTest: -1,
       };
       const numberOne = Math.floor(Math.random() * 5) + 1;
       let numberTwo = numberOne;
@@ -335,52 +338,54 @@ const createQuestionsToTest = (test, questions) => {
       question["option" + indexs[0]] = getDistractors[0];
       question["option" + indexs[1]] = getDistractors[1];
       question["option" + indexs[2]] = getDistractors[2];
-      question.value = q.value;
-      question.content1 = q.content1;
       question.content2 = q.content2;
       question.content3 = q.content3;
-      question.questionType = q.questionType;
-      question.idTest = q.idTest;
-      question.id = q.id;
-      return question;
     }
+    question.id = q.id;
+    question.content1 = q.content1;
+    question.questionType = q.questionType;
+    question.idTest = q.idTest;
+    question.value = q.value;
+    return question;
   });
+  test.question = null;
   return (dispatch) => {
     dispatch(setFullTest(test, questionList));
   };
 };
 
-export const insertUserAnswer = (answer, multipleAnswers, question) => {
+export const insertUserAnswer = (answer, multipleAnswers, index) => {
   return {
     type: actionTypes.INSERT_USER_ANSWER,
     answer,
     multipleAnswers,
-    question,
+    index,
   };
 };
 
-export const finishTest = (questions, idTest) => {
+export const finishTest = (questions, testDetails) => {
   const questionList = questions.map((q) => {
     return { id: q.id, userAnswer1: q.userAnswer1, userAnswer2: q.userAnswer2 };
   });
   const test = {
-    id: idTest,
-    questionList,
+    Id: testDetails.id,
+    PassingGrade: testDetails.passingGrade,
+    QuestionList: questionList,
   };
+
   return (dispatch) => {
     const idStudent = localStorage.getItem("idUser");
     const token = localStorage.getItem("token");
     dispatch(actionStart());
     axios
-      .post(`https://localhost:44356/api/Test/FinishTest/${idStudent}`, test, {
+      .post(`https://localhost:44356/api/Test/CheckTest/${idStudent}`, test, {
         headers: {
           Authorization: "Bearer " + token,
         },
       })
       .then((res) => {
-        if (res.data.success === false) {
-        } else {
-          dispatch(setGrade(res.data.grade));
+        if (res.data.success === true) {
+          dispatch(setGrade(res.data.grade, testDetails));
         }
         dispatch(actionTestSuccess());
       })
@@ -388,9 +393,40 @@ export const finishTest = (questions, idTest) => {
   };
 };
 
-const setGrade = (grade) => {
+const setGrade = (grade, test) => {
+  console.log(grade, test);
   return {
     type: actionTypes.FINISH_TEST,
     grade,
+    test,
+  };
+};
+
+export const initialNewTest = () => {
+  const idUser = localStorage.getItem("idUser");
+  return (dispatch) => {
+    dispatch(actionStart());
+    axios
+      .get(`https://localhost:44356/api/Test/GetInitialTest/${idUser}`)
+      .then((res) => {
+        dispatch(
+          setTestDetails({
+            professionName: res.data.profession.name.toLowerCase(),
+          })
+        );
+        const classrooms = res.data.classrooms.map((c) => {
+          return { ...c, isAssign: false };
+        });
+        dispatch(insertTestClassrooms(classrooms));
+        dispatch(actionTestSuccess());
+      })
+      .catch(() => dispatch(actionFail()));
+  };
+};
+
+export const insertTestClassrooms = (classrooms) => {
+  return {
+    type: actionTypes.ADD_TEST_CLASSROOMS,
+    classrooms,
   };
 };

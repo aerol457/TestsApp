@@ -113,6 +113,7 @@ export const authLogout = () => {
   localStorage.removeItem("idUser");
   localStorage.removeItem("expirationDate");
   localStorage.removeItem("dashboard");
+  localStorage.removeItem("testDesignDash");
   localStorage.removeItem("state");
   return (dispatch) => {
     dispatch(logout());

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 export const DashboardContext = React.createContext({
   stateDashboard: "tests",
@@ -10,6 +11,7 @@ export const DashboardContext = React.createContext({
 
 const DashboardContextProvider = (props) => {
   const [stateDashboard, setStateDashboard] = useState("");
+  const isAuth = useSelector((state) => state.auth.token !== null);
 
   const handleViewTests = () => {
     setStateDashboard("tests");
@@ -32,10 +34,12 @@ const DashboardContextProvider = (props) => {
   };
 
   useEffect(() => {
-    const dashboard = localStorage.getItem("dashboard");
-    if (!dashboard) return handleViewTests();
-    setStateDashboard(dashboard);
-  }, []);
+    if (isAuth) {
+      const dashboard = localStorage.getItem("dashboard");
+      if (!dashboard) return handleViewTests();
+      setStateDashboard(dashboard);
+    }
+  }, [isAuth]);
 
   return (
     <DashboardContext.Provider

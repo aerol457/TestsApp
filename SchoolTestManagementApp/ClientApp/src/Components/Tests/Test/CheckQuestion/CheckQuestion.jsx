@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { AiOutlineCheck } from "react-icons/ai";
 
 import "./CheckQuestion.css";
+import { insertUserAnswer } from "../../../../store/actions/index";
 
-const CheckQuestion = ({
-  question,
-  index,
-  setUserMultipleAnswers,
-  setCurrentQuestion,
-}) => {
+const CheckQuestion = ({ question, index }) => {
   const [checkOption1, setCheckOption1] = useState(false);
   const [checkOption2, setCheckOption2] = useState(false);
   const [checkOption3, setCheckOption3] = useState(false);
@@ -16,6 +13,7 @@ const CheckQuestion = ({
   const [checkOption5, setCheckOption5] = useState(false);
   const [disableChecks, setDisableChecks] = useState(false);
   const [validate, setValidate] = useState(0);
+  const dispatch = useDispatch();
 
   const handleChooseOption = (e, check) => {
     let isValid = validate;
@@ -81,14 +79,11 @@ const CheckQuestion = ({
       answers.push(question.option5.id);
     }
     setValidate(answers.length);
-    setUserMultipleAnswers(answers);
+    dispatch(insertUserAnswer(null, answers, index));
   };
 
   useEffect(() => {
-    const initialAnswers = [];
-    setCurrentQuestion(question);
     if (question.userAnswer1 !== 0) {
-      initialAnswers.push(question.userAnswer1);
       switch (question.userAnswer1) {
         case question.option1.id:
           setCheckOption1(true);
@@ -107,7 +102,6 @@ const CheckQuestion = ({
           break;
       }
       if (question.userAnswer2 !== 0) {
-        initialAnswers.push(question.userAnswer2);
         switch (question.userAnswer2) {
           case question.option1.id:
             setCheckOption1(true);
@@ -130,7 +124,6 @@ const CheckQuestion = ({
       } else {
         setValidate(1);
       }
-      setUserMultipleAnswers(initialAnswers);
     }
   }, [question]);
 

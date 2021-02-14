@@ -8,8 +8,9 @@ import {
   auth,
   actionAuthSuccess,
   authFail,
+  initGeneral,
 } from "../../../store/actions/index";
-import { DashboardContext } from "../../../context/TeacherContext/DashboardContext";
+import { DashboardContext } from "../../../context/DashboardContext";
 import {
   required,
   emailValidate,
@@ -22,6 +23,7 @@ const Login = ({ stateAuth, updateState }) => {
   const [validateInputs, setValidateInputs] = useState([false, false]);
   const dashboardContext = useContext(DashboardContext);
   const loading = useSelector((state) => state.auth.loading);
+  const userProfile = useSelector((state) => state.auth.userProfile);
   const error = useSelector((state) => state.auth.error);
   const dispatch = useDispatch();
 
@@ -36,6 +38,7 @@ const Login = ({ stateAuth, updateState }) => {
           passwordHash: password,
         })
       );
+      dispatch(initGeneral());
       dashboardContext.viewTests();
     }
   };

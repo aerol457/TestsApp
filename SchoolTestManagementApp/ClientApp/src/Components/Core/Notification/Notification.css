@@ -1,0 +1,27 @@
+.pop-up-grade-error {
+  display: flex;
+  border: 2px solid gray;
+  border-radius: 20px;
+  background-color: white;
+  padding: 10px;
+  opacity: 1;
+  position: fixed;
+  z-index: 11;
+  top: 10vh;
+  right: 2vw;
+  transition: all 1.5s ease-in-out;
+}
+
+.pop-up-transparent {
+  opacity: 0;
+}
+
+.pop-up-grade-error > p {
+  color: red;
+  margin: 0;
+}
+
+.pop-up-icon {
+  padding-right: 5px;
+  font-size: 20px;
+}

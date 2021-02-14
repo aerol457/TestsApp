@@ -163,7 +163,7 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.QuestionServi
                     {
                         grade += q.Value;
                     }
-                }else if(q.QuestionType == "check" || q.QuestionType == "complete")
+                }else if(q.QuestionType == "check" || q.QuestionType == "blank")
                 {
                     if ((question.UserAnswer1 == answers[0].IdOption && question.UserAnswer2 == answers[1].IdOption) || 
                         (question.UserAnswer1 == answers[1].IdOption && question.UserAnswer2 == answers[0].IdOption))
@@ -184,6 +184,7 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.QuestionServi
                 {
                     if(studentTest.IdUser == idStudent && studentTest.IdTest == test.Id)
                     {
+                        studentTest.IsPass = grade >= test.PassingGrade;
                         studentTest.IsDone = true;
                         studentTest.Grade = grade;
                         context.Update(studentTest);

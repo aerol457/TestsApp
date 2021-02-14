@@ -12,13 +12,13 @@ import {
   updateQuestion,
 } from "../../../../../../store/actions/index";
 
-const Question = ({ questionContent, type }) => {
+const Question = ({ questionContent, type, saveImage }) => {
   const [position, setPosition] = useState(null);
   const [question, setQuestion] = useState("");
   const [partialQuestion1, setPartialQuestion1] = useState("");
   const [partialQuestion2, setPartialQuestion2] = useState("");
   const [answer1, setAnswer1] = useState("");
-  const [answer2, setAnswer2] = useState("");
+  const [answer2, setAnswer2] = useState(null);
   const [option1, setOption1] = useState("");
   const [option2, setOption2] = useState("");
   const [option3, setOption3] = useState("");
@@ -57,7 +57,6 @@ const Question = ({ questionContent, type }) => {
         option3,
         value: +value,
         imageUrl,
-        imageFile,
         imageBlob,
         questionType: type,
       };
@@ -65,6 +64,9 @@ const Question = ({ questionContent, type }) => {
         dispatch(updateQuestion(questionDetails));
       } else {
         dispatch(addQuestion(questionDetails));
+      }
+      if (imageFile) {
+        saveImage({ file: imageFile, name: imageUrl });
       }
       initialForm();
     }
@@ -132,7 +134,6 @@ const Question = ({ questionContent, type }) => {
 
     if (
       !range({ min: 1, max: 100 })(value) ||
-      +testDetails.grade + +value > 100 ||
       +testDetails.grade + +value - oldValue > 100
     ) {
       updateErrors[6] = true;
@@ -151,6 +152,7 @@ const Question = ({ questionContent, type }) => {
   const showPreview = (e) => {
     if (e.target.files && e.target.files[0]) {
       let image = e.target.files[0];
+      console.log(image);
       let fileName = Date.now() + "." + image.name.split(".")[1];
       const localImageUrl = URL.createObjectURL(image);
       setImageBlob(localImageUrl);
@@ -189,7 +191,11 @@ const Question = ({ questionContent, type }) => {
         setPartialQuestion2(questionContent.content3);
       }
     } else {
-      setIsUpdate(false);
+      if (type === "check" || type === "blank") {
+        setAnswer2("");
+
+        setIsUpdate(false);
+      }
     }
   }, [questionContent]);
 

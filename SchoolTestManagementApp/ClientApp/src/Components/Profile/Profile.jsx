@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import { GoLocation } from "react-icons/go";
 import { MdPermIdentity } from "react-icons/md";
 import { AiOutlinePhone } from "react-icons/ai";
+import { RiLogoutBoxLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 
 import "./Profile.css";
 import Spinner from "../Core/Spinner/Spinner";
-import { getUserProfile } from "../../store/actions/index";
+import { getUserProfile, authLogout } from "../../store/actions/index";
 
 const Profile = () => {
   const userProfile = useSelector((state) => state.auth.userProfile);
@@ -59,6 +60,12 @@ const Profile = () => {
           </span>
           {userProfile.phoneNumber}
         </h5>
+      </div>
+      <div className="profile-logout">
+        <RiLogoutBoxLine
+          className="profile-logout-icon"
+          onClick={() => dispatch(authLogout())}
+        />
       </div>
     </>
   );

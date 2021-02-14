@@ -8,7 +8,6 @@ import ErrorHandler from "../../hoc/ErrorHandler/ErrorHandler";
 
 const Auth = () => {
   const [stateAuth, setStateAuth] = useState("");
-
   const handleUpdateState = (idAuth) => {
     setStateAuth(idAuth);
   };

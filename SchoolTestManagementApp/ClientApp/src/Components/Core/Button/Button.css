@@ -1,14 +1,14 @@
 .btn-outlined {
   width: 100%;
-  color: #5794c9;
+  color: #3d4652;
   background: none;
-  border: 3px solid #5794c9;
+  border: 3px solid #3d4652;
   padding: 5px 10px;
   transition: all 0.3s linear;
 }
 .btn-outlined:hover,
 .btn-outlined:active {
-  background: #5794c9;
+  background: #3d4652;
   color: white;
 }
 

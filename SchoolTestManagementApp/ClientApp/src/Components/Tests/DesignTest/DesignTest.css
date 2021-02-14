@@ -40,7 +40,10 @@
 }
 
 .icon-option {
-  color: white;
+  width: 3vw;
+}
+.icon-option-active {
+  color: #3d4652;
 }
 
 .test-design-title {

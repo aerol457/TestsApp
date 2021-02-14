@@ -33,8 +33,6 @@ export default (state = initialState, action) => {
       return updateState(state, { classrooms: action.data });
     case actionTypes.GET_CLASSROOM_BY_ID:
       return updateState(state, { classroom: action.data });
-    case actionTypes.GET_CLASSROOM_BY_ID_TEACHER:
-      return updateState(state, { classrooms: action.data });
     default:
       return state;
   }

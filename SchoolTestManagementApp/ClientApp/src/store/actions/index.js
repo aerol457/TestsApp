@@ -1,7 +1,6 @@
 export {
   getAllTest,
   findMyTests,
-  addTestDetails,
   addQuestion,
   updateQuestion,
   updateViewQuestion,
@@ -14,7 +13,10 @@ export {
   insertUserAnswer,
   finishTest,
   resetErrorTest,
-  updateTestDetails,
+  setTestDetails,
+  insertTestClassrooms,
+  initialNewTest,
+  startTest,
 } from "./test/test";
 
 export {
@@ -22,8 +24,6 @@ export {
   getProfessionById,
   getClassroomById,
   getAllClassrooms,
-  getClassroomByIdTeacher,
-  getClassroomForPublishTest,
   initGeneral,
 } from "./general/general";
 export {

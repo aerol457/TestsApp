@@ -1,16 +1,42 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FiSettings } from "react-icons/fi";
 import { FaRegQuestionCircle } from "react-icons/fa";
-import { GrFormUpload } from "react-icons/gr";
 
 import "./DesignTest.css";
 import Settings from "./Options/Settings/Settings";
 import Questions from "./Options/Questions/Questions";
 import Publish from "./Options/Publish/Publish";
-import { TestDesignContext } from "../../../context/TeacherContext/TestDesignContext";
+import Overview from "./Options/Overview/Overview";
+import uploadIcon from "../../../assets/upload.png";
+import uploadWhiteIcon from "../../../assets/upload-white.png";
+import overviewIcon from "../../../assets/overview.png";
+import overviewWhiteIcon from "../../../assets/overview-white.png";
+import { TestDesignDashContext } from "../../../context/TestDesignDashContext";
 
 const DesignTest = () => {
-  const testDesignContext = useContext(TestDesignContext);
+  const [questionImages, setQuestionImages] = useState([]);
+  const testDesignDashContext = useContext(TestDesignDashContext);
+
+  const handleSaveImages = (imageFile) => {
+    const updateImages = [...questionImages];
+    console.log("1");
+    updateImages.push(imageFile);
+    console.log(updateImages);
+    setQuestionImages(updateImages);
+    // localStorage.setItem("images", updateImages);
+  };
+
+  // useEffect(() => {
+  //   console.log("render");
+  //   if (questionImages.length === 0) {
+  //     const images = localStorage.getItem("images");
+  //     console.log("local-images", images);
+  //     setQuestionImages(images);
+  //   }
+  //   return () => {
+  //     console.log("unmount");
+  //   };
+  // }, []);
 
   return (
     <div className="test-design">
@@ -19,13 +45,19 @@ const DesignTest = () => {
           <div className="test-design-option">
             <div
               className={
-                testDesignContext.stateDashboard === "settings"
+                testDesignDashContext.stateDashboard === "settings"
                   ? "test-design-title test-design-title-active"
                   : "test-design-title"
               }
             >
               <span>
-                <FiSettings className="icon-option" />
+                <FiSettings
+                  className={
+                    testDesignDashContext.stateDashboard === "settings"
+                      ? "icon-option icon-option-active"
+                      : "icon-option"
+                  }
+                />
               </span>
               TEST SETTING
             </div>
@@ -33,13 +65,19 @@ const DesignTest = () => {
           <div className="test-design-option">
             <div
               className={
-                testDesignContext.stateDashboard === "questions"
+                testDesignDashContext.stateDashboard === "questions"
                   ? "test-design-title test-design-title-active"
                   : "test-design-title"
               }
             >
               <span>
-                <FaRegQuestionCircle className="icon-option" />
+                <FaRegQuestionCircle
+                  className={
+                    testDesignDashContext.stateDashboard === "questions"
+                      ? "icon-option icon-option-active"
+                      : "icon-option"
+                  }
+                />
               </span>
               TEST QUESTIONS
             </div>
@@ -47,28 +85,59 @@ const DesignTest = () => {
           <div className="test-design-option">
             <div
               className={
-                testDesignContext.stateDashboard === "publish"
+                testDesignDashContext.stateDashboard === "publish"
                   ? "test-design-title test-design-title-active"
                   : "test-design-title"
               }
             >
               <span>
-                <GrFormUpload className="icon-option" />
+                <img
+                  className="icon-option"
+                  src={
+                    testDesignDashContext.stateDashboard === "publish"
+                      ? uploadIcon
+                      : uploadWhiteIcon
+                  }
+                  alt="Upload"
+                />
               </span>
               TEST PUBLISH
             </div>
           </div>
-          <div>TEST UPDATE</div>
+          <div className="test-design-option">
+            <div
+              className={
+                testDesignDashContext.stateDashboard === "overview"
+                  ? "test-design-title test-design-title-active"
+                  : "test-design-title"
+              }
+            >
+              <span>
+                <img
+                  className="icon-option"
+                  src={
+                    testDesignDashContext.stateDashboard === "overview"
+                      ? overviewIcon
+                      : overviewWhiteIcon
+                  }
+                  alt="Overview"
+                />
+              </span>
+              OVERVIEW
+            </div>
+          </div>
         </div>
       </div>
       <div className="test-design-body">
         <div className="test-design-content">
-          {testDesignContext.stateDashboard === "settings" ? (
+          {testDesignDashContext.stateDashboard === "settings" ? (
             <Settings />
-          ) : testDesignContext.stateDashboard === "questions" ? (
-            <Questions />
-          ) : (
+          ) : testDesignDashContext.stateDashboard === "questions" ? (
+            <Questions saveImages={handleSaveImages} />
+          ) : testDesignDashContext.stateDashboard === "publish" ? (
             <Publish />
+          ) : (
+            <Overview images={questionImages} />
           )}
         </div>
       </div>

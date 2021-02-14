@@ -21,27 +21,27 @@ namespace SchoolTestManagementApp.Controllers
             this._serviceClassTest = serviceClassTest;
         }
 
-        [HttpGet("{idUser}")]
-        public IActionResult GetClassrooms(int idUser)
-        {
-            var classrooms = _service.GetClassroomsByIdUser(idUser);
-            if (classrooms != null)
-            {
-                return CreatedAtAction(nameof(GetClassrooms), new { classrooms });
-            }
-            return Unauthorized();
-        }
+        //[HttpGet("{idUser}")]
+        //public IActionResult GetClassrooms(int idUser)
+        //{
+        //    var classrooms = _service.GetClassroomsByIdUser(idUser);
+        //    if (classrooms != null)
+        //    {
+        //        return CreatedAtAction(nameof(GetClassrooms), new { classrooms });
+        //    }
+        //    return Unauthorized();
+        //}
 
-        [HttpGet("[action]/{idTest}")]
-        public IActionResult GetClassroomsAssignToTest(int idTest)
-        {
-            var classrooms = _serviceClassTest.GetClassroomsByIdTest(idTest);
-            if (classrooms != null)
-            {
-                return CreatedAtAction(nameof(GetClassrooms), new { classrooms });
-            }
-            return Unauthorized();
-        }
+        //[HttpGet("[action]/{idTest}")]
+        //public IActionResult GetClassroomsAssignToTest(int idTest)
+        //{
+        //    var classrooms = _serviceClassTest.GetClassroomsByIdTest(idTest);
+        //    if (classrooms != null)
+        //    {
+        //        return CreatedAtAction(nameof(GetClassrooms), new { classrooms });
+        //    }
+        //    return Unauthorized();
+        //}
 
         [HttpGet("GetStudents/{idUser}")]
         public IActionResult GetStudentsByIdTeacher(int idUser)

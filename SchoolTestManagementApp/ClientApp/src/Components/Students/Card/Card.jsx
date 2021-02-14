@@ -14,7 +14,7 @@ const Card = ({ clicked, studentInfo }) => {
           }`}
           alt="profile"
         />
-        <Button outlined clicked={() => clicked(studentInfo)}>
+        <Button outlinedWhite clicked={() => clicked(studentInfo)}>
           View Details
         </Button>
       </div>

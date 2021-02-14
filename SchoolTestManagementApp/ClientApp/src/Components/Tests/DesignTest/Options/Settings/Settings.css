@@ -44,5 +44,6 @@
 }
 
 .settings-btn {
+  display: flex;
   float: right;
 }

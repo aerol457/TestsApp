@@ -30,6 +30,7 @@ const Table = () => {
               <th>Date Of Submission</th>
               <th>Grade</th>
               <th>Done</th>
+              <th>IsPass</th>
             </tr>
           </thead>
           <tbody>
@@ -57,6 +58,13 @@ const Table = () => {
                 <td>{test.studentTest[0].grade}</td>
                 <td>
                   {test.studentTest[0].isDone ? (
+                    <FaRegCheckCircle className="isDone-check" />
+                  ) : (
+                    <GiCancel className="isDone-false" />
+                  )}
+                </td>
+                <td>
+                  {test.studentTest[0].isPass ? (
                     <FaRegCheckCircle className="isDone-check" />
                   ) : (
                     <GiCancel className="isDone-false" />

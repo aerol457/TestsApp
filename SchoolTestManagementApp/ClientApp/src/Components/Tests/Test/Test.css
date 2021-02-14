@@ -51,11 +51,6 @@
   flex: 0.9;
 }
 
-.test-view-question-content > div {
-  width: 85%;
-  margin: 0 auto;
-}
-
 .test-view-question-page {
   padding: 10px;
 }
@@ -91,7 +86,7 @@
   display: flex;
   margin: auto;
   cursor: pointer;
-  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .navigate-arrow:hover {

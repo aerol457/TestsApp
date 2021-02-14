@@ -16,7 +16,7 @@
 }
 
 .dashboard-content-end {
-  color: white;
+  color: aliceblue;
   margin-top: 44vh;
   padding: 5px;
   text-align: left;
@@ -25,8 +25,7 @@
 
 .dashboard-content-end h5 {
   display: flex;
-  color: gray;
-  color: #212529;
+  color: aliceblue;
   letter-spacing: 2px;
   font-size: 1.2rem;
 }
@@ -41,6 +40,20 @@
 
 .dashboard-content-header h4 {
   font-size: 24px;
+}
+
+.profile-logout {
+  font-size: 30px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 0 10px 10px 0px;
+  color: darkgrey;
+  cursor: pointer;
+}
+
+.profile-logout-icon:hover {
+  color: white;
 }
 
 @media (min-width: 1100px) {

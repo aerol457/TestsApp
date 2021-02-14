@@ -7,9 +7,10 @@ import "./Questions.css";
 import Question from "./Question/Question";
 import Card from "./Question/Card/Card";
 import Button from "../../../../Core/Button/Button";
-import { TestDesignContext } from "../../../../../context/TeacherContext/TestDesignContext";
+import Notification from "../../../../Core/Notification/Notification";
+import { TestDesignDashContext } from "../../../../../context/TestDesignDashContext";
 
-const Questions = () => {
+const Questions = ({ saveImages }) => {
   const [questionType, setQuestionType] = useState("option");
   const [questionView, setQuestionView] = useState(null);
   const perPage = useState(6)[0];
@@ -18,10 +19,11 @@ const Questions = () => {
   const [position, setPosition] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [questionsView, setQuestionsView] = useState([]);
+  const [error, setError] = useState(false);
 
   const questions = useSelector((state) => state.test.questions);
   const test = useSelector((state) => state.test.test);
-  const testDesignContext = useContext(TestDesignContext);
+  const testDesignDashContext = useContext(TestDesignDashContext);
 
   const handleNextQuestions = () => {
     let updatePage = page + 1;
@@ -57,6 +59,13 @@ const Questions = () => {
     setQuestionsView(updateView);
   };
 
+  const handleSubmitQuetions = () => {
+    if (test.grade !== 100) {
+      return setError(true);
+    }
+    testDesignDashContext.viewPublish();
+  };
+
   useEffect(() => {
     let pages = 0;
     pages = questions.length / perPage;
@@ -78,10 +87,15 @@ const Questions = () => {
     if (questions) {
       designPageCard();
     }
-  }, [page, questions.length]);
+  }, [page, questions]);
 
   return (
     <div className="questions">
+      <Notification
+        message="Grade Must be equal to 100 before proceeding"
+        resetError={setError}
+        error={error}
+      />
       <div className="questions-design">
         <div className="questions-design-header">
           <div className="tabs">
@@ -115,7 +129,11 @@ const Questions = () => {
           </div>
         </div>
         <div className="question-config-">
-          <Question type={questionType} questionContent={questionView} />
+          <Question
+            type={questionType}
+            questionContent={questionView}
+            saveImage={saveImages}
+          />
         </div>
       </div>
 
@@ -144,8 +162,8 @@ const Questions = () => {
       </div>
 
       <div className="questions-btn">
-        <Button clicked={testDesignContext.viewSettings}>BACK</Button>
-        <Button clicked={testDesignContext.viewPublish}>NEXT</Button>
+        <Button clicked={testDesignDashContext.viewSettings}>BACK</Button>
+        <Button clicked={handleSubmitQuetions}>NEXT</Button>
       </div>
     </div>
   );
