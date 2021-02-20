@@ -4,7 +4,7 @@ import "./InputImage.css";
 
 const InputImage = ({
   blob,
-  defaultImg,
+  defaultImg = "profileDefault.png",
   click,
   isQuestion = false,
   isEmpty = false,
@@ -25,7 +25,7 @@ const InputImage = ({
             className={
               isEmpty ? " input-image input-image-error" : "input-image"
             }
-            src={blob === "" ? `/Images/${defaultImg}` : blob}
+            src={blob === null ? `/Images/${defaultImg}` : blob}
             alt="img question"
           />
         </label>

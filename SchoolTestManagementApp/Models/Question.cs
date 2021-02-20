@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -33,6 +34,10 @@ namespace SchoolTestManagementApp.Models
         public int UserAnswer1 { get; set; }
         [NotMapped]
         public int UserAnswer2 { get; set; }
+        [NotMappedAttribute]
+        public IFormFile ImageFile { get; set; }
+        [NotMappedAttribute]
+        public string CurrentImage { get; set; }
 
         public virtual Test IdTestNavigation { get; set; }
         public virtual ICollection<QuestionOption> QuestionOption { get; set; }

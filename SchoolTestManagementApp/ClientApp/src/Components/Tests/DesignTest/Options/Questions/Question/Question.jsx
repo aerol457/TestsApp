@@ -10,21 +10,23 @@ import { required, range } from "../../../../../../utils/validators";
 import {
   addQuestion,
   updateQuestion,
+  updateTestQuantity,
 } from "../../../../../../store/actions/index";
 
-const Question = ({ questionContent, type, saveImage }) => {
-  const [position, setPosition] = useState(null);
+const Question = ({ questionContent, type, index }) => {
+  const [id, setId] = useState(0);
   const [question, setQuestion] = useState("");
   const [partialQuestion1, setPartialQuestion1] = useState("");
   const [partialQuestion2, setPartialQuestion2] = useState("");
   const [answer1, setAnswer1] = useState("");
-  const [answer2, setAnswer2] = useState(null);
+  const [answer2, setAnswer2] = useState("");
   const [option1, setOption1] = useState("");
   const [option2, setOption2] = useState("");
   const [option3, setOption3] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [imageBlob, setImageBlob] = useState("");
   const [imageFile, setImageFile] = useState(null);
+  const [imageBlob, setImageBlob] = useState(null);
+  const [defaultImage, setDefaultImage] = useState("defaultQuestion.png");
   const [value, setValue] = useState(0);
   const [oldValue, setOldValue] = useState(0);
   const [isUpdate, setIsUpdate] = useState(true);
@@ -44,35 +46,45 @@ const Question = ({ questionContent, type, saveImage }) => {
 
   const onHandleSubmitQuestion = (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      const questionDetails = {
-        position,
-        content1: question,
-        content2: partialQuestion1,
-        content3: partialQuestion2,
-        answer1,
-        answer2,
-        option1,
-        option2,
-        option3,
-        value: +value,
-        imageUrl,
-        imageBlob,
-        questionType: type,
-      };
-      if (isUpdate) {
-        dispatch(updateQuestion(questionDetails));
-      } else {
-        dispatch(addQuestion(questionDetails));
+    const isValid = validateForm();
+    if (isValid) {
+      var questionForm = new FormData();
+      questionForm.append("id", id);
+      questionForm.append("content1", question);
+      questionForm.append("content2", partialQuestion1);
+      questionForm.append("content3", partialQuestion2);
+      questionForm.append("answer1", answer1);
+      questionForm.append("option1", option1);
+      questionForm.append("option2", option2);
+      questionForm.append("option3", option3);
+      questionForm.append("value", +value);
+      questionForm.append("questionType", type);
+      questionForm.append("idTest", testDetails.id);
+
+      if (type === "check" || type === "blank") {
+        questionForm.append("answer2", answer2);
       }
-      if (imageFile) {
-        saveImage({ file: imageFile, name: imageUrl });
+
+      if (type === "image") {
+        questionForm.append("imageUrl", imageUrl);
+        questionForm.append("imageFile", imageFile);
+        questionForm.append("currentImage", defaultImage);
+      }
+
+      if (isUpdate) {
+        dispatch(updateQuestion(questionForm, index));
+      } else {
+        dispatch(addQuestion(questionForm));
+        const test = { ...testDetails };
+        test.quantityOfQuestions += 1;
+        dispatch(updateTestQuantity(test));
       }
       initialForm();
     }
   };
 
   const initialForm = () => {
+    setId(0);
     setQuestion("");
     setPartialQuestion1("");
     setPartialQuestion2("");
@@ -81,9 +93,10 @@ const Question = ({ questionContent, type, saveImage }) => {
     setOption1("");
     setOption2("");
     setOption3("");
-    setImageBlob("");
-    setImageUrl("");
+    setImageUrl(null);
     setImageFile(null);
+    setImageBlob(null);
+    setDefaultImage("defaultQuestion.png");
     setOldValue(0);
     setValue(0);
     setIsUpdate(false);
@@ -126,8 +139,7 @@ const Question = ({ questionContent, type, saveImage }) => {
       updateErrors[4] = true;
       isValid = false;
     }
-
-    if (!required(answer2) && (type === "check" || type === "blank")) {
+    if ((type === "check" || type === "blank") && !required(answer2)) {
       updateErrors[5] = true;
       isValid = false;
     }
@@ -140,7 +152,7 @@ const Question = ({ questionContent, type, saveImage }) => {
       isValid = false;
     }
 
-    if (imageFile === null && type === "image") {
+    if (imageUrl === "" && type === "image") {
       updateErrors[7] = true;
       isValid = false;
     }
@@ -152,26 +164,26 @@ const Question = ({ questionContent, type, saveImage }) => {
   const showPreview = (e) => {
     if (e.target.files && e.target.files[0]) {
       let image = e.target.files[0];
-      console.log(image);
       let fileName = Date.now() + "." + image.name.split(".")[1];
       const localImageUrl = URL.createObjectURL(image);
-      setImageBlob(localImageUrl);
       setImageUrl(fileName);
       setImageFile(image);
+      setImageBlob(localImageUrl);
+      e.target.value = "";
     } else {
-      setImageUrl("");
-      setImageFile("");
-      setImageBlob("");
+      setImageUrl(null);
+      setImageFile(null);
+      setImageBlob(null);
     }
   };
 
   useEffect(() => {
     initialForm();
-  }, [type]);
+  }, [type, questions.length]);
 
   useEffect(() => {
     if (questionContent !== null) {
-      setPosition(questionContent.position);
+      setId(questionContent.id);
       setQuestion(questionContent.content1);
       setAnswer1(questionContent.answer1);
       setOption1(questionContent.option1);
@@ -182,8 +194,7 @@ const Question = ({ questionContent, type, saveImage }) => {
       setIsUpdate(true);
       if (type === "image") {
         setImageUrl(questionContent.imageUrl);
-        setImageBlob(questionContent.imageBlob);
-        setImageFile(questionContent.imageFile);
+        setDefaultImage(questionContent.imageUrl);
       } else if (type === "check" || type === "blank") {
         setAnswer2(questionContent.answer2);
       } else if (type === "blank") {
@@ -193,17 +204,10 @@ const Question = ({ questionContent, type, saveImage }) => {
     } else {
       if (type === "check" || type === "blank") {
         setAnswer2("");
-
         setIsUpdate(false);
       }
     }
   }, [questionContent]);
-
-  useEffect(() => {
-    if (!isUpdate) {
-      setPosition(questions.length + 1);
-    }
-  }, [questions.length, isUpdate]);
 
   return (
     <form className="question">
@@ -330,9 +334,9 @@ const Question = ({ questionContent, type, saveImage }) => {
           <label>Image: </label>
           <InputImage
             click={showPreview}
-            blob={imageBlob}
-            defaultImg="defaultQuestion.png"
+            defaultImg={defaultImage}
             isQuestion={true}
+            blob={imageBlob}
             isEmpty={errors[7]}
           />
           <span>{errors[7] && <Error error="Must add file" />}</span>

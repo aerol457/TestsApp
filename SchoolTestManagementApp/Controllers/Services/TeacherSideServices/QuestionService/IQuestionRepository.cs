@@ -8,11 +8,12 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.QuestionServi
 {
     public interface IQuestionRepository
     {
-        Task<int> AddQuestion(Question question);
-        Task<Question> UpdateQuestion(int idQuestion, Question question);
+        Task<Question> AddQuestion(Question question);
+        void UpdateQuestion(Question question);
         Task<bool> DeleteQuestion(int idQuestion);
         Question GetQuestionById(int idQuestion);
         void GetAllQuestionByIdTest(int idTest);
+        List<QuestionOption> GetQuestionOptions(int idQuestion);
         Task<int> CheckQuestionsTest(Test test, int idStudent);
     }
 }

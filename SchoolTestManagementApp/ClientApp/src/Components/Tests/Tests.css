@@ -87,8 +87,27 @@
   height: 20vh;
 }
 
+.test-list-header {
+  display: flex;
+  justify-content: space-between;
+}
+
 .test-title {
   text-transform: capitalize;
+}
+
+.test-archive-btn {
+  display: none;
+}
+
+.test-archive-btn-visible {
+  display: block;
+}
+
+.test-archive-btn-enabled {
+  display: block;
+  color: red;
+  pointer-events: none;
 }
 
 .btn-test {

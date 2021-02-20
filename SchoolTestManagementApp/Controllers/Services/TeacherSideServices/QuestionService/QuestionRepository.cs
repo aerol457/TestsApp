@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using SchoolTestManagementApp.Controllers.Services.utils;
 using SchoolTestManagementApp.Models;
 using System;
 using System.Collections.Generic;
@@ -10,12 +12,15 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.QuestionServi
     public class QuestionRepository : IQuestionRepository
     {
         private readonly ExamDataContext context;
-        public QuestionRepository(ExamDataContext context)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public QuestionRepository(ExamDataContext context, IWebHostEnvironment webHostEnvironment)
         {
             this.context = context;
+            this._webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<int> AddQuestion(Question question)
+        public async Task<Question> AddQuestion(Question question)
         {
             try
             {
@@ -29,13 +34,18 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.QuestionServi
                 {
                     AddOption(question.Answer2, question.Id, 2);
                 }
+                if(question.QuestionType  == "image" && question.ImageFile != null && question.ImageUrl != "")
+                {
+                    ImageFile saveImage = new ImageFile(_webHostEnvironment);
+                    saveImage.Save(question.ImageFile, question.ImageUrl);
+                }
                 await context.SaveChangesAsync();
-                return question.Id;
+                return question;
             }
             catch (Exception ex) 
             {
                 Console.WriteLine("Error: ", ex.Message);
-                return -1;
+                return null;
             }
         }
 
@@ -53,26 +63,44 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.QuestionServi
             context.SaveChanges();
         }
 
-        protected void GetQuestionOptions(int idQuestion)
+        public void UpdateQuestion(Question question)
         {
-            var options = context.QuestionOption.Where(q => q.IdQuestion == idQuestion).ToList();
-            foreach(var opt in options)
+            try
             {
-                context.Option.Find(opt.IdOption);
+                var distructions = GetQuestionOptions(question.Id).Where(o => o.Type == 1).ToList();
+                var answers = GetQuestionOptions(question.Id).Where(o => o.Type == 2).ToList();
+
+                UpdateOption(distructions[0].IdOption, question.Option1);
+                UpdateOption(distructions[1].IdOption, question.Option2);
+                UpdateOption(distructions[2].IdOption, question.Option3);
+                UpdateOption(answers[0].IdOption, question.Answer1);
+
+                if(question.Answer2 != null)
+                {
+                    UpdateOption(answers[1].IdOption, question.Answer2);
+                }
+
+                if (question.QuestionType == "image" && question.ImageFile != null)
+                {
+                    ImageFile image = new ImageFile(_webHostEnvironment);
+                    image.Save(question.ImageFile, question.ImageUrl);
+                    image.Remove(question.CurrentImage);
+                }
+                context.Question.Update(question);
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: ", ex.Message);
             }
         }
 
-        protected List<QuestionOption> GetQuestionAnswers(int idQuestion)
+        protected void UpdateOption(int id, string content)
         {
-            var answers = context.QuestionOption.Where(q => q.IdQuestion == idQuestion && q.Type == 2).ToList();
-            foreach(var ans in answers)
-            {
-                context.Option.Find(ans.IdOption);
-            }
-
-            return answers;
+            var option = context.Option.Find(id);
+            option.Content = content;
+            context.Option.Update(option);
         }
-
 
         public async Task<bool> DeleteQuestion(int idQuestion)
         {
@@ -81,8 +109,20 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.QuestionServi
                 var question = context.Question.FirstOrDefault(q => q.Id == idQuestion);
                 if (question != null)
                 {
+                    GetQuestionOptions(idQuestion);
+                    foreach (var optionQuestion in question.QuestionOption)
+                    {
+                        RemoveOption(optionQuestion.IdOption);
+                    }
                     context.Question.Remove(question);
                 }
+
+                if(question.QuestionType == "image")
+                {
+                    ImageFile image = new ImageFile(_webHostEnvironment);
+                    image.Remove(question.ImageUrl);
+                }
+
                 return await context.SaveChangesAsync() > 0;
             }
             catch (Exception ex)
@@ -91,28 +131,23 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.QuestionServi
                 return false;
             }
         }
-        public async Task<Question> UpdateQuestion(int idQuestion, Question question)
+
+        protected void RemoveOption(int idOption)
         {
-            try
+            var option = context.Option.Find(idOption);
+            var questionOption = context.QuestionOption.Where(q => q.IdOption == idOption).FirstOrDefault();
+            context.QuestionOption.Remove(questionOption);
+            context.Option.Remove(option);
+        }
+
+        public List<QuestionOption> GetQuestionOptions(int idQuestion)
+        {
+            var options = context.QuestionOption.Where(q => q.IdQuestion == idQuestion).ToList();
+            foreach(var opt in options)
             {
-                var oldQuestion = context.Question.FirstOrDefault(q => q.Id == idQuestion);
-                if (oldQuestion != null)
-                {
-                    oldQuestion.Content1 = question.Content1;
-                    oldQuestion.Content2 = question.Content2;
-                    oldQuestion.Content3 = question.Content3;
-                    oldQuestion.ImageUrl = question.ImageUrl;
-                    oldQuestion.Value = question.Value;
-                    await context.SaveChangesAsync();
-                    return oldQuestion;
-                }
-                return null;
+                context.Option.Find(opt.IdOption);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: ", ex.Message);
-                return null;
-            }
+            return options;
         }
 
         public Question GetQuestionById(int idQuestion)
@@ -151,7 +186,7 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.QuestionServi
             foreach(var question in test.QuestionList.ToList())
             {
                 var q = context.Question.Where(q => q.Id == question.Id).FirstOrDefault();
-                var answers = GetQuestionAnswers(q.Id);
+                var answers = GetQuestionOptions(q.Id).Where(o => o.Type == 2).ToList();
                 if (q == null)
                 {
                     isValid = false;

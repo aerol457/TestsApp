@@ -25,16 +25,12 @@ namespace SchoolTestManagementApp.Controllers
             this._serviceUser = serviceUser;
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateStudentTest([FromBody] StudentTest studentTest)
-        //{
-        //    var isSuccess= await _service.AddStudentTest(studentTest);
-        //    if (isSuccess)
-        //    {
-        //        return Ok(new { success=true,id = studentTest.Id });
-        //    }
-        //    return Json(new { success = false });
-        //}
+        [HttpPost("{idTest}")]
+        public IActionResult PublishTestToStudents([FromBody] List<int> idClassrooms, int idTest)
+        {
+            _service.PublishTest(idClassrooms, idTest);
+            return Ok();
+        }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateStudentTest(int id, [FromBody] StudentTest studentTest)
@@ -64,7 +60,7 @@ namespace SchoolTestManagementApp.Controllers
         }
 
         [HttpGet("GetTests/{id}")]
-        public IActionResult GetAllStudentTestsById(int id)
+        public IActionResult GetAllStudentTestsById(int id, [FromQuery] string userType)
         {
             var listTestStudent = _service.GetAllTests(id);
             if (listTestStudent != null)
@@ -74,8 +70,10 @@ namespace SchoolTestManagementApp.Controllers
                 {
                     var test =_serviceTest.GetTestByIdTest(studentTest.IdTest);
                     _serviceUser.GetUserById(test.IdUser);
-                    tests.Add(test);
-
+                    if ((test.IsAccess && !test.Archive)|| userType  == "teacher")
+                    {
+                        tests.Add(test);
+                    }
                 }
                 return Ok(new {success= true, tests });
             }

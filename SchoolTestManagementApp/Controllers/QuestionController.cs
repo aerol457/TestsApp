@@ -19,36 +19,28 @@ namespace SchoolTestManagementApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateQuestion([FromBody] Question question)
+        public async Task<IActionResult> Create([FromForm] Question question)
         {
-            var idQuestion = await _service.AddQuestion(question);
-            if(idQuestion != -1)
+            var addedQuestion = await _service.AddQuestion(question);
+            if(addedQuestion != null)
             {
-                return CreatedAtAction(nameof(CreateQuestion), new { id = idQuestion });
+                return Ok(new { success = true, question = addedQuestion });
             }
-            return Unauthorized();
+            return Json(new { success = false });
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateQuestion(int id, [FromBody] Question question)
+        [HttpPut]
+        public IActionResult Update([FromForm] Question question)
         {
-            var updatedQuestion = await _service.UpdateQuestion(id, question);
-            if (updatedQuestion != null)
-            {
-                return Ok(new { data = updatedQuestion});
-            }
-            return NotFound();
+            _service.UpdateQuestion(question);
+            return Ok();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteQuestion(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var isReqSuccess = await _service.DeleteQuestion(id);
-            if (isReqSuccess)
-            {
-                return Ok();
-            }
-            return NotFound();
+            return Ok(new { success = isReqSuccess});
         }
 
         [HttpGet("{id}")]

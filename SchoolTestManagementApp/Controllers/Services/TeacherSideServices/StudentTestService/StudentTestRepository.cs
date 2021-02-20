@@ -15,36 +15,38 @@ namespace SchoolTestManagementApp.Data.Services.StudentSideServices.StudentTestS
             this.context = context;
         }
 
-        public async Task<bool> PublishTest(Test test)
+        public void PublishTest(List<int> classrooms, int idTest)
         {
             try
             {
-                foreach(int idClass in test.IdClassrooms)
+                foreach(int idClass in classrooms)
                 {
-                    foreach(User s in context.User)
+                    var idClassExits = context.ClassroomTest.Where(c => c.IdTest == idTest && c.IdClassroom == idClass).FirstOrDefault(); 
+                    if(idClassExits == null)
                     {
-                        if(s.IdClassroom == idClass)
+                        foreach(User s in context.User)
                         {
-                        StudentTest student = new StudentTest();
-                            student.IdUser = s.Id;
-                            student.IdTest = test.Id;
-                            student.Grade = 0;
-                            student.IsDone = false;
-                            context.StudentTest.Add(student);
+                            if(s.IdClassroom == idClass)
+                            {
+                            StudentTest student = new StudentTest();
+                                student.IdUser = s.Id;
+                                student.IdTest = idTest;
+                                student.Grade = 0;
+                                student.IsDone = false;
+                                context.StudentTest.Add(student);
+                            }
                         }
+                        ClassroomTest classroomTest = new ClassroomTest();
+                        classroomTest.IdClassroom = idClass;
+                        classroomTest.IdTest = idTest;
+                        context.ClassroomTest.Add(classroomTest);
                     }
-                    ClassroomTest classroomTest = new ClassroomTest();
-                    classroomTest.IdClassroom = idClass;
-                    classroomTest.IdTest = test.Id;
-                    context.ClassroomTest.Add(classroomTest);
                 }
-                await context.SaveChangesAsync();
-                return true;
+                context.SaveChanges();
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error: ", ex.Message);
-                return false;
             }
         }
 

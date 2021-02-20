@@ -78,6 +78,14 @@ namespace SchoolTestManagementApp.Controllers
             return Json(new {errors= isValid });
         }
 
+        [HttpGet]
+        public IActionResult VerifyEmail()
+        {
+            Auth auth = new Auth(_config);
+            auth.SendVerifyEmail();
+            return Ok();
+        }
+
         [HttpGet("{id}")]
         public IActionResult GetUser(int id)
         {

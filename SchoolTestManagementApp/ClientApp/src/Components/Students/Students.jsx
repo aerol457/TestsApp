@@ -63,7 +63,7 @@ const Students = () => {
   };
 
   const handleShowModal = (studentInfo) => {
-    dispatch(getAllTestsByIdStudent(studentInfo));
+    dispatch(getAllTestsByIdStudent(studentInfo, "teacher"));
     setShowModal(true);
   };
 
@@ -75,6 +75,7 @@ const Students = () => {
   const designPageCard = () => {
     const start = perPage * position;
     const slice = students.slice(start, offset);
+    console.log(slice[0]);
     const postDataView = Object.keys(slice).map((i, index) => (
       <Card key={index} clicked={handleShowModal} studentInfo={slice[i]} />
     ));

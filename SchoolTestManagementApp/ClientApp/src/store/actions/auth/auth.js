@@ -1,5 +1,5 @@
 import axios from "axios";
-import { initTest, initGeneral, clearAll } from "../index";
+import { resetTest, initGeneral, clearAll } from "../index";
 
 import * as actionTypes from "./actionTypes";
 
@@ -117,7 +117,7 @@ export const authLogout = () => {
   localStorage.removeItem("state");
   return (dispatch) => {
     dispatch(logout());
-    dispatch(initTest());
+    dispatch(resetTest());
     dispatch(initGeneral());
     dispatch(clearAll());
   };
@@ -169,5 +169,14 @@ const setProfileSuccess = (details) => {
   return {
     type: actionTypes.SET_USER_DETAILS,
     data: details,
+  };
+};
+
+export const sendVerifyMail = (email) => {
+  return (dispatch) => {
+    axios
+      .get("https://localhost:44356/api/User")
+      .then((res) => {})
+      .catch();
   };
 };

@@ -5,7 +5,7 @@ import { FaRegQuestionCircle } from "react-icons/fa";
 import "./DesignTest.css";
 import Settings from "./Options/Settings/Settings";
 import Questions from "./Options/Questions/Questions";
-import Publish from "./Options/Publish/Publish";
+import Publish from "./Options/PublishClass/PublishClass";
 import Overview from "./Options/Overview/Overview";
 import uploadIcon from "../../../assets/upload.png";
 import uploadWhiteIcon from "../../../assets/upload-white.png";
@@ -14,29 +14,7 @@ import overviewWhiteIcon from "../../../assets/overview-white.png";
 import { TestDesignDashContext } from "../../../context/TestDesignDashContext";
 
 const DesignTest = () => {
-  const [questionImages, setQuestionImages] = useState([]);
   const testDesignDashContext = useContext(TestDesignDashContext);
-
-  const handleSaveImages = (imageFile) => {
-    const updateImages = [...questionImages];
-    console.log("1");
-    updateImages.push(imageFile);
-    console.log(updateImages);
-    setQuestionImages(updateImages);
-    // localStorage.setItem("images", updateImages);
-  };
-
-  // useEffect(() => {
-  //   console.log("render");
-  //   if (questionImages.length === 0) {
-  //     const images = localStorage.getItem("images");
-  //     console.log("local-images", images);
-  //     setQuestionImages(images);
-  //   }
-  //   return () => {
-  //     console.log("unmount");
-  //   };
-  // }, []);
 
   return (
     <div className="test-design">
@@ -133,11 +111,11 @@ const DesignTest = () => {
           {testDesignDashContext.stateDashboard === "settings" ? (
             <Settings />
           ) : testDesignDashContext.stateDashboard === "questions" ? (
-            <Questions saveImages={handleSaveImages} />
+            <Questions />
           ) : testDesignDashContext.stateDashboard === "publish" ? (
             <Publish />
           ) : (
-            <Overview images={questionImages} />
+            <Overview />
           )}
         </div>
       </div>

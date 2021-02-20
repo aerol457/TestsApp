@@ -20,7 +20,7 @@ namespace SchoolTestManagementApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TestController: Controller
+    public class TestController : Controller
     {
         private IQuestionRepository _serviceQuestion;
         private ITestRepository _serviceTest;
@@ -30,12 +30,12 @@ namespace SchoolTestManagementApp.Controllers
         private ITeacherClassRepository _serviceTeacherClass;
         private IProfessionRepository _serviceProfession;
         private readonly IWebHostEnvironment webHostEnvironment;
-        public TestController(IQuestionRepository serviceQuestion, ITestRepository serviceTest, IWebHostEnvironment hostEnvironment, 
-                                IUserRepository serviceUser, IStudentTestRepository serviceStudentTest, 
+        public TestController(IQuestionRepository serviceQuestion, ITestRepository serviceTest, IWebHostEnvironment hostEnvironment,
+                                IUserRepository serviceUser, IStudentTestRepository serviceStudentTest,
                                     IClassroomTestRepository serviceClassroomTest, ITeacherClassRepository serviceTeacherClass, IProfessionRepository serviceProfession)
         {
             this._serviceQuestion = serviceQuestion;
-            this._serviceUser= serviceUser;
+            this._serviceUser = serviceUser;
             this._serviceTest = serviceTest;
             this._serviceStudentTest = serviceStudentTest;
             this._serviceClassroomTest = serviceClassroomTest;
@@ -57,17 +57,30 @@ namespace SchoolTestManagementApp.Controllers
 
         [HttpGet("[action]/{idTest}")]
         public IActionResult GetFullTest(int idTest)
-         {
+        {
             var test = _serviceTest.GetTestByIdTest(idTest);
             if (test != null)
             {
-                _serviceQuestion.GetAllQuestionByIdTest(test.Id);
+                _serviceQuestion.GetAllQuestionByIdTest(idTest);
+                foreach (var q in test.Question)
+                {
+                    var distractions = _serviceQuestion.GetQuestionOptions(q.Id).Where(o => o.Type == 1).ToList();
+                    var answers = _serviceQuestion.GetQuestionOptions(q.Id).Where(o => o.Type == 2).ToList();
+                    q.Option1 = distractions[0].IdOptionNavigation.Content;
+                    q.Option2 = distractions[1].IdOptionNavigation.Content;
+                    q.Option3 = distractions[2].IdOptionNavigation.Content;
+                    q.Answer1 = answers[0].IdOptionNavigation.Content;
+                    if (q.QuestionType == "check" || q.QuestionType == "blank")
+                    {
+                        q.Answer2 = answers[1].IdOptionNavigation.Content;
+                    }
+                }
                 _serviceUser.GetUserById(test.IdUser);
                 var assignClassrooms = _serviceClassroomTest.GetClassroomsByIdTest(test.Id);
                 var classrooms = _serviceTeacherClass.GetClassroomsByIdUser(test.IdUser);
-                return Ok(new {success = true, test, classrooms, assignClassrooms });
+                return Ok(new { success = true, test, classrooms, assignClassrooms });
             }
-                return Json(new {success = false});
+            return Json(new { success = false });
         }
 
         [HttpGet("[action]/{idTeacher}")]
@@ -76,7 +89,7 @@ namespace SchoolTestManagementApp.Controllers
             var teacher = _serviceUser.GetUserById(idTeacher);
             var classrooms = _serviceTeacherClass.GetClassroomsByIdUser(idTeacher);
             var profession = _serviceProfession.getProfessionById(teacher.Id);
-            return Json(new { profession, classrooms});
+            return Json(new { profession, classrooms });
         }
 
         [HttpGet("all-tests/{idTeacher}")]
@@ -85,80 +98,60 @@ namespace SchoolTestManagementApp.Controllers
             List<Test> tests = _serviceTest.GetTestsByIdTeacher(idTeacher);
             if (tests != null)
             {
-                return Ok(new { success= true, tests });
+                return Ok(new { success = true, tests });
             }
             return Json(new { success = false });
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTest([FromBody] Test test)
+        public async Task<IActionResult> Create([FromBody] Test test)
         {
-            var idTest = await _serviceTest.AddTest(test);
-            if (idTest != -1)
+            var addedTest = await _serviceTest.AddTest(test);
+            if (addedTest != null)
             {
-                foreach (var question in test.QuestionList)
-                {
-                    question.IdTest = idTest;
-                    await _serviceQuestion.AddQuestion(question);
-                }
-                foreach (var file in test.Images)
-                {
-                    SaveImage saveImage = new SaveImage(webHostEnvironment);
-                    saveImage.Save(file, file.FileName);
-                }
-                if (test.IdClassrooms.Count != 0)
-                {
-                    await _serviceStudentTest.PublishTest(test);
-                }
-                return Ok(new { success= true, idTest });
+                return Ok(new { success = true, test = addedTest });
             }
             return Json(new { success = false });
         }
 
-        //[HttpPost("[action]")]
-        //public IActionResult CreateQuestionImages([FromForm]List<IFormFile> images)
-        //{
-        //   foreach(var file in images)
-        //    {
-        //        SaveImage saveImage = new SaveImage(webHostEnvironment);
-        //        saveImage.Save(file, file.FileName);
-        //    }
-        //    return Ok();
-        //}
-
-        //[HttpPost("[action]")]
-        //public async Task<IActionResult> PublishTest([FromBody] StudentTest studentTest)
-        //{
-        //    bool isSuccess = await _serviceStudentTest.PublishTest(studentTest);
-        //    if (isSuccess)
-        //    {
-        //        return Ok();
-        //    }
-        //    return NotFound();
-        //}
-
         [HttpPost("[action]/{idStudent}")]
-        public async Task<IActionResult> CheckTest([FromBody] Test test, [FromRoute]int idStudent)
+        public async Task<IActionResult> CheckTest([FromBody] Test test, [FromRoute] int idStudent)
         {
             int grade = await _serviceQuestion.CheckQuestionsTest(test, idStudent);
             if (grade != -1)
             {
-                return Ok(new { success= true, grade });
+                return Ok(new { success = true, grade });
             }
             return Json(new { success = false });
 
         }
 
-        [HttpPut("{idTest}")]
-        public async Task<IActionResult> UpdateTest(int idTest, [FromBody] Test test)
+        [HttpPut]
+        public IActionResult Update([FromBody] Test test)
         {
-            var updatedTest = await _serviceTest.UpdateTest(idTest, test);
-            if (updatedTest != null)
-            {
-                return Ok(new {success = false, data = updatedTest });
-            }
-            return Json(new { success = false });
+            _serviceTest.UpdateTest(test);
+            return Ok();
+        }
 
+        [HttpPut("[action]/{idTest}")]
+        public IActionResult UpdateQuantityOfQuestions([FromBody] Test test , int idTest)
+        {
+            _serviceTest.UpdateQuantity(idTest, test.QuantityOfQuestions);
+            return Ok();
+        }
+
+        [HttpPut("[action]/{idTest}")]
+        public IActionResult TestToArchive(int idTest)
+        {
+            _serviceTest.PostTestToArchive(idTest);
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var isReqSuccess = await _serviceTest.RemoveTest(id);
+            return Ok(new { success = isReqSuccess });
         }
     }
 }

@@ -14,6 +14,8 @@ import {
   resetErrorTest,
   initialNewTest,
   startTest,
+  clearTests,
+  archiveTest,
 } from "../../store/actions/index";
 import { TestDesignDashContext } from "../../context/TestDesignDashContext";
 
@@ -48,17 +50,31 @@ const Tests = () => {
     designList(slice);
   };
 
+  const handleUpdateTest = (e, id) => {
+    e.stopPropagation();
+    dispatch(getTestById(id));
+    dispatch(clearTests());
+    dashboardContext.viewTestDesign();
+    testDesignDashContext.viewSettings();
+  };
+
   const handleViewTest = (e, id) => {
     e.stopPropagation();
     dispatch(getTestById(id));
-    testDesignDashContext.viewSettings();
+    dispatch(clearTests());
     dashboardContext.viewTestDesign();
+    testDesignDashContext.viewOverview();
   };
 
   const handleStartTest = (e, id) => {
     e.stopPropagation();
     dispatch(startTest(id));
     dashboardContext.viewTest();
+  };
+
+  const handleArchiveTest = (e, idTest) => {
+    e.stopPropagation();
+    dispatch(archiveTest(idTest));
   };
 
   const designList = (slice) => {
@@ -75,6 +91,19 @@ const Tests = () => {
           isView = false;
         }
       }
+      let button = (
+        <Button outlined clicked={(e) => handleViewTest(e, slice[i].id)}>
+          OVERVIEW
+        </Button>
+      );
+      if (!slice[i].isAccess && !slice[i].archive) {
+        button = (
+          <Button outlined clicked={(e) => handleUpdateTest(e, slice[i].id)}>
+            UPDATE
+          </Button>
+        );
+      }
+
       return (
         <li
           className={
@@ -85,7 +114,21 @@ const Tests = () => {
           key={i}
           onClick={() => onToggleTestDetails(i, slice)}
         >
-          <h4 className="test-title">{slice[i].name}</h4>
+          <div className="test-list-header">
+            <h4 className="test-title">{slice[i].name}</h4>
+            <span
+              className={
+                slice[i].show && slice[i].archive
+                  ? "test-archive-btn-enabled"
+                  : slice[i].show
+                  ? "test-archive-btn-visible"
+                  : "test-archive-btn"
+              }
+              onClick={(e) => handleArchiveTest(e, slice[i].id)}
+            >
+              Archive
+            </span>
+          </div>
           <div
             className={
               !slice[i].show
@@ -160,18 +203,13 @@ const Tests = () => {
             {isView ? (
               <div className="btn-test">
                 {userDetails.userType === "teacher" ? (
-                  <Button
-                    outlined
-                    clicked={(e) => handleViewTest(e, slice[i].id)}
-                  >
-                    VIEW TEST
-                  </Button>
+                  button
                 ) : (
                   <Button
                     outlined
                     clicked={(e) => handleStartTest(e, slice[i].id)}
                   >
-                    START TEST
+                    START
                   </Button>
                 )}
               </div>
@@ -216,7 +254,7 @@ const Tests = () => {
   };
 
   useEffect(() => {
-    if (userDetails) {
+    if (userDetails && tests.length === 0) {
       dispatch(getAllTest(userDetails));
     }
   }, [userDetails]);
@@ -234,6 +272,13 @@ const Tests = () => {
     }
     return () => clearTimeout(timer);
   }, [error]);
+
+  // useEffect(() => {
+  //   let timer = setInterval(() => {
+  //     dispatch(getAllTest(userDetails));
+  //   }, 60000);
+  //   return () => clearInterval(timer);
+  // }, []);
 
   return (
     <div className="tests-layout">

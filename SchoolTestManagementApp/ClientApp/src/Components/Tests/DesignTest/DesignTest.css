@@ -68,6 +68,7 @@
 .test-design-content {
   width: 85%;
   height: 100%;
+  position: relative;
   margin: 0 auto;
   padding: 10px;
   background-color: white;

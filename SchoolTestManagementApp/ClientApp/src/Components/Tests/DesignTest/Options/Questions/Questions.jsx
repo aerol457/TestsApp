@@ -10,8 +10,9 @@ import Button from "../../../../Core/Button/Button";
 import Notification from "../../../../Core/Notification/Notification";
 import { TestDesignDashContext } from "../../../../../context/TestDesignDashContext";
 
-const Questions = ({ saveImages }) => {
+const Questions = () => {
   const [questionType, setQuestionType] = useState("option");
+  const [index, setIndex] = useState(0);
   const [questionView, setQuestionView] = useState(null);
   const perPage = useState(6)[0];
   const [offset, setOffset] = useState(perPage);
@@ -45,8 +46,9 @@ const Questions = ({ saveImages }) => {
     }
   };
 
-  const handleViewQuestion = (question) => {
+  const handleViewQuestion = (question, index) => {
     setQuestionView(question);
+    setIndex(index);
     setQuestionType(question.questionType);
   };
 
@@ -54,7 +56,7 @@ const Questions = ({ saveImages }) => {
     const start = perPage * position;
     const slice = questions.slice(start, offset);
     const updateView = slice.map((q, i) => (
-      <Card key={i} content={q} click={handleViewQuestion} />
+      <Card key={i} content={q} click={handleViewQuestion} index={i} />
     ));
     setQuestionsView(updateView);
   };
@@ -132,7 +134,7 @@ const Questions = ({ saveImages }) => {
           <Question
             type={questionType}
             questionContent={questionView}
-            saveImage={saveImages}
+            index={index}
           />
         </div>
       </div>

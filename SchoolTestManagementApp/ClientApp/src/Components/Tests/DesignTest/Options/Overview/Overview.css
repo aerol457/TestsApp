@@ -1,6 +1,5 @@
 .overview {
   height: 100%;
-  position: relative;
 }
 
 .publish-overview-section {
@@ -39,12 +38,14 @@
 }
 
 .question-content-overview {
+  width: 100%;
   flex: 0.7;
 }
 
 .question-image-overview {
   display: flex;
   flex: 0.3;
+  padding: 0 10px;
 }
 
 .question-image-overview-content {
@@ -53,7 +54,7 @@
 }
 
 .test-overview-classes-list {
-  width: 30%;
+  width: fit-content;
   height: 7vh;
   display: grid;
   padding: 0;
@@ -62,6 +63,13 @@
   overflow: auto;
   grid-template-rows: 50% 50%;
   grid-template-columns: auto auto auto;
+  grid-gap: 10px;
+}
+
+.test-overview-classes-item {
+  padding: 5px 10px;
+  color: white;
+  background: #3d4652;
 }
 
 .overview-btn {
@@ -69,8 +77,9 @@
   position: absolute;
   right: 0;
   bottom: 0;
+  padding: 0 15px 15px 0px;
 }
 
-.overview-btn Button:last-child {
-  padding-left: 10px;
+.overview-btn Button:first-child {
+  margin-right: 10px;
 }

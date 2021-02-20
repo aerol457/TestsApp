@@ -8,11 +8,13 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TestService
 {
     public interface ITestRepository
     {
-        Task<int> AddTest(Test test);
-        Task<Test> UpdateTest(int idTest, Test test);
-        void RemoveTest(int idTest);
+        Task<Test> AddTest(Test test);
+        void UpdateTest(Test test);
+        void UpdateQuantity(int idTest,int quantity);
+        Task<bool> RemoveTest(int idTest);
         Test GetTestById (string idTest);
         Test GetTestByIdTest (int idTest);
         List<Test> GetTestsByIdTeacher (int idTeacher);
+        void PostTestToArchive (int idTest);
     }
 }

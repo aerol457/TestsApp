@@ -6,7 +6,11 @@ import Button from "../../../../Core/Button/Button";
 import Spinner from "../../../../Core/Spinner/Spinner";
 import { TestDesignDashContext } from "../../../../../context/TestDesignDashContext";
 import { DashboardContext } from "../../../../../context/DashboardContext";
-import { addTest, clearTest } from "../../../../../store/actions/index";
+import {
+  updateTests,
+  clearTest,
+  publishClassrooms,
+} from "../../../../../store/actions/index";
 
 const Overview = () => {
   const [viewClass, setViewClass] = useState(false);
@@ -19,21 +23,16 @@ const Overview = () => {
   const dispatch = useDispatch();
 
   const confirmAddTest = () => {
-    test.quantityOfQuestions = questions.length;
-    test.dateOfDistribution = new Date();
-    const idClassrooms = classrooms.map((c) => {
-      if (!c.isAssign) {
-        return;
-      }
-      return c.id;
-    });
-    dispatch(
-      addTest({
-        ...test,
-        questionList: questions,
-        idClassrooms,
-      })
-    );
+    const idClassrooms = [];
+    classrooms.forEach((c) => c.isAssign && idClassrooms.push(c.id));
+    const updateTestAccess = { ...test };
+    if (idClassrooms.length > 0) {
+      updateTestAccess.isAccess = true;
+    } else {
+      updateTestAccess.isAccess = false;
+    }
+    dispatch(updateTests(updateTestAccess));
+    dispatch(publishClassrooms(idClassrooms, test.id));
     dispatch(clearTest());
     dashboardContext.viewTests();
     testDesignDashContext.viewSettings();
@@ -49,7 +48,7 @@ const Overview = () => {
       });
       setViewClass(isView);
     }
-  }, []);
+  }, [classrooms]);
 
   return (
     <div className="overview">
@@ -76,7 +75,10 @@ const Overview = () => {
               Passing Grade: <span>{test.passingGrade}</span>
             </p>
             <p>
-              Submission Date: <span>{test.dateOfSubmission}</span>
+              Submission Date:{" "}
+              {test.dateOfSubmission && (
+                <span>{test.dateOfSubmission.split("T")[0]}</span>
+              )}
             </p>
           </div>
         </div>
@@ -105,7 +107,7 @@ const Overview = () => {
                   <div className="question-image-overview">
                     <img
                       className="question-image-overview-content"
-                      src="./images/defaultQuestion.png"
+                      src={`./images/${q.imageUrl}`}
                       alt="question"
                     />
                   </div>
@@ -116,14 +118,18 @@ const Overview = () => {
         </ul>
       </div>
       <div className="publish-overview-section">
-        <h5>Classrooms To Publish:</h5>
+        <h5>Classrooms:</h5>
         <ul className="test-overview-classes-list">
           {viewClass ? (
             classrooms.map((c, i) => {
               if (!c.isAssign) {
                 return;
               }
-              return <li key={i}> {c.name}</li>;
+              return (
+                <li key={i} className="test-overview-classes-item">
+                  {c.name}
+                </li>
+              );
             })
           ) : (
             <p>No classes were selected</p>
@@ -131,10 +137,16 @@ const Overview = () => {
         </ul>
       </div>
       <div className="overview-btn">
-        <Button clicked={testDesignDashContext.viewPublish}>BACK</Button>
-        <Button clicked={confirmAddTest}>
-          {loading ? <Spinner /> : "CONFIRM"}
-        </Button>
+        {test.isAccess ? (
+          <Button clicked={dashboardContext.viewTests}>EXIT</Button>
+        ) : (
+          <>
+            <Button clicked={testDesignDashContext.viewPublish}>BACK</Button>
+            <Button clicked={confirmAddTest}>
+              {loading ? <Spinner /> : "CONFIRM"}
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );

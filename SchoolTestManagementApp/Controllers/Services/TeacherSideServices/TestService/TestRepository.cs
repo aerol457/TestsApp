@@ -14,53 +14,43 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TestService
             this.context = context;        
         }
 
-        public async Task<int> AddTest(Test test)
+        public async Task<Test> AddTest(Test test)
         {
             try
             {
                 Random rnd = new Random();
                 int id = rnd.Next(100000, 999999);
                 int number = rnd.Next(1, 9);
+                test.DateOfDistribution = DateTime.Today;
                 test.IdTest = id.ToString() + number.ToString();
                 context.Test.Add(test);
                 await context.SaveChangesAsync();
-                return test.Id;
+                return test;
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return -1;
+                return null;
             }
         }
-        public async Task<Test> UpdateTest(int idTest, Test test)
+
+        public void UpdateTest(Test test)
         {
             try
             {
-                var oldTest = context.Test.FirstOrDefault(t => t.Id == idTest);
-                if (oldTest != null)
-                {
-                    oldTest.IdUser = test.IdUser;
-                    oldTest.Name = test.Name;
-                    oldTest.QuantityOfQuestions = test.QuantityOfQuestions;
-                    oldTest.Time = test.Time;
-                    oldTest.ProfessionName = test.ProfessionName;
-                    oldTest.DateOfSubmission = test.DateOfSubmission;
-                    oldTest.DateOfDistribution= test.DateOfDistribution;
-                    await context.SaveChangesAsync();
-                    return oldTest;
-                }
-                return null;
+                context.Test.Update(test);
+                context.SaveChanges();
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error: ", ex.Message);
-                return null;
             }
         }
-        public void RemoveTest(int idTest)
+
+        public async Task<bool> RemoveTest(int idTest)
         {
             Test test = context.Test.FirstOrDefault(t => t.Id == idTest);
             context.Test.Remove(test);
-            context.SaveChanges();
+            return await context.SaveChangesAsync() > 0;
         }
 
         public Test GetTestById(string idTest)
@@ -99,6 +89,25 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TestService
             {
                 Console.WriteLine("Error: ", ex.Message);
                 return null;
+            }
+        }
+
+        public void UpdateQuantity(int idTest, int quantity)
+        {
+            var test = context.Test.Find(idTest);
+            test.QuantityOfQuestions = quantity;
+            context.Test.Update(test);
+            context.SaveChanges();
+        }
+
+        public void PostTestToArchive(int idTest)
+        {
+            var test = context.Test.Find(idTest);
+            if (test != null)
+            {
+                test.Archive = true;
+                context.Test.Update(test);
+                context.SaveChanges();
             }
         }
     }

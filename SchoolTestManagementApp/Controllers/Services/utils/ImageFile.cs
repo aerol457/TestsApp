@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace SchoolTestManagementApp.Controllers.Services.utils
 {
-    public class SaveImage
+    public class ImageFile
     {
         private readonly IWebHostEnvironment webHostEnvironment;
-        public SaveImage(IWebHostEnvironment hostEnvironment)
+        public ImageFile(IWebHostEnvironment hostEnvironment)
         {
             this.webHostEnvironment = hostEnvironment;
         }
@@ -23,6 +23,15 @@ namespace SchoolTestManagementApp.Controllers.Services.utils
             var imagePath = Path.Combine(webHostEnvironment.ContentRootPath, "ClientApp", "public", "Images", fileName);
             var fileStream = new FileStream(imagePath, FileMode.Create);
             await imageFile.CopyToAsync(fileStream);
+        }
+
+        [NonAction]
+        public void Remove(string fileName)
+        {
+            var imagePath = Path.Combine(webHostEnvironment.ContentRootPath, "ClientApp", "public", "Images", fileName);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            File.Delete(imagePath);
         }
     }
 }

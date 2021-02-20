@@ -20,6 +20,7 @@ import {
   getAllClassrooms,
   actionAuthSuccess,
   authFail,
+  sendVerifyMail,
 } from "../../../store/actions/index";
 
 const SignUp = ({ stateAuth, updateState }) => {
@@ -33,7 +34,7 @@ const SignUp = ({ stateAuth, updateState }) => {
   const [address, setAddress] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
-  const [imageBlob, setImageBlob] = useState("");
+  const [imageBlob, setImageBlob] = useState(null);
   const [profession, setProfession] = useState(1);
   const [idClassroom, setIdClassroom] = useState(1);
   const [isStudent, setIsStudent] = useState(false);
@@ -57,27 +58,28 @@ const SignUp = ({ stateAuth, updateState }) => {
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
-    updateState("signup");
-    const isValid = validateForm();
-    if (isValid) {
-      dispatch(
-        signUp({
-          idCard: idCard,
-          name: name.toLowerCase(),
-          email: email.toLowerCase(),
-          phoneNumber: phoneNumber,
-          passwordHash: password,
-          confirmPassword: confirmPassword,
-          city: city.toLowerCase(),
-          address: address.toLowerCase(),
-          idProfession: profession,
-          idClassroom: idClassroom,
-          image: imageFile,
-          imageUrl: imageUrl,
-          userType: isStudent ? "student" : "teacher",
-        })
-      );
-    }
+    // updateState("signup");
+    // const isValid = validateForm();
+    // if (isValid) {
+    //   dispatch(
+    //     signUp({
+    //       idCard: idCard,
+    //       name: name.toLowerCase(),
+    //       email: email.toLowerCase(),
+    //       phoneNumber: phoneNumber,
+    //       passwordHash: password,
+    //       confirmPassword: confirmPassword,
+    //       city: city.toLowerCase(),
+    //       address: address.toLowerCase(),
+    //       idProfession: profession,
+    //       idClassroom: idClassroom,
+    //       image: imageFile,
+    //       imageUrl: imageUrl,
+    //       userType: isStudent ? "student" : "teacher",
+    //     })
+    //   );
+    // }
+    dispatch(sendVerifyMail());
   };
 
   const validateForm = () => {
@@ -184,11 +186,7 @@ const SignUp = ({ stateAuth, updateState }) => {
         <div className="signup-user-type-title">
           <h5>{isStudent ? "STUDENT" : "TEACHER"}</h5>
         </div>
-        <InputImage
-          blob={imageBlob}
-          defaultImg="profileDefault.png"
-          click={showPreview}
-        />
+        <InputImage blob={imageBlob} click={showPreview} />
         <div>
           <div className="signup-tuggle">
             <Switcher clicked={setIsStudent} position={isStudent} />

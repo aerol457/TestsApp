@@ -1,22 +1,25 @@
 export {
-  getAllTest,
-  findMyTests,
+  initialNewTest,
+  resetTest,
+  clearTests,
+  clearTest,
+  addTest,
+  updateTest,
+  updateTests,
+  updateTestQuantity,
   addQuestion,
   updateQuestion,
-  updateViewQuestion,
-  orderViewQuestion,
   deleteQuestion,
-  addTest,
-  clearTest,
+  setClassrooms,
+  getAllTest,
+  findMyTests,
   getTestById,
-  initTest,
+  startTest,
   insertUserAnswer,
   finishTest,
   resetErrorTest,
-  setTestDetails,
-  insertTestClassrooms,
-  initialNewTest,
-  startTest,
+  publishClassrooms,
+  archiveTest,
 } from "./test/test";
 
 export {
@@ -34,6 +37,7 @@ export {
   getUserProfile,
   actionAuthSuccess,
   authFail,
+  sendVerifyMail,
 } from "./auth/auth";
 
 export {

@@ -24,14 +24,10 @@ namespace SchoolTestManagementApp.Models
         public int IdUser { get; set; }
         public int PassingGrade { get; set; }
         public string ProfessionName { get; set; }
+        public bool IsAccess { get; set; }
+        public bool Archive { get; set; }
         [NotMappedAttribute]
         public List<Question> QuestionList { get; set; }
-        [NotMappedAttribute]
-        public List<IFormFile> Images { get; set; }
-        [NotMappedAttribute]
-        public int IdStudent { get; set; }
-        [NotMapped]
-        public List<int> IdClassrooms { get; set; }
 
         public virtual User IdUserNavigation { get; set; }
         public virtual ICollection<ClassroomTest> ClassroomTest { get; set; }

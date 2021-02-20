@@ -73,7 +73,7 @@ const setStudents = (students) => {
   };
 };
 
-export const getAllTestsByIdStudent = (student) => {
+export const getAllTestsByIdStudent = (student, userType) => {
   const token = localStorage.getItem("token");
   return (dispatch) => {
     if (!token) {
@@ -81,7 +81,11 @@ export const getAllTestsByIdStudent = (student) => {
     }
     dispatch(actionStart());
     axios
-      .get(`https://localhost:44356/api/StudentTest/GetTests/${student.id}`)
+      .get(`https://localhost:44356/api/StudentTest/GetTests/${student.id}`, {
+        params: {
+          userType,
+        },
+      })
       .then((res) => {
         if (res.data.success === false) {
           return dispatch(actionFail());

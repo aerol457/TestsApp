@@ -8,7 +8,7 @@ namespace SchoolTestManagementApp.Data.Services.StudentSideServices.StudentTestS
 {
     public interface IStudentTestRepository
     {
-        Task<bool> PublishTest(Test test);
+        void PublishTest(List<int> idClassrooms, int idTest);
         Task<bool> UpdateStudentTest(int idStudentTest, StudentTest studentTest);
         Task<bool> DeleteStudentTest(int idStudentTest);
         StudentTest GetTest(int idStudent);

@@ -41,7 +41,7 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherServic
                 user.PasswordSalt = salt;
                 user.PasswordHash = hash;
                 user.DateJoined = DateTime.Now;
-                SaveImage image = new SaveImage(webHostEnvironment);
+                ImageFile image = new ImageFile(webHostEnvironment);
                 image.Save(user.ImageFile, user.ImageUrl);
                 _context.User.Add(user);
                 await _context.SaveChangesAsync();

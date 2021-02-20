@@ -1,6 +1,5 @@
 import axios from "axios";
 import * as actionTypes from "../../actions/test/actionsTypes";
-import { authLogout } from "../index";
 
 const actionStart = () => {
   return {
@@ -19,9 +18,9 @@ export const resetErrorTest = () => {
   };
 };
 
-export const initTest = () => {
+export const resetTest = () => {
   return {
-    type: actionTypes.INIT_TEST,
+    type: actionTypes.RESET_TEST,
   };
 };
 
@@ -29,6 +28,265 @@ const actionFail = (error) => {
   return {
     type: actionTypes.ACTION_FAIL_TEST,
     error: error,
+  };
+};
+
+export const initialSearchTest = () => {
+  return {
+    type: actionTypes.INITIAL_SEARCH_TEST,
+  };
+};
+
+export const clearTest = () => {
+  return {
+    type: actionTypes.CLEAR_TEST,
+  };
+};
+
+export const clearTests = () => {
+  return {
+    type: actionTypes.CLEAR_TESTS,
+  };
+};
+
+export const initialNewTest = () => {
+  const idUser = localStorage.getItem("idUser");
+  return (dispatch) => {
+    dispatch(actionStart());
+    axios
+      .get(`https://localhost:44356/api/Test/GetInitialTest/${idUser}`)
+      .then((res) => {
+        dispatch(
+          setInitTest({
+            quantityOfQuestions: 0,
+            grade: 0,
+            professionName: res.data.profession.name.toLowerCase(),
+          })
+        );
+        const classrooms = res.data.classrooms.map((c) => {
+          return { ...c, isAssign: false };
+        });
+        dispatch(setClassrooms(classrooms));
+        dispatch(clearTests());
+        dispatch(actionTestSuccess());
+      })
+      .catch(() => dispatch(actionFail()));
+  };
+};
+
+const setInitTest = (test) => {
+  return {
+    type: actionTypes.INIT_TEST,
+    test,
+  };
+};
+
+export const addTest = (test) => {
+  return (dispatch) => {
+    const idUser = localStorage.getItem("idUser");
+    const token = localStorage.getItem("token");
+    dispatch(actionStart());
+    test.idUser = idUser;
+    axios
+      .post("https://localhost:44356/api/Test", test, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((res) => {
+        if (res.data.success === true) {
+          dispatch(setAddTest(res.data.test));
+          dispatch(actionTestSuccess());
+        }
+      })
+      .catch(() => dispatch(actionFail()));
+  };
+};
+
+const setAddTest = (test) => {
+  return {
+    type: actionTypes.ADD_TEST,
+    test,
+  };
+};
+
+export const updateTest = (test) => {
+  return (dispatch) => {
+    const token = localStorage.getItem("token");
+    dispatch(actionStart());
+    axios
+      .put("https://localhost:44356/api/Test", test, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then(() => {
+        dispatch(setUpdateTest(test));
+        dispatch(actionTestSuccess());
+      })
+      .catch(() => dispatch(actionFail()));
+  };
+};
+
+export const updateTestQuantity = (test) => {
+  return (dispatch) => {
+    const token = localStorage.getItem("token");
+    dispatch(actionStart());
+    axios
+      .put(
+        `https://localhost:44356/api/Test/UpdateQuantityOfQuestions/${test.id}`,
+        test,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      .then(() => {
+        dispatch(setUpdateTest(test));
+        dispatch(actionTestSuccess());
+      })
+      .catch(() => dispatch(actionFail()));
+  };
+};
+
+const setUpdateTest = (test) => {
+  return {
+    type: actionTypes.UPDATE_TEST,
+    test,
+  };
+};
+
+export const addQuestion = (question) => {
+  return (dispatch) => {
+    dispatch(actionStart());
+    axios
+      .post("https://localhost:44356/api/Question", question)
+      .then((res) => {
+        if (res.data.success === true) {
+          dispatch(setAddQuestion(res.data.question));
+          dispatch(actionTestSuccess());
+        }
+      })
+      .catch(() => dispatch(actionFail()));
+  };
+};
+
+const setAddQuestion = (question) => {
+  return {
+    type: actionTypes.ADD_QUESTION,
+    question,
+  };
+};
+
+export const updateQuestion = (question, index) => {
+  return (dispatch) => {
+    dispatch(actionStart());
+    axios
+      .put("https://localhost:44356/api/Question", question)
+      .then(() => {
+        const type = question.get("questionType");
+        let updateQuestion = {
+          id: question.get("id"),
+          content1: question.get("content1"),
+          content2: question.get("content2"),
+          content3: question.get("content3"),
+          answer1: question.get("answer1"),
+          option1: question.get("option1"),
+          option2: question.get("option2"),
+          option3: question.get("option3"),
+          value: +question.get("value"),
+          questionType: type,
+          idTest: question.get("idTest"),
+        };
+
+        if (type === "check" || type === "blank") {
+          updateQuestion.answer2 = question.get("answer2");
+        }
+
+        if (type === "image") {
+          updateQuestion.imageUrl = question.get("imageUrl");
+        }
+
+        dispatch(setUpdateQuestion(updateQuestion, index));
+        dispatch(actionTestSuccess());
+      })
+      .catch(() => dispatch(actionFail()));
+  };
+};
+
+const setUpdateQuestion = (question, index) => {
+  return {
+    type: actionTypes.UPDATE_QUESTION,
+    question,
+    index,
+  };
+};
+
+export const deleteQuestion = (id, index) => {
+  return (dispatch) => {
+    dispatch(actionStart());
+    axios
+      .delete(`https://localhost:44356/api/Question/${id}`)
+      .then((res) => {
+        if (res.data.success === true) {
+          dispatch(setDeleteQuestion(index));
+          dispatch(actionTestSuccess());
+        }
+      })
+      .catch(() => dispatch(actionFail()));
+  };
+};
+
+const setDeleteQuestion = (index) => {
+  return {
+    type: actionTypes.DELETE_QUESTION,
+    index,
+  };
+};
+
+export const updateTests = (test) => {
+  return (dispatch) => {
+    const token = localStorage.getItem("token");
+    dispatch(actionStart());
+    axios
+      .put("https://localhost:44356/api/Test", test, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then(() => {
+        dispatch(setUpdateTests(test));
+        dispatch(actionTestSuccess());
+      })
+      .catch(() => dispatch(actionFail()));
+  };
+};
+
+const setUpdateTests = (test) => {
+  return {
+    type: actionTypes.UPDATE_TESTS,
+    test,
+  };
+};
+
+export const publishClassrooms = (classrooms, idTest) => {
+  const token = localStorage.getItem("token");
+  return (dispatch) => {
+    axios
+      .post(`https://localhost:44356/api/StudentTest/${idTest}`, classrooms, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .catch(() => dispatch(actionFail()));
+  };
+};
+
+export const setClassrooms = (classrooms) => {
+  return {
+    type: actionTypes.SET_CLASSROOMS,
+    classrooms,
   };
 };
 
@@ -89,58 +347,6 @@ export const findMyTests = (searchInput, user) => {
   };
 };
 
-export const initialSearchTest = () => {
-  return {
-    type: actionTypes.INITIAL_SEARCH_TEST,
-  };
-};
-
-export const setTestDetails = (test) => {
-  return {
-    type: actionTypes.SET_TEST_DETAILS,
-    test,
-  };
-};
-
-export const addTest = (test, files) => {
-  const formData = new FormData();
-  files.map((f) => {
-    // formData.append("images", f.imageFile, f.imageUrl);
-    formData.append("images", f.imageFile);
-  });
-  test = {
-    ...test,
-    Images: formData,
-  };
-  return (dispatch) => {
-    const idUser = localStorage.getItem("idUser");
-    const token = localStorage.getItem("token");
-    if (!token || !idUser) {
-      return dispatch(authLogout());
-    }
-    dispatch(actionStart());
-    test.idUser = idUser;
-    axios
-      .post("https://localhost:44356/api/Test", test, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      })
-      .then((res) => {
-        // axios
-        //   .post(
-        //     "https://localhost:44356/api/Test/CreateQuestionImages",
-        //     formData
-        //   )
-        //   .then((res) => {});
-        dispatch(updatedTestsState(test));
-        dispatch(clearTest());
-        dispatch(actionTestSuccess());
-      })
-      .catch(() => dispatch(actionFail()));
-  };
-};
-
 export const getTestById = (idTest) => {
   const token = localStorage.getItem("token");
   return (dispatch) => {
@@ -178,62 +384,6 @@ export const setFullTest = (test, questions, classrooms) => {
     test,
     questions,
     classrooms,
-  };
-};
-
-export const clearTest = () => {
-  return {
-    type: actionTypes.CLEAR_TEST,
-  };
-};
-
-export const updatedTestsState = (test) => {
-  return {
-    type: actionTypes.ADD_TEST,
-    data: test,
-  };
-};
-
-export const addQuestion = (question) => {
-  return {
-    type: actionTypes.ADD_QUESTION,
-    data: question,
-  };
-};
-
-export const deleteQuestion = (id) => {
-  return {
-    type: actionTypes.DELETE_QUESTION,
-    id: id,
-  };
-};
-
-export const updateQuestion = (question) => {
-  return {
-    type: actionTypes.UPDATE_QUESTION,
-    question,
-  };
-};
-
-export const updateViewQuestion = (questionLists, id) => {
-  const updatedList = questionLists.map((q) => {
-    const updateObj = { ...q };
-    if (updateObj.position === id) {
-      updateObj.isView = true;
-    } else {
-      updateObj.isView = false;
-    }
-    return updateObj;
-  });
-  return {
-    type: actionTypes.UPDATE_VIEW_QUESTION,
-    data: updatedList,
-  };
-};
-
-export const orderViewQuestion = () => {
-  return {
-    type: actionTypes.ORDER_VIEW_QUESTION,
   };
 };
 
@@ -394,7 +544,6 @@ export const finishTest = (questions, testDetails) => {
 };
 
 const setGrade = (grade, test) => {
-  console.log(grade, test);
   return {
     type: actionTypes.FINISH_TEST,
     grade,
@@ -402,31 +551,22 @@ const setGrade = (grade, test) => {
   };
 };
 
-export const initialNewTest = () => {
-  const idUser = localStorage.getItem("idUser");
+export const archiveTest = (idTest) => {
   return (dispatch) => {
     dispatch(actionStart());
     axios
-      .get(`https://localhost:44356/api/Test/GetInitialTest/${idUser}`)
-      .then((res) => {
-        dispatch(
-          setTestDetails({
-            professionName: res.data.profession.name.toLowerCase(),
-          })
-        );
-        const classrooms = res.data.classrooms.map((c) => {
-          return { ...c, isAssign: false };
-        });
-        dispatch(insertTestClassrooms(classrooms));
+      .put(`https://localhost:44356/api/Test/TestToArchive/${idTest}`)
+      .then(() => {
+        dispatch(setArchiveTest(idTest));
         dispatch(actionTestSuccess());
       })
       .catch(() => dispatch(actionFail()));
   };
 };
 
-export const insertTestClassrooms = (classrooms) => {
+const setArchiveTest = (idTest) => {
   return {
-    type: actionTypes.ADD_TEST_CLASSROOMS,
-    classrooms,
+    type: actionTypes.ARCHIVE_TEST,
+    idTest,
   };
 };

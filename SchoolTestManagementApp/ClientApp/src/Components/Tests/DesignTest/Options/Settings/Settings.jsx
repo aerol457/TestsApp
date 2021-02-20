@@ -11,7 +11,8 @@ import {
   validDate,
 } from "../../../../../utils/validators";
 import {
-  setTestDetails,
+  addTest,
+  updateTest,
   clearTest,
   initialNewTest,
 } from "../../../../../store/actions/index";
@@ -35,21 +36,16 @@ const Settings = () => {
     e.preventDefault();
     if (validateForm()) {
       const testDetails = {
+        ...test,
         name: testName,
         time: +testTime,
         dateOfSubmission: testDateSubmitted,
         passingGrade,
       };
       if (isUpdate) {
-        dispatch(setTestDetails(testDetails));
+        dispatch(updateTest(testDetails));
       } else {
-        dispatch(
-          setTestDetails({
-            ...testDetails,
-            quantityOfQuestions: 0,
-            grade: 0,
-          })
-        );
+        dispatch(addTest(testDetails));
       }
       testDesignDashContext.viewQuestions();
     }
@@ -103,6 +99,7 @@ const Settings = () => {
       setTestName(test.name);
       setTestTime(test.time);
       setTestDateSubmitted(test.dateOfSubmission);
+      setPassingGrade(test.passingGrade);
       setIsUpdate(true);
     } else {
       setIsUpdate(false);

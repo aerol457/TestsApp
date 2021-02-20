@@ -1,0 +1,45 @@
+.publish {
+  height: 100%;
+}
+
+.publish-title {
+  padding-top: 20px;
+}
+
+.publish-list-class {
+  padding: 20px;
+}
+
+.publish-list-class-item {
+  width: 50%;
+  display: block;
+  margin: 10px 0;
+  border: 2px solid black;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.publish-list-class-item input {
+  display: none;
+}
+
+.publish-list-class-item:hover,
+.publish-list-class-item-active {
+  background-color: #3d4652;
+  border: 2px solid black;
+  color: white;
+}
+
+.publish-btn {
+  display: flex;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 0 15px 15px 0px;
+}
+
+.publish-btn Button:first-child {
+  margin-right: 10px;
+}
