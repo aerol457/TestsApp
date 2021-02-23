@@ -8,8 +8,10 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherClassS
 {
     public interface ITeacherClassRepository
     {
+        Task<TeacherClassroom> AddTeacherClassroom(int idTeacher, int idClass);
+        void RemoveTeacherClassroom(int idTeacher, int idClass);
         Task<TeacherClassroom> UpdateStudent(int idTeacherClassroom, TeacherClassroom teacherClassroom);
-        List<Classroom> GetClassroomsByIdUser(int idUser);
+        List<Classroom> GetConnectedClassroomsByIdUser(int idUser);
         List<User> GetStudentsByIdUser(int idUser);
 
     }

@@ -19,7 +19,7 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherClassS
         {
             try
             {
-                var classes = GetClassroomsByIdUser(idUser);
+                var classes = GetConnectedClassroomsByIdUser(idUser);
                 if(classes == null)
                 {
                     return null;
@@ -59,7 +59,7 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherClassS
                 return null;
             }
         }
-        public List<Classroom> GetClassroomsByIdUser(int idUser)
+        public List<Classroom> GetConnectedClassroomsByIdUser(int idUser)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherClassS
                                                                        (tc, c) => new { classroom = tc, teacherClass = c })
                                                                        .Where(ssa => ssa.teacherClass.IdUser == idUser)
                                                                        .Select(ssa => ssa.classroom).ToList();
-
+                
                 return classroomList;
             }
             catch(Exception ex)
@@ -79,6 +79,29 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherClassS
                 return null;
             }
 
+        }
+
+        public async Task<TeacherClassroom> AddTeacherClassroom(int idTeacher, int idClass)
+        {
+            var teacher = context.User.Find(idTeacher);
+            var classroom = context.Classroom.Find(idClass);
+            if(teacher != null && classroom != null)
+            {
+                var teacherClass = new TeacherClassroom();
+                teacherClass.IdClassroom = idClass;
+                teacherClass.IdUser = idTeacher;
+                context.TeacherClassroom.Add(teacherClass);
+                await context.SaveChangesAsync();
+                return teacherClass;
+            }
+            return null;
+        }
+
+        public void RemoveTeacherClassroom(int idTeacher, int idClass)
+        {
+            var teacherClass = context.TeacherClassroom.Where(tc => tc.IdClassroom == idClass && tc.IdUser == idTeacher).FirstOrDefault();
+            context.TeacherClassroom.Remove(teacherClass);
+            context.SaveChanges();
         }
     }
 }

@@ -21,7 +21,6 @@ export const initGeneral = () => {
 };
 
 export const actionFail = (error) => {
-  console.log(error);
   return {
     type: actionTypes.ACTION_FAIL_GENERAL,
     error: error,
@@ -105,5 +104,47 @@ export const setClassroom = (classroom) => {
   return {
     type: actionTypes.GET_CLASSROOM_BY_ID,
     data: classroom,
+  };
+};
+
+export const addProfession = (name) => {
+  return (dispatch) => {
+    dispatch(actionStart());
+    axios.post("https://localhost:44356/api/Profession", name).then((res) => {
+      if (res.data.success === true) {
+        dispatch(setAddProfession(res.data.profession.result));
+        dispatch(actionSuccess());
+      } else {
+        dispatch(actionFail());
+      }
+    });
+  };
+};
+
+const setAddProfession = (profession) => {
+  return {
+    type: actionTypes.ADD_PROFESSION,
+    profession,
+  };
+};
+
+export const addClassroom = (name) => {
+  return (dispatch) => {
+    dispatch(actionStart());
+    axios.post("https://localhost:44356/api/Class", name).then((res) => {
+      if (res.data.success === true) {
+        dispatch(setAddClassroom(res.data.classroom.result));
+        dispatch(actionSuccess());
+      } else {
+        dispatch(actionFail());
+      }
+    });
+  };
+};
+
+const setAddClassroom = (classroom) => {
+  return {
+    type: actionTypes.ADD_CLASSROOM,
+    classroom,
   };
 };

@@ -171,12 +171,3 @@ const setProfileSuccess = (details) => {
     data: details,
   };
 };
-
-export const sendVerifyMail = (email) => {
-  return (dispatch) => {
-    axios
-      .get("https://localhost:44356/api/User")
-      .then((res) => {})
-      .catch();
-  };
-};

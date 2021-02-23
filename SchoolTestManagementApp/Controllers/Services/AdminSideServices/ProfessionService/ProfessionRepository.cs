@@ -14,6 +14,14 @@ namespace SchoolTestManagementApp.Data.Services.AdminSideServices.ProfessionServ
             this.context = context;
         }
 
+        public async Task<Profession> Add(string name)
+        {
+            var profession = new Profession() { Name = name };
+            context.Profession.Add(profession);
+            await context.SaveChangesAsync();
+            return profession;
+        }
+
         public List<Profession> getAllProfession()
         {
             return context.Profession.ToList();

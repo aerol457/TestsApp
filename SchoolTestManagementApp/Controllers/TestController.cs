@@ -1,17 +1,14 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SchoolTestManagementApp.Controllers.Services.utils;
 using SchoolTestManagementApp.Controllers.TeacherSideServices.ClassroomTest;
 using SchoolTestManagementApp.Data.Services.AdminSideServices.ProfessionService;
+using SchoolTestManagementApp.Data.Services.AuthService;
 using SchoolTestManagementApp.Data.Services.StudentSideServices.StudentTestService;
 using SchoolTestManagementApp.Data.Services.TeacerSideServices.QuestionService;
 using SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherClassService;
-using SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherService;
 using SchoolTestManagementApp.Data.Services.TeacerSideServices.TestService;
-using SchoolTestManagementApp.Data.Services.UserService;
 using SchoolTestManagementApp.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,14 +21,14 @@ namespace SchoolTestManagementApp.Controllers
     {
         private IQuestionRepository _serviceQuestion;
         private ITestRepository _serviceTest;
-        private IUserRepository _serviceUser;
+        private IAuthRepository _serviceUser;
         private IStudentTestRepository _serviceStudentTest;
         private IClassroomTestRepository _serviceClassroomTest;
         private ITeacherClassRepository _serviceTeacherClass;
         private IProfessionRepository _serviceProfession;
         private readonly IWebHostEnvironment webHostEnvironment;
         public TestController(IQuestionRepository serviceQuestion, ITestRepository serviceTest, IWebHostEnvironment hostEnvironment,
-                                IUserRepository serviceUser, IStudentTestRepository serviceStudentTest,
+                                IAuthRepository serviceUser, IStudentTestRepository serviceStudentTest,
                                     IClassroomTestRepository serviceClassroomTest, ITeacherClassRepository serviceTeacherClass, IProfessionRepository serviceProfession)
         {
             this._serviceQuestion = serviceQuestion;
@@ -77,7 +74,7 @@ namespace SchoolTestManagementApp.Controllers
                 }
                 _serviceUser.GetUserById(test.IdUser);
                 var assignClassrooms = _serviceClassroomTest.GetClassroomsByIdTest(test.Id);
-                var classrooms = _serviceTeacherClass.GetClassroomsByIdUser(test.IdUser);
+                var classrooms = _serviceTeacherClass.GetConnectedClassroomsByIdUser(test.IdUser);
                 return Ok(new { success = true, test, classrooms, assignClassrooms });
             }
             return Json(new { success = false });
@@ -87,7 +84,7 @@ namespace SchoolTestManagementApp.Controllers
         public IActionResult GetInitialTest(int idTeacher)
         {
             var teacher = _serviceUser.GetUserById(idTeacher);
-            var classrooms = _serviceTeacherClass.GetClassroomsByIdUser(idTeacher);
+            var classrooms = _serviceTeacherClass.GetConnectedClassroomsByIdUser(idTeacher);
             var profession = _serviceProfession.getProfessionById(teacher.Id);
             return Json(new { profession, classrooms });
         }

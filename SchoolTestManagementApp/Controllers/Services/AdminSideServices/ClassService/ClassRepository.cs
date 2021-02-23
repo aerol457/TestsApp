@@ -14,6 +14,14 @@ namespace SchoolTestManagementApp.Data.Services.AdminSideServices.ClassService
             this.context = context;
         }
 
+        public async Task<Classroom> Add(string name)
+        {
+            var classroom = new Classroom() { Name = name };
+            context.Classroom.Add(classroom);
+            await context.SaveChangesAsync();
+            return classroom;
+        }
+
         public List<Classroom> getAllClass()
         {
             return context.Classroom.ToList();

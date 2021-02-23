@@ -36,7 +36,7 @@
 
   <ItemGroup>
     <None Remove="ClientApp\src\Pages\Dashboard\Dashboard.jsx~RF114db975.TMP" />
-    <None Remove="Controllers\Services\UserService\UserRepository.cs~RF25e96a9b.TMP" />
+    <None Remove="Controllers\Services\AuthService\UserRepository.cs~RF25e96a9b.TMP" />
     <None Remove="Controllers\TeacherController.cs~RF23aecb53.TMP" />
   </ItemGroup>
 

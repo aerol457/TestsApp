@@ -13,6 +13,7 @@ import testReducer from "./store/reducers/test/test";
 import generalReducer from "./store/reducers/general/general";
 import authReducer from "./store/reducers/auth/auth";
 import studentReducer from "./store/reducers/student/student";
+import adminReducer from "./store/reducers/admin/admin";
 import DashboardContextProvider from "./context/DashboardContext";
 import TestDesignDashContextProvider from "./context/TestDesignDashContext";
 import TestContextProvider from "./context/TestContext";
@@ -49,6 +50,7 @@ const rootReducer = combineReducers({
   test: testReducer,
   auth: authReducer,
   student: studentReducer,
+  admin: adminReducer,
 });
 
 const store = createStore(

@@ -21,28 +21,6 @@ namespace SchoolTestManagementApp.Controllers
             this._serviceClassTest = serviceClassTest;
         }
 
-        //[HttpGet("{idUser}")]
-        //public IActionResult GetClassrooms(int idUser)
-        //{
-        //    var classrooms = _service.GetClassroomsByIdUser(idUser);
-        //    if (classrooms != null)
-        //    {
-        //        return CreatedAtAction(nameof(GetClassrooms), new { classrooms });
-        //    }
-        //    return Unauthorized();
-        //}
-
-        //[HttpGet("[action]/{idTest}")]
-        //public IActionResult GetClassroomsAssignToTest(int idTest)
-        //{
-        //    var classrooms = _serviceClassTest.GetClassroomsByIdTest(idTest);
-        //    if (classrooms != null)
-        //    {
-        //        return CreatedAtAction(nameof(GetClassrooms), new { classrooms });
-        //    }
-        //    return Unauthorized();
-        //}
-
         [HttpGet("GetStudents/{idUser}")]
         public IActionResult GetStudentsByIdTeacher(int idUser)
         {
@@ -54,16 +32,22 @@ namespace SchoolTestManagementApp.Controllers
             return Unauthorized();
         }
 
-        //Dont use
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTeacherClass(int id, [FromBody] TeacherClassroom teacherClass)
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] User user)
         {
-            var updatedTeacher = await _service.UpdateStudent(id, teacherClass);
-            if(updatedTeacher != null)
+            var teacherClass = await _service.AddTeacherClassroom(user.Id, (int)user.IdClassroom);
+            if (teacherClass != null)
             {
-                return Ok(new { data = updatedTeacher});
+                return Ok(new { success = true, teacherClass });
             }
-            return NotFound();
+            return Json(new { success = false });
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult Remove([FromBody] User user)
+        {
+            _service.RemoveTeacherClassroom(user.Id, (int)user.IdClassroom);
+            return Ok();
         }
     }
 }

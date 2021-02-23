@@ -8,6 +8,7 @@ namespace SchoolTestManagementApp.Data.Services.AdminSideServices.ClassService
 {
     public interface IClassRepository
     {
+        Task<Classroom> Add(string name);
         List<Classroom> getAllClass();
         Classroom getClassById(int idClass);
     }

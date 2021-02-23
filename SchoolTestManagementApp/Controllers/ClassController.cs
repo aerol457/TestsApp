@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolTestManagementApp.Data.Services.AdminSideServices.ClassService;
+using SchoolTestManagementApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace SchoolTestManagementApp.Controllers
         [HttpGet]
         public IActionResult GetAllClass()
         {
-            var classes= _service.getAllClass();
+            var classes = _service.getAllClass();
             if (classes != null)
             {
                 return Ok(new { classrooms = classes });
@@ -37,6 +38,17 @@ namespace SchoolTestManagementApp.Controllers
                 return Ok(new { classroom = getClass });
             }
             return NotFound();
+        }
+
+        [HttpPost]
+        public IActionResult Create([FromBody] Classroom classroom)
+        {
+            var getClassroom = _service.Add(classroom.Name);
+            if (getClassroom != null)
+            {
+                return Ok(new { success = true, classroom = getClassroom });
+            }
+            return Json(new { success = false });
         }
     }
 

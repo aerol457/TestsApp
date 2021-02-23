@@ -28,6 +28,8 @@ export {
   getClassroomById,
   getAllClassrooms,
   initGeneral,
+  addClassroom,
+  addProfession,
 } from "./general/general";
 export {
   auth,
@@ -37,7 +39,6 @@ export {
   getUserProfile,
   actionAuthSuccess,
   authFail,
-  sendVerifyMail,
 } from "./auth/auth";
 
 export {
@@ -48,3 +49,10 @@ export {
   searchStudent,
   resetErrorStudent,
 } from "./student/student";
+
+export {
+  getInitUserClass,
+  addTeacherClass,
+  removeTeacherClass,
+  actionResetAdmin,
+} from "./admin/admin";

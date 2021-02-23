@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
-import Spinner from "../Core/Spinner/Spinner";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 import "./Tests.css";
+import Spinner from "../Core/Spinner/Spinner";
 import Button from "../Core/Button/Button";
 import Search from "../Search/Search";
 import { DashboardContext } from "../../context/DashboardContext";
@@ -116,18 +117,21 @@ const Tests = () => {
         >
           <div className="test-list-header">
             <h4 className="test-title">{slice[i].name}</h4>
-            <span
+            <div
               className={
                 slice[i].show && slice[i].archive
-                  ? "test-archive-btn-enabled"
+                  ? "test-archive-enabled"
                   : slice[i].show
-                  ? "test-archive-btn-visible"
-                  : "test-archive-btn"
+                  ? "test-archive"
+                  : "test-archive-enabled"
               }
               onClick={(e) => handleArchiveTest(e, slice[i].id)}
             >
-              Archive
-            </span>
+              <span className="test-archive-icon">
+                <RiDeleteBin6Line />
+              </span>
+              <span className="test-archive-text">Archive</span>
+            </div>
           </div>
           <div
             className={
@@ -136,6 +140,11 @@ const Tests = () => {
                 : "test-list-item-details show-details"
             }
           >
+            {slice[i].show && slice[i].archive && (
+              <div className="archive-title">
+                <span>ARCHIVED</span>
+              </div>
+            )}
             <ul>
               <li>
                 Id Test:
@@ -272,13 +281,6 @@ const Tests = () => {
     }
     return () => clearTimeout(timer);
   }, [error]);
-
-  // useEffect(() => {
-  //   let timer = setInterval(() => {
-  //     dispatch(getAllTest(userDetails));
-  //   }, 60000);
-  //   return () => clearInterval(timer);
-  // }, []);
 
   return (
     <div className="tests-layout">

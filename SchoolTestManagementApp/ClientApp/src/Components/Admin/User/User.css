@@ -1,0 +1,126 @@
+.teacher-managment-layout {
+  height: 100%;
+  padding: 6vh;
+}
+
+.teacher-managment-data {
+  width: 27vw;
+}
+
+.teacher-input-classrooms select {
+  width: 100%;
+  display: block;
+  padding: 3px;
+  border-radius: 3px;
+}
+
+.teacher-input-classrooms span {
+  display: block;
+  margin-top: 10px;
+}
+
+.teacher-managment-view {
+  padding-top: 5vh;
+  display: flex;
+}
+
+.teacher-card {
+  flex: 0.5;
+  padding: 15px;
+  border-radius: 20px;
+  border: 3px solid black;
+  text-transform: capitalize;
+}
+
+.teacher-card-top {
+  height: 11vh;
+  display: flex;
+  padding-bottom: 10px;
+}
+
+.teacher-card-top img {
+  width: 10vw;
+}
+
+.teacher-card-top-right {
+  padding-left: 2vw;
+  width: 100%;
+}
+
+.teacher-card-bottom p {
+  margin-bottom: 5px;
+}
+
+.teacher-view-change-icon {
+  flex: 0.2;
+  display: flex;
+}
+
+.teacher-view-change-icon span {
+  margin: auto;
+  font-size: 40px;
+}
+
+.teacher-view-change-icon span:hover {
+  cursor: pointer;
+  font-size: 43px;
+}
+
+.classroom-card {
+  flex: 0.3;
+  padding: 15px;
+  border: 3px solid black;
+  border-radius: 20px;
+}
+
+.classroom-card-value {
+  height: 100%;
+  display: flex;
+  border: 2px solid black;
+  background: #3d4652;
+}
+
+.classroom-card-value span {
+  margin: auto;
+  font-size: 45px;
+  color: white;
+}
+
+.teacher-management-details {
+  padding-top: 5vh;
+}
+
+.teacher-management-details ul {
+  margin-top: 20px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.teacher-management-details li,
+.student-connect-class {
+  width: 100%;
+  height: 4vh;
+  padding: 6px;
+  margin-bottom: 10px;
+  border: 2px solid black;
+  background: #3d4652;
+  color: white;
+}
+
+.teacher-management-details li span {
+  float: right;
+  cursor: pointer;
+}
+
+.classrooms-empty-list {
+  font-size: 16px;
+}
+
+.classrooms-empty-btn {
+  pointer-events: none;
+}

@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 export const DashboardContext = React.createContext({
-  stateDashboard: "tests",
+  stateDashboard: "",
   viewTests: () => {},
   viewStudents: () => {},
   viewTestDesign: () => {},
   viewTest: () => {},
+  viewGeneral: () => {},
+  viewTeacher: () => {},
+  viewStudent: () => {},
 });
 
 const DashboardContextProvider = (props) => {
@@ -33,6 +36,21 @@ const DashboardContextProvider = (props) => {
     localStorage.setItem("dashboard", "testView");
   };
 
+  const handleViewGeneral = () => {
+    setStateDashboard("general");
+    localStorage.setItem("dashboard", "general");
+  };
+
+  const handleViewTeacher = () => {
+    setStateDashboard("teacher");
+    localStorage.setItem("dashboard", "teacher");
+  };
+
+  const handleViewStudent = () => {
+    setStateDashboard("student");
+    localStorage.setItem("dashboard", "student");
+  };
+
   useEffect(() => {
     if (isAuth) {
       const dashboard = localStorage.getItem("dashboard");
@@ -49,6 +67,9 @@ const DashboardContextProvider = (props) => {
         viewTest: handleViewTest,
         viewStudents: handleViewStudents,
         viewTestDesign: handleViewDesignTest,
+        viewGeneral: handleViewGeneral,
+        viewTeacher: handleViewTeacher,
+        viewStudent: handleViewStudent,
       }}
     >
       {props.children}

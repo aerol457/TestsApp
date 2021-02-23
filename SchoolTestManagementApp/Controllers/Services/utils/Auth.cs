@@ -71,25 +71,5 @@ namespace SchoolTestManagementApp.Controllers.Services.utils
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        
-        public void SendVerifyEmail()
-        {
-            //using (MailMessage mail = new MailMessage())
-            //{
-            //    mail.From = new MailAddress("harelnahari@gmail.com"); //enter whatever email you are sending from here 
-            //    mail.To.Add("Request for Verification"); //Text box that the user enters their email address 
-            //    mail.Subject = "Email Subject"; //enter whatever subject you would like 
-            //    mail.Body = "<p> Dear ......</p> <br> <p> Enter message here </p>";
-            //    mail.IsBodyHtml = true;
-
-            //    using (SmtpClient smtp = new SmtpClient("harelnahari@gmail.com", 587)) //enter the same email that the message is sending from along with port 587
-            //    {
-            //        smtp.Credentials = new NetworkCredential("harelnahari@gmail.com", "myNala457"); //Enter email with password 
-            //        smtp.Enablessl = true;
-            //        smtp.Send(mail);
-            //    }
-
-            //}
-        }
     }
 }

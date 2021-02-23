@@ -20,7 +20,6 @@ import {
   getAllClassrooms,
   actionAuthSuccess,
   authFail,
-  sendVerifyMail,
 } from "../../../store/actions/index";
 
 const SignUp = ({ stateAuth, updateState }) => {
@@ -38,7 +37,9 @@ const SignUp = ({ stateAuth, updateState }) => {
   const [profession, setProfession] = useState(1);
   const [idClassroom, setIdClassroom] = useState(1);
   const [isStudent, setIsStudent] = useState(false);
+  const defaultImage = useState("profileDefault.png")[0];
   const [validateInputs, setValidateInputs] = useState([
+    false,
     false,
     false,
     false,
@@ -58,33 +59,42 @@ const SignUp = ({ stateAuth, updateState }) => {
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
-    // updateState("signup");
-    // const isValid = validateForm();
-    // if (isValid) {
-    //   dispatch(
-    //     signUp({
-    //       idCard: idCard,
-    //       name: name.toLowerCase(),
-    //       email: email.toLowerCase(),
-    //       phoneNumber: phoneNumber,
-    //       passwordHash: password,
-    //       confirmPassword: confirmPassword,
-    //       city: city.toLowerCase(),
-    //       address: address.toLowerCase(),
-    //       idProfession: profession,
-    //       idClassroom: idClassroom,
-    //       image: imageFile,
-    //       imageUrl: imageUrl,
-    //       userType: isStudent ? "student" : "teacher",
-    //     })
-    //   );
-    // }
-    dispatch(sendVerifyMail());
+    updateState("signup");
+    const isValid = validateForm();
+    if (isValid) {
+      dispatch(
+        signUp({
+          idCard: idCard,
+          name: name.toLowerCase(),
+          email: email.toLowerCase(),
+          phoneNumber: phoneNumber,
+          passwordHash: password,
+          confirmPassword: confirmPassword,
+          city: city.toLowerCase(),
+          address: address.toLowerCase(),
+          idProfession: profession,
+          idClassroom: idClassroom,
+          image: imageFile,
+          imageUrl: imageUrl,
+          userType: isStudent ? "student" : "teacher",
+        })
+      );
+    }
   };
 
   const validateForm = () => {
     let isValid = true;
-    const validators = [false, false, false, false, false, false, false, false];
+    const validators = [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ];
     if (!length({ min: 9, max: 10 })(idCard) || !required(idCard)) {
       validators[0] = true;
       isValid = false;
@@ -117,6 +127,11 @@ const SignUp = ({ stateAuth, updateState }) => {
       validators[7] = true;
       isValid = false;
     }
+    if (imageUrl === "") {
+      validators[8] = true;
+      isValid = false;
+    }
+
     setValidateInputs(validators);
     if (!isValid) {
       dispatch(authFail(["Error: Invalid user inputs"]));
@@ -186,7 +201,12 @@ const SignUp = ({ stateAuth, updateState }) => {
         <div className="signup-user-type-title">
           <h5>{isStudent ? "STUDENT" : "TEACHER"}</h5>
         </div>
-        <InputImage blob={imageBlob} click={showPreview} />
+        <InputImage
+          blob={imageBlob}
+          click={showPreview}
+          isEmpty={validateInputs[8]}
+          defaultImg={defaultImage}
+        />
         <div>
           <div className="signup-tuggle">
             <Switcher clicked={setIsStudent} position={isStudent} />

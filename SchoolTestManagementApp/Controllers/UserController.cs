@@ -5,8 +5,8 @@ using Microsoft.Extensions.Configuration;
 using SchoolTestManagementApp.Controllers.Services.utils;
 using SchoolTestManagementApp.Data.Services.AdminSideServices.ClassService;
 using SchoolTestManagementApp.Data.Services.AdminSideServices.ProfessionService;
-using SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherService;
-using SchoolTestManagementApp.Data.Services.UserService;
+using SchoolTestManagementApp.Data.Services.AuthService;
+using SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherClassService;
 using SchoolTestManagementApp.Models;
 using System;
 using System.Collections.Generic;
@@ -21,17 +21,21 @@ namespace SchoolTestManagementApp.Controllers
     public class UserController : Controller
     {
         
-        private IUserRepository _service;
+        private IAuthRepository _service;
         private IProfessionRepository _serviceProfession;
         private IClassRepository _serviceClass;
+        private ITeacherClassRepository _serviceTeacherClass;
         private IConfiguration _config;
 
-        public UserController(IUserRepository service, IConfiguration config, IProfessionRepository serviceProfession, IClassRepository serviceClass)
+        public UserController(IAuthRepository service, IConfiguration config, 
+                                IProfessionRepository serviceProfession, IClassRepository serviceClass,
+                                    ITeacherClassRepository serviceTeacherClass)
         {
             this._service = service;
             this._config = config;
             this._serviceProfession = serviceProfession;
             _serviceClass = serviceClass;
+            this._serviceTeacherClass = serviceTeacherClass;
         }
 
         [HttpPost("[action]")]
@@ -40,7 +44,9 @@ namespace SchoolTestManagementApp.Controllers
             var authUser = _service.AuthenticateUser(user.Email, user.PasswordHash);
             if(authUser != null)
             {
-                if(authUser.UserType == "teacher")
+                authUser.PasswordHash = "";
+                authUser.PasswordSalt = "";
+                if (authUser.UserType == "teacher")
                 {
                     _serviceProfession.getProfessionById((int)authUser.IdProfession);
 
@@ -59,7 +65,7 @@ namespace SchoolTestManagementApp.Controllers
         public async Task<IActionResult> SignUp([FromForm] User user)
         {
             var isValid = _service.ValidateUser(user);
-            if(isValid == null)
+            if(isValid.Count == 0)
             {
                 var createdUser = await _service.Add(user); 
                 if (createdUser.UserType == "teacher")
@@ -78,13 +84,7 @@ namespace SchoolTestManagementApp.Controllers
             return Json(new {errors= isValid });
         }
 
-        [HttpGet]
-        public IActionResult VerifyEmail()
-        {
-            Auth auth = new Auth(_config);
-            auth.SendVerifyEmail();
-            return Ok();
-        }
+
 
         [HttpGet("{id}")]
         public IActionResult GetUser(int id)
@@ -92,10 +92,11 @@ namespace SchoolTestManagementApp.Controllers
             var user = _service.GetUserById(id);
             if(user != null)
             {
+                user.PasswordHash = "";
+                user.PasswordSalt = "";
                 if (user.UserType == "teacher")
                 {
                     _serviceProfession.getProfessionById((int)user.IdProfession);
-
                 }
                 else if (user.UserType == "student")
                 {
@@ -107,11 +108,36 @@ namespace SchoolTestManagementApp.Controllers
         }
 
         [HttpGet("[action]/{id}")]
+        public IActionResult GetUserAndConnectedClassrooms(string id)
+        {
+            var user = _service.GetUserByIdCard(id);
+            if (user != null)
+            {
+                user.PasswordHash = "";
+                user.PasswordSalt = "";
+                var classrooms = new List<Classroom>();
+                if (user.UserType == "teacher")
+                {
+                    _serviceProfession.getProfessionById((int)user.IdProfession);
+                    classrooms = _serviceTeacherClass.GetConnectedClassroomsByIdUser(user.Id);
+                }
+                else if (user.UserType == "student")
+                {
+                    classrooms.Add(_serviceClass.getClassById((int)user.IdClassroom));
+                }
+                return Ok(new { success = true, user, classrooms });
+            }
+            return Json(new { success = false });
+        }
+
+        [HttpGet("[action]/{id}")]
         public IActionResult GetStudent(string id)
          {
-            var student = _service.GetStudentByIdCard(id);
+            var student = _service.GetUserByIdCard(id);
             if(student != null)
             {
+                student.PasswordHash = "";
+                student.PasswordSalt = "";
                 return Ok(new { success = false, student });
             }
             return Json(new { success = false });
@@ -123,6 +149,8 @@ namespace SchoolTestManagementApp.Controllers
             var updatedUser = await _service.Update(id, user);
             if(updatedUser != null)
             {
+                updatedUser.PasswordHash = "";
+                updatedUser.PasswordSalt = "";
                 return Ok(new { success = true, user = updatedUser });
             }
             return Json(new { success = false});

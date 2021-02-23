@@ -13,8 +13,13 @@
   flex: 0.5;
 }
 
-.dashboard-content-center {
+.dashboard-layout-center {
   flex: 2;
+  height: 100%;
+}
+
+.dashboard-content-center {
+  width: calc(100% - 70px);
   height: 100%;
 }
 
@@ -72,12 +77,34 @@
 .dashboard-content-right-directions li {
   font-size: 28px;
   font-weight: 600;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
+  text-align: left;
   cursor: pointer;
 }
 
 .dashboard-content-right-directions li:hover {
   color: white;
+}
+
+.directions-active {
+  color: white;
+}
+
+.users-subgroup {
+  height: 7vh;
+  padding-left: 12px;
+  transition: all 0.2s ease-in;
+}
+
+.users-subgroup li {
+  font-size: 17px;
+  margin-bottom: 10px;
+}
+
+.users-subgroup-hide {
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
 }
 
 @media (min-width: 1100px) {

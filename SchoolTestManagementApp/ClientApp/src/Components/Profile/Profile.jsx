@@ -38,29 +38,31 @@ const Profile = () => {
             ? userProfile.idProfessionNavigation.name
             : userProfile.userType === "student"
             ? userProfile.idClassroomNavigation.name
-            : "Admin"}
+            : null}
         </h4>
       </div>
-      <div className="dashboard-content-end">
-        <h5>
-          <span>
-            <MdPermIdentity />
-          </span>
-          {userProfile.idCard}
-        </h5>
-        <h5>
-          <span>
-            <GoLocation />
-          </span>
-          {userProfile.city}, {userProfile.address}
-        </h5>
-        <h5>
-          <span>
-            <AiOutlinePhone />
-          </span>
-          {userProfile.phoneNumber}
-        </h5>
-      </div>
+      {userProfile.userType !== "admin" && (
+        <div className="dashboard-content-end">
+          <h5>
+            <span>
+              <MdPermIdentity />
+            </span>
+            {userProfile.idCard}
+          </h5>
+          <h5>
+            <span>
+              <GoLocation />
+            </span>
+            {userProfile.city}, {userProfile.address}
+          </h5>
+          <h5>
+            <span>
+              <AiOutlinePhone />
+            </span>
+            {userProfile.phoneNumber}
+          </h5>
+        </div>
+      )}
       <div className="profile-logout">
         <RiLogoutBoxLine
           className="profile-logout-icon"

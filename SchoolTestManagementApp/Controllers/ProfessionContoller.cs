@@ -39,5 +39,16 @@ namespace SchoolTestManagementApp.Controllers
             }
             return NotFound();
         }
+
+        [HttpPost]
+        public IActionResult Create([FromBody] Profession profession)
+        {
+            var getProfession = _service.Add(profession.Name);
+            if (getProfession != null)
+            {
+                return Ok(new { success = true, profession = getProfession });
+            }
+            return Json(new { success = false });
+        }
     }
 }

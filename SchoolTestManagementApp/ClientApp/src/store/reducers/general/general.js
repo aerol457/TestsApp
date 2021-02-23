@@ -33,6 +33,14 @@ export default (state = initialState, action) => {
       return updateState(state, { classrooms: action.data });
     case actionTypes.GET_CLASSROOM_BY_ID:
       return updateState(state, { classroom: action.data });
+    case actionTypes.ADD_PROFESSION:
+      const updateAddProfessions = [...state.professions];
+      updateAddProfessions.push(action.profession);
+      return updateState(state, { professions: updateAddProfessions });
+    case actionTypes.ADD_CLASSROOM:
+      const updateAddClassrooms = [...state.classrooms];
+      updateAddClassrooms.push(action.classroom);
+      return updateState(state, { classrooms: updateAddClassrooms });
     default:
       return state;
   }

@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SchoolTestManagementApp.Data.Services.UserService
+namespace SchoolTestManagementApp.Data.Services.AuthService
 {
-    public interface IUserRepository
+    public interface IAuthRepository
     {
         Task<User> Add(User user);
         Task<User> Update(int idUser, User user);
         User GetUserById(int idUser);
-        User GetStudentByIdCard(string idCard);
+        User GetUserByIdCard(string idCard);
         User AuthenticateUser(string email, string password);
         List<string> ValidateUser(User user);
     }

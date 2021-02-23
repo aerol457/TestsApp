@@ -8,6 +8,7 @@ namespace SchoolTestManagementApp.Data.Services.AdminSideServices.ProfessionServ
 {
     public interface IProfessionRepository
     {
+        Task<Profession> Add(string name);
         List<Profession> getAllProfession();
         Profession getProfessionById(int idProfession);
     }

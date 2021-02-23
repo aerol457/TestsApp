@@ -1,25 +1,18 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using SchoolTestManagementApp.Controllers;
 using SchoolTestManagementApp.Controllers.Services.utils;
-using SchoolTestManagementApp.Data.Services.UserService;
 using SchoolTestManagementApp.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherService
+namespace SchoolTestManagementApp.Data.Services.AuthService
 {
-    public class UserRepository : IUserRepository
+    public class AuthRepository : IAuthRepository
     {
         private readonly ExamDataContext _context;
         private readonly IWebHostEnvironment webHostEnvironment;
-        public UserRepository(ExamDataContext context, IWebHostEnvironment hostEnvironment)
+        public AuthRepository(ExamDataContext context, IWebHostEnvironment hostEnvironment)
         {
             this._context = context;
             this.webHostEnvironment = hostEnvironment;
@@ -117,7 +110,7 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherServic
             }
         }
 
-        public User GetStudentByIdCard(string idCard)
+        public User GetUserByIdCard(string idCard)
         {
             return _context.User.Where(u => u.IdCard == idCard).FirstOrDefault();
         }

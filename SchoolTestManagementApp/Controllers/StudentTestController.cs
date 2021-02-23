@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolTestManagementApp.Data.Services.StudentSideServices.StudentTestService;
-using SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherService;
 using SchoolTestManagementApp.Data.Services.TeacerSideServices.TestService;
-using SchoolTestManagementApp.Data.Services.UserService;
+using SchoolTestManagementApp.Data.Services.AuthService;
 using SchoolTestManagementApp.Models;
 using System;
 using System.Collections.Generic;
@@ -17,8 +16,8 @@ namespace SchoolTestManagementApp.Controllers
     {
         private IStudentTestRepository _service;
         private ITestRepository _serviceTest;
-        private IUserRepository _serviceUser;
-        public StudentTestController(IStudentTestRepository service, ITestRepository serviceTest, IUserRepository serviceUser)
+        private IAuthRepository _serviceUser;
+        public StudentTestController(IStudentTestRepository service, ITestRepository serviceTest, IAuthRepository serviceUser)
         {
             this._service = service;
             this._serviceTest = serviceTest;
