@@ -55,4 +55,5 @@ export {
   addTeacherClass,
   removeTeacherClass,
   actionResetAdmin,
+  updateStudentClass,
 } from "./admin/admin";

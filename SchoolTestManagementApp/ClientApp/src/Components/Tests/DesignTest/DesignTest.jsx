@@ -37,7 +37,7 @@ const DesignTest = () => {
                   }
                 />
               </span>
-              TEST SETTING
+              SETTINGS
             </div>
           </div>
           <div className="test-design-option">
@@ -57,7 +57,7 @@ const DesignTest = () => {
                   }
                 />
               </span>
-              TEST QUESTIONS
+              QUESTIONS
             </div>
           </div>
           <div className="test-design-option">
@@ -79,7 +79,7 @@ const DesignTest = () => {
                   alt="Upload"
                 />
               </span>
-              TEST PUBLISH
+              PUBLISH
             </div>
           </div>
           <div className="test-design-option">

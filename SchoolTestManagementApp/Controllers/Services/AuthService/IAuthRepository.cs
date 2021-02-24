@@ -12,6 +12,7 @@ namespace SchoolTestManagementApp.Data.Services.AuthService
     {
         Task<User> Add(User user);
         Task<User> Update(int idUser, User user);
+        Task<bool> UpdateUserClass(User user);
         User GetUserById(int idUser);
         User GetUserByIdCard(string idCard);
         User AuthenticateUser(string email, string password);

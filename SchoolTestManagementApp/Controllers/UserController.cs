@@ -156,5 +156,12 @@ namespace SchoolTestManagementApp.Controllers
             return Json(new { success = false});
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateClass([FromBody] User user)
+        {
+            var isUpdate = await _service.UpdateUserClass(user);
+            return Ok(new { success = isUpdate });
+        }
+
     }
 }

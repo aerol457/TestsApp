@@ -1,5 +1,5 @@
 import axios from "axios";
-import { resetTest, initGeneral, clearAll } from "../index";
+import { resetTest, initGeneral, clearAll, actionResetAdmin } from "../index";
 
 import * as actionTypes from "./actionTypes";
 
@@ -120,6 +120,7 @@ export const authLogout = () => {
     dispatch(resetTest());
     dispatch(initGeneral());
     dispatch(clearAll());
+    dispatch(actionResetAdmin());
   };
 };
 

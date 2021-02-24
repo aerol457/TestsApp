@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import "./General.css";
 import Button from "../../Core/Button/Button";
@@ -8,25 +9,23 @@ import {
   getAllProfessions,
   getAllClassrooms,
 } from "../../../store/actions/index";
-import { useDispatch, useSelector } from "react-redux";
+import { DashboardContext } from "../../../context/DashboardContext";
 const Profession = () => {
-  const [profession, setProfession] = useState("");
-  const [classroom, setClassroom] = useState("");
+  const [input, setInput] = useState("");
 
   const professions = useSelector((state) => state.general.professions);
   const classrooms = useSelector((state) => state.general.classrooms);
+  const dashboardContext = useContext(DashboardContext);
   const dispatch = useDispatch();
 
-  const handleCreateProfession = (e) => {
+  const handleCreate = (e) => {
     e.preventDefault();
-    dispatch(addProfession({ name: profession }));
-    setProfession("");
-  };
-
-  const handleCreateClassroom = (e) => {
-    e.preventDefault();
-    dispatch(addClassroom({ name: classroom }));
-    setClassroom("");
+    if (dashboardContext.stateDashboard === "profession") {
+      dispatch(addProfession({ name: input }));
+    } else {
+      dispatch(addClassroom({ name: input }));
+    }
+    setInput("");
   };
 
   useEffect(() => {
@@ -35,62 +34,40 @@ const Profession = () => {
   }, []);
 
   return (
-    <div className="general-content">
+    <div className="general-layout">
       <h1>General:</h1>
-      <div className="general-layout">
-        <div className="general-part">
-          <div className="general-part-content">
-            <h4>Profession:</h4>
-            <form>
-              <div>
-                <label>Name:</label>
-                <input
-                  value={profession}
-                  onChange={(e) => setProfession(e.target.value)}
-                />
-                <span>
-                  <strong>Insert a name to create</strong>
-                </span>
-              </div>
-              <Button outlined clicked={handleCreateProfession}>
-                CREATE
-              </Button>
-            </form>
-            <div className="general-list">
-              <ul>
-                {professions.map((p, i) => (
-                  <li key={i}>{p.name}</li>
-                ))}
-              </ul>
-            </div>
+      <div className="general-content">
+        <h4>
+          {dashboardContext.stateDashboard === "profession"
+            ? "Professions:"
+            : "Classrooms:"}
+        </h4>
+        <form>
+          <div>
+            <label className="general-content-block">Name:</label>
+            <input value={input} onChange={(e) => setInput(e.target.value)} />
+            <span className="general-content-block">
+              <strong>Insert a name to create</strong>
+            </span>
           </div>
-        </div>
-        <div className="general-part">
-          <div className="general-part-content">
-            <h4>Classroom:</h4>
-            <form>
-              <div>
-                <label>Name:</label>
-                <input
-                  value={classroom}
-                  onChange={(e) => setClassroom(e.target.value)}
-                />
-                <span>
-                  <strong>Insert a name to create</strong>
-                </span>
-              </div>
-              <Button outlined clicked={handleCreateClassroom}>
-                CREATE
-              </Button>
-            </form>
-            <div className="general-list">
-              <ul>
-                {classrooms.map((c, i) => (
-                  <li key={i}>{c.name}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          <Button outlined clicked={handleCreate}>
+            CREATE
+          </Button>
+        </form>
+        <div className="general-list">
+          {dashboardContext.stateDashboard === "profession" ? (
+            <ul>
+              {professions.map((p, i) => (
+                <li key={i}>{p.name}</li>
+              ))}
+            </ul>
+          ) : (
+            <ul>
+              {classrooms.map((c, i) => (
+                <li key={i}>{c.name}</li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>

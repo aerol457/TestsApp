@@ -10,7 +10,8 @@
 }
 
 .img-label {
-  width: 50%;
+  /* width: 50%; */
+  width: 180px;
   margin: auto;
   border-radius: 10px;
 }

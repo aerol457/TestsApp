@@ -7,7 +7,8 @@ export const DashboardContext = React.createContext({
   viewStudents: () => {},
   viewTestDesign: () => {},
   viewTest: () => {},
-  viewGeneral: () => {},
+  viewProfession: () => {},
+  viewClassroom: () => {},
   viewTeacher: () => {},
   viewStudent: () => {},
 });
@@ -36,9 +37,14 @@ const DashboardContextProvider = (props) => {
     localStorage.setItem("dashboard", "testView");
   };
 
-  const handleViewGeneral = () => {
-    setStateDashboard("general");
-    localStorage.setItem("dashboard", "general");
+  const handleViewProfession = () => {
+    setStateDashboard("profession");
+    localStorage.setItem("dashboard", "profession");
+  };
+
+  const handleViewClassroom = () => {
+    setStateDashboard("classroom");
+    localStorage.setItem("dashboard", "classroom");
   };
 
   const handleViewTeacher = () => {
@@ -67,7 +73,8 @@ const DashboardContextProvider = (props) => {
         viewTest: handleViewTest,
         viewStudents: handleViewStudents,
         viewTestDesign: handleViewDesignTest,
-        viewGeneral: handleViewGeneral,
+        viewProfession: handleViewProfession,
+        viewClassroom: handleViewClassroom,
         viewTeacher: handleViewTeacher,
         viewStudent: handleViewStudent,
       }}

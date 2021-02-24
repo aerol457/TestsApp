@@ -2,6 +2,10 @@ import React, { useState, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { AiOutlineCheckCircle } from "react-icons/ai";
+import { MdUpdate } from "react-icons/md";
+import { FiArchive } from "react-icons/fi";
+import { GiCancel } from "react-icons/gi";
 
 import "./Tests.css";
 import Spinner from "../Core/Spinner/Spinner";
@@ -117,21 +121,43 @@ const Tests = () => {
         >
           <div className="test-list-header">
             <h4 className="test-title">{slice[i].name}</h4>
-            <div
-              className={
-                slice[i].show && slice[i].archive
-                  ? "test-archive-enabled"
-                  : slice[i].show
-                  ? "test-archive"
-                  : "test-archive-enabled"
-              }
-              onClick={(e) => handleArchiveTest(e, slice[i].id)}
-            >
-              <span className="test-archive-icon">
-                <RiDeleteBin6Line />
+            {slice[i].show && userDetails.userType === "teacher" ? (
+              <div
+                className={
+                  slice[i].show && slice[i].archive
+                    ? "test-archive-enabled"
+                    : slice[i].show
+                    ? "test-archive"
+                    : "test-archive-enabled"
+                }
+                onClick={(e) => handleArchiveTest(e, slice[i].id)}
+              >
+                <span className="test-archive-icon">
+                  <RiDeleteBin6Line />
+                </span>
+                <span className="test-archive-text">Archive</span>
+              </div>
+            ) : !slice[i].isAccess &&
+              !slice[i].archive &&
+              userDetails.userType === "teacher" ? (
+              <span className="test-state-icon-update">
+                <MdUpdate />
               </span>
-              <span className="test-archive-text">Archive</span>
-            </div>
+            ) : slice[i].archive && userDetails.userType === "teacher" ? (
+              <span className="test-state-icon-archive">
+                <FiArchive />
+              </span>
+            ) : (!slice[i].archive && userDetails.userType === "teacher") ||
+              (slice[i].studentTest[0].isDone &&
+                userDetails.userType === "student") ? (
+              <span className="test-state-icon-check">
+                <AiOutlineCheckCircle />
+              </span>
+            ) : (
+              <span className="test-state-icon-update">
+                <GiCancel />
+              </span>
+            )}
           </div>
           <div
             className={

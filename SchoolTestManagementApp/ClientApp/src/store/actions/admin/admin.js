@@ -117,3 +117,24 @@ const setRemoveTeacherClass = (data) => {
     data,
   };
 };
+
+export const updateStudentClass = (user) => {
+  return (dispatch) => {
+    dispatch(actionStart());
+    axios.put("https://localhost:44356/api/User", user).then((res) => {
+      if (res.data.success === true) {
+        dispatch(setStudentClass(user));
+        dispatch(actionSuccess());
+      } else {
+        dispatch(actionFail("Student not found"));
+      }
+    });
+  };
+};
+
+const setStudentClass = (user) => {
+  return {
+    type: actionTypes.UPDATE_STUDENT_CLASS,
+    user,
+  };
+};

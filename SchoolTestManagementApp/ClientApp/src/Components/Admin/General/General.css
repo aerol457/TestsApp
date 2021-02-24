@@ -1,43 +1,39 @@
-.general-content {
+.general-layout {
   height: 100%;
   padding: 5vh 3vw;
 }
 
-.general-content h1 {
+.general-layout h1 {
   padding-bottom: 4vh;
 }
 
-.general-layout {
-  display: flex;
-}
-
-.general-part {
+.general {
   flex: 0.5;
   height: 85vh;
 }
 
-.general-part-content {
-  width: 90%;
+.general-content {
+  width: 80%;
   height: 70%;
-  padding: 10px;
+  margin: auto;
+  padding: 20px;
   border: 3px solid #3d4652;
   border-radius: 30px;
 }
 
-.general-part-content Button {
+.general-content Button {
   width: fit-content;
 }
 
-.general-part-content h4 {
+.general-content h4 {
   margin-bottom: 20px;
 }
 
-.general-part-content div {
+.general-content div {
   margin-bottom: 20px;
 }
 
-.general-part-content label,
-span {
+.general-content-block {
   display: block;
 }
 

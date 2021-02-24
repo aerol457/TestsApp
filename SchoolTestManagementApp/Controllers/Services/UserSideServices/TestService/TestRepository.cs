@@ -83,7 +83,24 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TestService
         {
             try
             {
-                return context.Test.Where(t => t.IdUser == idTeacher).ToList();
+                var tests = context.Test.Where(t => t.IdUser == idTeacher).ToList();
+                var today = DateTime.Now;
+
+                var isUpdate = false;
+                foreach (var test in tests)
+                {
+                    if(test.DateOfSubmission <= today && !test.Archive)
+                    {
+                        test.Archive = true;
+                        isUpdate = true;  
+                    }
+                }
+                if (isUpdate)
+                {
+                    context.Test.UpdateRange(tests);
+                    context.SaveChanges();
+                }
+                return tests;
             }
             catch (Exception ex)
             {

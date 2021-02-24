@@ -114,5 +114,16 @@ namespace SchoolTestManagementApp.Data.Services.AuthService
         {
             return _context.User.Where(u => u.IdCard == idCard).FirstOrDefault();
         }
+
+        public async Task<bool> UpdateUserClass(User user)
+        {
+            var updateUser = await _context.User.FindAsync(user.Id);
+            if(updateUser != null)
+            {
+                updateUser.IdClassroom = user.IdClassroom;
+                _context.User.Update(updateUser);
+            }
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

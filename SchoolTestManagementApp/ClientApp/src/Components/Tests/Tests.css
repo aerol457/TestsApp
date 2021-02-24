@@ -120,6 +120,24 @@
   color: white;
 }
 
+.test-state-icon-check {
+  margin-top: -4px;
+  font-size: 24px;
+  color: green;
+}
+
+.test-state-icon-update {
+  margin-top: -5px;
+  font-size: 28px;
+  color: red;
+}
+
+.test-state-icon-archive {
+  margin-top: -4px;
+  font-size: 24px;
+  color: gray;
+}
+
 .archive-title {
   width: 100%;
   height: 100%;

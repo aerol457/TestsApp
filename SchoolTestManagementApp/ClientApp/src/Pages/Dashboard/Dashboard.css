@@ -39,6 +39,7 @@
 
 .show-dashboard-content-right {
   width: 230px;
+  z-index: 10;
 }
 
 .toggle-left {
@@ -90,18 +91,18 @@
   color: white;
 }
 
-.users-subgroup {
+.subgroup {
   height: 7vh;
   padding-left: 12px;
   transition: all 0.2s ease-in;
 }
 
-.users-subgroup li {
+.subgroup li {
   font-size: 17px;
   margin-bottom: 10px;
 }
 
-.users-subgroup-hide {
+.subgroup-hide {
   height: 0;
   opacity: 0;
   overflow: hidden;

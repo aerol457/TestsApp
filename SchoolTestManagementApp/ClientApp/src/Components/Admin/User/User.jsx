@@ -11,6 +11,7 @@ import {
   removeTeacherClass,
   getAllClassrooms,
   actionResetAdmin,
+  updateStudentClass,
 } from "../../../store/actions/index";
 import Search from "../../Search/Search";
 
@@ -21,8 +22,8 @@ const Teacher = () => {
   const [inputId, setInputId] = useState("");
 
   const allClassrooms = useSelector((state) => state.general.classrooms);
-  const teacherClass = useSelector((state) => state.admin.teacherClass);
-  const teacherDetails = useSelector((state) => state.admin.teacherDetails);
+  const userClass = useSelector((state) => state.admin.userClass);
+  const userDetails = useSelector((state) => state.admin.userDetails);
   const error = useSelector((state) => state.admin.error);
   const dispatch = useDispatch();
   const dashboardContext = useContext(DashboardContext);
@@ -35,16 +36,35 @@ const Teacher = () => {
     setInputId("");
   };
 
+  const handleUpdateStudentClass = (e) => {
+    e.preventDefault();
+    dispatch(
+      updateStudentClass({
+        id: userDetails.id,
+        idClassroom: classroom.id,
+        className: classroom.name,
+      })
+    );
+  };
+
   const handleAddClassroom = (e) => {
     e.preventDefault();
     dispatch(
-      addTeacherClass({ id: teacherDetails.id, idClassroom: classroom.id })
+      addTeacherClass({
+        id: userDetails.id,
+        idClassroom: classroom.id,
+      })
     );
   };
 
   const handleRemoveClass = (e, id) => {
     e.preventDefault();
-    dispatch(removeTeacherClass({ id: teacherDetails.id, idClassroom: id }));
+    dispatch(
+      removeTeacherClass({
+        id: userDetails.id,
+        idClassroom: id,
+      })
+    );
   };
 
   const handleSetInputSearch = (event) => {
@@ -65,9 +85,18 @@ const Teacher = () => {
   }, []);
 
   useEffect(() => {
-    if (teacherClass.length !== 0) {
+    if (userClass.length !== 0) {
+      const updateUnConnect = userClass.map((c) => !c.isAssign);
+      const updateConnect = userClass.map((c) => c.isAssign);
+      setUnConnectedClassroom(updateUnConnect);
+      setConnectedClassroom(updateConnect);
+    }
+  }, [userClass]);
+
+  useEffect(() => {
+    if (userClass.length !== 0) {
       let initClass = null;
-      teacherClass.forEach((c) => {
+      userClass.forEach((c) => {
         if (!c.isAssign && initClass === null) {
           initClass = {
             id: c.id,
@@ -77,13 +106,13 @@ const Teacher = () => {
       });
       setClassroom(initClass);
     }
-  }, [teacherClass]);
+  }, [userClass]);
 
   useEffect(() => {
-    if (teacherClass) {
+    if (userClass) {
       const updatedViewConnectClass = [];
       const updatedViewUnConnectClass = [];
-      teacherClass.forEach((c) => {
+      userClass.forEach((c) => {
         if (c.isAssign) {
           updatedViewConnectClass.push(c);
         } else {
@@ -93,7 +122,7 @@ const Teacher = () => {
       setConnectedClassroom(updatedViewConnectClass);
       setUnConnectedClassroom(updatedViewUnConnectClass);
     }
-  }, [teacherClass]);
+  }, [userClass]);
 
   return (
     <div className="teacher-managment-layout">
@@ -105,7 +134,7 @@ const Teacher = () => {
           error={error}
         />
       </div>
-      {teacherDetails && (
+      {userDetails && (
         <>
           <div className="teacher-managment-data">
             <div className="teacher-input-classrooms">
@@ -124,22 +153,22 @@ const Teacher = () => {
           <div className="teacher-managment-view">
             <div className="teacher-card">
               <div className="teacher-card-top">
-                <img src={`/Images/${teacherDetails.imageUrl}`} />
+                <img src={`/Images/${userDetails.imageUrl}`} />
                 <div className="teacher-card-top-right">
-                  <h4>{teacherDetails.name}</h4>
+                  <h4>{userDetails.name}</h4>
                   <h6>
                     {dashboardContext.stateDashboard === "teacher"
-                      ? teacherDetails.idProfessionNavigation.name
+                      ? userDetails.idProfessionNavigation.name
                       : null}
                   </h6>
                 </div>
               </div>
               <div className="teacher-card-bottom">
-                <p>Id: {teacherDetails.idCard}</p>
-                <p>City: {teacherDetails.city}</p>
-                <p>Address: {teacherDetails.address}</p>
+                <p>Id: {userDetails.idCard}</p>
+                <p>City: {userDetails.city}</p>
+                <p>Address: {userDetails.address}</p>
                 <p style={{ textTransform: "none" }}>
-                  E-Mail: {teacherDetails.email}
+                  E-Mail: {userDetails.email}
                 </p>
               </div>
             </div>
@@ -152,7 +181,11 @@ const Teacher = () => {
                       ? "classrooms-empty-btn"
                       : null
                   }
-                  onClick={handleAddClassroom}
+                  onClick={
+                    dashboardContext.stateDashboard === "teacher"
+                      ? handleAddClassroom
+                      : handleUpdateStudentClass
+                  }
                 />
               </span>
             </div>
