@@ -43,6 +43,8 @@ const resetError = () => {
 };
 
 export const getInitUserClass = (idCard, allClassrooms, type) => {
+  const token = localStorage.getItem("token");
+
   return (dispatch) => {
     dispatch(actionStart());
     if (idCard === "") {
@@ -50,9 +52,17 @@ export const getInitUserClass = (idCard, allClassrooms, type) => {
     }
     axios
       .get(
-        `https://localhost:44356/api/User/GetUserAndConnectedClassrooms/${idCard}`
+        `https://localhost:44356/api/User/GetUserAndConnectedClassrooms/${idCard}`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
       )
       .then((res) => {
+        if (res.status === 401) {
+          return;
+        }
         if (res.data.success === true && res.data.user.userType === type) {
           const classrooms = allClassrooms.map((c) => {
             let isAssign = false;
@@ -68,7 +78,8 @@ export const getInitUserClass = (idCard, allClassrooms, type) => {
         } else {
           dispatch(actionFail("Not found user"));
         }
-      });
+      })
+      .catch(() => dispatch(actionFail()));
   };
 };
 
@@ -81,14 +92,22 @@ const setInitUserClass = (user, classrooms) => {
 };
 
 export const addTeacherClass = (data) => {
+  const token = localStorage.getItem("token");
   return (dispatch) => {
     dispatch(actionStart());
-    axios.post("https://localhost:44356/api/TeacherClass", data).then((res) => {
-      if (res.data.success === true) {
-        dispatch(setTeacherClass(res.data.teacherClass));
-      }
-      dispatch(actionSuccess());
-    });
+    axios
+      .post("https://localhost:44356/api/TeacherClass", data, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((res) => {
+        if (res.data.success === true && res.status !== 401) {
+          dispatch(setTeacherClass(res.data.teacherClass));
+        }
+        dispatch(actionSuccess());
+      })
+      .catch(() => dispatch(actionFail()));
   };
 };
 
@@ -100,14 +119,22 @@ const setTeacherClass = (data) => {
 };
 
 export const removeTeacherClass = (data) => {
+  const token = localStorage.getItem("token");
   return (dispatch) => {
     dispatch(actionStart());
     axios
-      .post("https://localhost:44356/api/TeacherClass/Remove", data)
-      .then(() => {
-        dispatch(setRemoveTeacherClass(data));
-        dispatch(actionSuccess());
-      });
+      .post("https://localhost:44356/api/TeacherClass/Remove", data, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((res) => {
+        if (res.status !== 401) {
+          dispatch(setRemoveTeacherClass(data));
+          dispatch(actionSuccess());
+        }
+      })
+      .catch(() => dispatch(actionFail()));
   };
 };
 
@@ -119,16 +146,27 @@ const setRemoveTeacherClass = (data) => {
 };
 
 export const updateStudentClass = (user) => {
+  const token = localStorage.getItem("token");
   return (dispatch) => {
     dispatch(actionStart());
-    axios.put("https://localhost:44356/api/User", user).then((res) => {
-      if (res.data.success === true) {
-        dispatch(setStudentClass(user));
-        dispatch(actionSuccess());
-      } else {
-        dispatch(actionFail("Student not found"));
-      }
-    });
+    axios
+      .put("https://localhost:44356/api/User", user, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((res) => {
+        if (res.status === 401) {
+          return;
+        }
+        if (res.data.success === true) {
+          dispatch(setStudentClass(user));
+          dispatch(actionSuccess());
+        } else {
+          dispatch(actionFail("Student not found"));
+        }
+      })
+      .catch(() => dispatch(actionFail()));
   };
 };
 

@@ -3,7 +3,7 @@ import axios from "axios";
 
 import "./Auth.css";
 import Login from "./Login/Login";
-import SignUp from "./SignUp/SignUp";
+import SignUp from "../../Components/Core/UserForm/UserForm";
 import ErrorHandler from "../../hoc/ErrorHandler/ErrorHandler";
 
 const Auth = () => {

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RiQuestionLine } from "react-icons/ri";
 import {
@@ -8,11 +8,12 @@ import {
   passwordValidate,
 } from "../../../utils/validators";
 
-import "./SignUp.css";
+import "./UserForm.css";
 
 import Button from "../../../Components/Core/Button/Button";
 import Switcher from "../../../Components/Core/Switcher/Switcher";
 import Spinner from "../../../Components/Core/Spinner/Spinner";
+import Notification from "../../../Components/Core/Notification/Notification";
 import InputImage from "../../../Components/Core/InputImage/InputImage";
 import {
   signUp,
@@ -20,9 +21,14 @@ import {
   getAllClassrooms,
   actionAuthSuccess,
   authFail,
+  authResetNotify,
 } from "../../../store/actions/index";
 
-const SignUp = ({ stateAuth, updateState }) => {
+const UserForm = ({
+  stateAuth = "",
+  updateState = () => {},
+  isLogin = false,
+}) => {
   const [idCard, setIdCard] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -37,7 +43,8 @@ const SignUp = ({ stateAuth, updateState }) => {
   const [profession, setProfession] = useState(1);
   const [idClassroom, setIdClassroom] = useState(1);
   const [isStudent, setIsStudent] = useState(false);
-  const defaultImage = useState("profileDefault.png")[0];
+  const [defaultImage, setDefaultImage] = useState("profileDefault.png");
+  const [touched, setTouched] = useState(false);
   const [validateInputs, setValidateInputs] = useState([
     false,
     false,
@@ -52,9 +59,10 @@ const SignUp = ({ stateAuth, updateState }) => {
   const [infoPass, setInfoPass] = useState(false);
   const professions = useSelector((state) => state.general.professions);
   const classrooms = useSelector((state) => state.general.classrooms);
+  const userProfile = useSelector((state) => state.auth.userProfile);
   const error = useSelector((state) => state.auth.error);
   const loading = useSelector((state) => state.auth.loading);
-
+  const notify = useSelector((state) => state.auth.notify);
   const dispatch = useDispatch();
 
   const handleSubmitForm = (e) => {
@@ -63,22 +71,26 @@ const SignUp = ({ stateAuth, updateState }) => {
     const isValid = validateForm();
     if (isValid) {
       dispatch(
-        signUp({
-          idCard: idCard,
-          name: name.toLowerCase(),
-          email: email.toLowerCase(),
-          phoneNumber: phoneNumber,
-          passwordHash: password,
-          confirmPassword: confirmPassword,
-          city: city.toLowerCase(),
-          address: address.toLowerCase(),
-          idProfession: profession,
-          idClassroom: idClassroom,
-          image: imageFile,
-          imageUrl: imageUrl,
-          userType: isStudent ? "student" : "teacher",
-        })
+        signUp(
+          {
+            idCard: idCard,
+            name: name.toLowerCase(),
+            email: email.toLowerCase(),
+            phoneNumber: phoneNumber,
+            passwordHash: password,
+            confirmPassword: confirmPassword,
+            city: city.toLowerCase(),
+            address: address.toLowerCase(),
+            idProfession: profession,
+            idClassroom: idClassroom,
+            image: imageFile,
+            imageUrl: imageUrl,
+            userType: isStudent ? "student" : "teacher",
+          },
+          isLogin
+        )
       );
+      setTouched(false);
     }
   };
 
@@ -107,14 +119,19 @@ const SignUp = ({ stateAuth, updateState }) => {
       validators[2] = true;
       isValid = false;
     }
-    if (!passwordValidate(password) || !required(password)) {
-      validators[3] = true;
-      isValid = false;
+    if (!required(password) && !isLogin) {
+      if (!passwordValidate(password)) {
+        validators[3] = true;
+        isValid = false;
+      }
     }
-    if (password !== confirmPassword || !required(confirmPassword)) {
-      validators[4] = true;
-      isValid = false;
+    if (!required(password) && !isLogin) {
+      if (password !== confirmPassword) {
+        validators[4] = true;
+        isValid = false;
+      }
     }
+
     if (!length({ min: 10, max: 10 })(phoneNumber) || !required(phoneNumber)) {
       validators[5] = true;
       isValid = false;
@@ -127,7 +144,7 @@ const SignUp = ({ stateAuth, updateState }) => {
       validators[7] = true;
       isValid = false;
     }
-    if (imageUrl === "") {
+    if (imageUrl === "" && imageFile === null) {
       validators[8] = true;
       isValid = false;
     }
@@ -148,6 +165,7 @@ const SignUp = ({ stateAuth, updateState }) => {
       setImageBlob(localImageUrl);
       setImageUrl(fileName);
       setImageFile(image);
+      setTouched(true);
     } else {
       setImageUrl("");
       setImageFile("");
@@ -187,20 +205,44 @@ const SignUp = ({ stateAuth, updateState }) => {
   }, [error, actionAuthSuccess]);
 
   useEffect(() => {
-    dispatch(getAllProfessions());
-    dispatch(getAllClassrooms());
-  }, [getAllProfessions, getAllClassrooms]);
+    if (!isLogin) {
+      dispatch(getAllProfessions());
+      dispatch(getAllClassrooms());
+    }
+  }, [getAllProfessions, getAllClassrooms, isLogin]);
+
+  useEffect(() => {
+    if (isLogin) {
+      setIdCard(userProfile.idCard);
+      setName(userProfile.name);
+      setEmail(userProfile.email);
+      setPhoneNumber(userProfile.phoneNumber);
+      setCity(userProfile.city);
+      setAddress(userProfile.address);
+      setImageUrl(userProfile.imageUrl);
+      setDefaultImage(userProfile.imageUrl);
+    }
+  }, []);
 
   return (
-    <div className="signup-content">
-      <div className="signup-title">
-        <h5>Sign up now</h5>
-        <p>Fill in the form below to get instant access: </p>
-      </div>
-      <div>
-        <div className="signup-user-type-title">
-          <h5>{isStudent ? "STUDENT" : "TEACHER"}</h5>
+    <div className={!isLogin ? "signup-content" : null}>
+      <Notification
+        message="User details updated successfully"
+        error={notify}
+        resetError={() => dispatch(authResetNotify())}
+      />
+      {!isLogin && (
+        <div className="signup-title">
+          <h5>Sign up now</h5>
+          <p>Fill in the form below to get instant access: </p>
         </div>
+      )}
+      <div>
+        {!isLogin && (
+          <div className="signup-user-type-title">
+            <h5>{isStudent ? "STUDENT" : "TEACHER"}</h5>
+          </div>
+        )}
         <InputImage
           blob={imageBlob}
           click={showPreview}
@@ -208,10 +250,12 @@ const SignUp = ({ stateAuth, updateState }) => {
           defaultImg={defaultImage}
         />
         <div>
-          <div className="signup-tuggle">
-            <Switcher clicked={setIsStudent} position={isStudent} />
-          </div>
-          <form className="signup-form" onSubmit={(e) => handleSubmitForm(e)}>
+          {!isLogin && (
+            <div className="signup-tuggle">
+              <Switcher clicked={setIsStudent} position={isStudent} />
+            </div>
+          )}
+          <form className="signup-form" onSubmit={handleSubmitForm}>
             <div className="signup-error">
               {error &&
                 stateAuth !== "login" &&
@@ -232,6 +276,7 @@ const SignUp = ({ stateAuth, updateState }) => {
               type="number"
               name="idCard"
               value={idCard}
+              onClick={() => setTouched(true)}
               onChange={(e) => setIdCard(e.target.value)}
             />
             <input
@@ -244,6 +289,7 @@ const SignUp = ({ stateAuth, updateState }) => {
               type="text"
               name="name"
               value={name}
+              onClick={() => setTouched(true)}
               onChange={(e) => setName(e.target.value)}
             />
             <input
@@ -256,6 +302,7 @@ const SignUp = ({ stateAuth, updateState }) => {
               type="email"
               name="email"
               value={email}
+              onClick={() => setTouched(true)}
               onChange={(e) => setEmail(e.target.value)}
             />
             <div className="form-input-password">
@@ -269,6 +316,7 @@ const SignUp = ({ stateAuth, updateState }) => {
                 type="password"
                 name="password"
                 value={password}
+                onClick={() => setTouched(true)}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <div
@@ -297,6 +345,7 @@ const SignUp = ({ stateAuth, updateState }) => {
               type="password"
               name="confirmPassword"
               value={confirmPassword}
+              onClick={() => setTouched(true)}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
             <input
@@ -309,6 +358,7 @@ const SignUp = ({ stateAuth, updateState }) => {
               type="text"
               name="phoneNummber"
               value={phoneNumber}
+              onClick={() => setTouched(true)}
               onChange={(e) => setPhoneNumber(e.target.value)}
             />
             <input
@@ -321,6 +371,7 @@ const SignUp = ({ stateAuth, updateState }) => {
               type="text"
               name="city"
               value={city}
+              onClick={() => setTouched(true)}
               onChange={(e) => setCity(e.target.value)}
             />
             <input
@@ -333,9 +384,10 @@ const SignUp = ({ stateAuth, updateState }) => {
               type="text"
               name="address"
               value={address}
+              onClick={() => setTouched(true)}
               onChange={(e) => setAddress(e.target.value)}
             />
-            {!isStudent ? (
+            {!isLogin && !isStudent ? (
               <>
                 <select
                   className="signup-form-select"
@@ -352,7 +404,7 @@ const SignUp = ({ stateAuth, updateState }) => {
                   })}
                 </select>
               </>
-            ) : (
+            ) : !isLogin ? (
               <>
                 <select
                   className="signup-form-select"
@@ -369,10 +421,24 @@ const SignUp = ({ stateAuth, updateState }) => {
                   })}
                 </select>
               </>
-            )}
-            <div className="signup-submit-btn">
-              <Button>
-                {loading && stateAuth !== "login" ? <Spinner /> : "SIGN ME UP!"}
+            ) : null}
+            <div
+              className={
+                isLogin && !touched
+                  ? "signup-submit-btn-auth signup-submit-btn-auth-disabled"
+                  : isLogin
+                  ? "signup-submit-btn-auth"
+                  : "signup-submit-btn"
+              }
+            >
+              <Button disabled={!touched}>
+                {loading && stateAuth !== "login" ? (
+                  <Spinner />
+                ) : isLogin ? (
+                  "UPDATE"
+                ) : (
+                  "SIGN ME UP!"
+                )}
               </Button>
             </div>
           </form>
@@ -381,4 +447,4 @@ const SignUp = ({ stateAuth, updateState }) => {
     </div>
   );
 };
-export default SignUp;
+export default UserForm;

@@ -7,11 +7,7 @@ import Button from "../../Core/Button/Button";
 import CheckQuestion from "./CheckQuestion/CheckQuestion";
 import OptionQuestion from "./OptionQuestion/OptionQuestion";
 import { DashboardContext } from "../../../context/DashboardContext";
-import {
-  finishTest,
-  clearTest,
-  getAllTest,
-} from "../../../store/actions/index";
+import { finishTest, clearTest } from "../../../store/actions/index";
 const Test = () => {
   const [questionsView, setQuestionsView] = useState([]);
   const [question, setQuestion] = useState();
@@ -22,7 +18,6 @@ const Test = () => {
   const [seconds, setSeconds] = useState(0);
   const [startTimer, setStartTimer] = useState(false);
   const test = useSelector((state) => state.test.test);
-  const userProfile = useSelector((state) => state.auth.userProfile);
   const questions = useSelector((state) => state.test.questions);
   const dashboardContext = useContext(DashboardContext);
 
@@ -65,6 +60,10 @@ const Test = () => {
   const endTest = () => {
     dispatch(finishTest(questions, test));
     dispatch(clearTest());
+    localStorage.removeItem("startTest");
+    localStorage.removeItem("seconds");
+    localStorage.removeItem("minutes");
+    localStorage.removeItem("houres");
     dashboardContext.viewTests();
   };
 
@@ -75,11 +74,26 @@ const Test = () => {
   }, [questions]);
 
   useEffect(() => {
-    if (test.time) {
+    const testPosition = localStorage.getItem("startTest");
+    if (test.time && testPosition === "init") {
       setSeconds(0);
       setMinutes(+test.time % 60);
       setHoures(Math.floor(+test.time / 60));
       setStartTimer(true);
+      localStorage.setItem("startTest", "start");
+    } else if (test.time) {
+      const oldSeconds = localStorage.getItem("seconds");
+      const oldMinutes = localStorage.getItem("minutes");
+      const oldHoures = localStorage.getItem("houres");
+      if (oldSeconds && oldMinutes && oldHoures) {
+        localStorage.setItem("startTest", "start");
+        setSeconds(oldSeconds);
+        setMinutes(oldMinutes);
+        setHoures(oldHoures);
+        setStartTimer(true);
+      } else {
+        endTest();
+      }
     }
   }, [test]);
 
@@ -106,6 +120,9 @@ const Test = () => {
         setSeconds(timerSeconds);
         setMinutes(timerMinutes);
         setHoures(timerHoures);
+        localStorage.setItem("seconds", timerSeconds);
+        localStorage.setItem("minutes", timerMinutes);
+        localStorage.setItem("houres", timerHoures);
         if (timerSeconds === 0 && timerMinutes === 0 && timerHoures === 0) {
           endTest();
         }

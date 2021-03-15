@@ -27,6 +27,7 @@
 }
 
 .question-overview {
+  position: relative;
   display: flex;
   margin: 10px 0;
   padding: 10px;
@@ -39,7 +40,17 @@
 
 .question-content-overview {
   width: 100%;
+}
+
+.question-content-overview-image {
   flex: 0.7;
+}
+
+.question-content-overview-type {
+  text-transform: capitalize;
+  position: absolute;
+  right: 10px;
+  top: 5px;
 }
 
 .question-image-overview {

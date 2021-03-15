@@ -1,7 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { FaArrowCircleRight } from "react-icons/fa";
 import { MdCancel } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 import "./User.css";
 import { DashboardContext } from "../../../context/DashboardContext";
@@ -14,8 +15,9 @@ import {
   updateStudentClass,
 } from "../../../store/actions/index";
 import Search from "../../Search/Search";
+import ErrorHandler from "../../../hoc/ErrorHandler/ErrorHandler";
 
-const Teacher = () => {
+const User = () => {
   const [classroom, setClassroom] = useState({});
   const [connectedClassroom, setConnectedClassroom] = useState([]);
   const [unConnectedClassroom, setUnConnectedClassroom] = useState([]);
@@ -231,4 +233,4 @@ const Teacher = () => {
   );
 };
 
-export default Teacher;
+export default ErrorHandler(User, axios);

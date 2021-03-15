@@ -130,10 +130,29 @@ const CheckQuestion = ({ question, index }) => {
   return (
     <>
       <div className="test-question-check-config">
-        <h5>Question {index}:</h5>
-        <p>
-          {question.content1}? <span>({question.value} POINTS)</span>
-        </p>
+        <h5>Question {+index + 1}:</h5>
+        {question.questionType === "blank" ? (
+          +question.blankType === 0 ? (
+            <p>
+              {question.content1} _____ {question.content2} _____{" "}
+              {question.content3} _____ ? <span>({question.value} POINTS)</span>
+            </p>
+          ) : +question.blankType === 1 ? (
+            <p>
+              {question.content1} _____ {question.content2} _____ ?{" "}
+              <span>({question.value} POINTS)</span>
+            </p>
+          ) : (
+            <p>
+              _____ {question.content1} _____ {question.content2} ?{" "}
+              <span>({question.value} POINTS)</span>
+            </p>
+          )
+        ) : (
+          <p>
+            {question.content1}? <span>({question.value} POINTS)</span>
+          </p>
+        )}
       </div>
       <div className="test-question-check-options">
         <div>

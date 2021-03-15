@@ -37,15 +37,15 @@ const testReducer = (state = initialTest, action) => {
         test: {},
         classrooms: [],
       });
-    case actionTypes.ARCHIVE_TEST:
+    case actionTypes.CANCEL_TEST:
       const getTests = [...state.tests];
-      const updateTestsArchive = getTests.map((t) => {
+      const updateTestsCancel = getTests.map((t) => {
         if (t.id === action.idTest) {
-          t.archive = true;
+          t.isCancel = true;
         }
         return t;
       });
-      return updateState(state, { tests: updateTestsArchive });
+      return updateState(state, { tests: updateTestsCancel });
     case actionTypes.SET_TESTS:
       return updateState(state, {
         tests: action.tests,

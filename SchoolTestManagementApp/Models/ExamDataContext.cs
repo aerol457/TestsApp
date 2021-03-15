@@ -78,6 +78,8 @@ namespace SchoolTestManagementApp.Models
 
                 entity.Property(e => e.ImageUrl).IsUnicode(false);
 
+                entity.Property(e => e.BlankType).IsUnicode(false);
+
                 entity.Property(e => e.QuestionType)
                     .IsRequired()
                     .HasMaxLength(15)

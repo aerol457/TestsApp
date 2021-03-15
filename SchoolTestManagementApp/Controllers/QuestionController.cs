@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SchoolTestManagementApp.Data.Services.TeacerSideServices.QuestionService;
 using SchoolTestManagementApp.Models;
 using System;
@@ -18,6 +19,7 @@ namespace SchoolTestManagementApp.Controllers
             this._service = service;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] Question question)
         {
@@ -29,6 +31,7 @@ namespace SchoolTestManagementApp.Controllers
             return Json(new { success = false });
         }
 
+        [Authorize]
         [HttpPut]
         public IActionResult Update([FromForm] Question question)
         {
@@ -36,6 +39,7 @@ namespace SchoolTestManagementApp.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

@@ -20,7 +20,7 @@ import {
   initialNewTest,
   startTest,
   clearTests,
-  archiveTest,
+  cancelTest,
 } from "../../store/actions/index";
 import { TestDesignDashContext } from "../../context/TestDesignDashContext";
 
@@ -74,12 +74,13 @@ const Tests = () => {
   const handleStartTest = (e, id) => {
     e.stopPropagation();
     dispatch(startTest(id));
+    localStorage.setItem("startTest", "init");
     dashboardContext.viewTest();
   };
 
-  const handleArchiveTest = (e, idTest) => {
+  const handleCancelTest = (e, idTest) => {
     e.stopPropagation();
-    dispatch(archiveTest(idTest));
+    dispatch(cancelTest(idTest));
   };
 
   const designList = (slice) => {
@@ -124,18 +125,18 @@ const Tests = () => {
             {slice[i].show && userDetails.userType === "teacher" ? (
               <div
                 className={
-                  slice[i].show && slice[i].archive
+                  slice[i].show && (slice[i].isCancel || slice[i].archive)
                     ? "test-archive-enabled"
                     : slice[i].show
                     ? "test-archive"
                     : "test-archive-enabled"
                 }
-                onClick={(e) => handleArchiveTest(e, slice[i].id)}
+                onClick={(e) => handleCancelTest(e, slice[i].id)}
               >
                 <span className="test-archive-icon">
                   <RiDeleteBin6Line />
                 </span>
-                <span className="test-archive-text">Archive</span>
+                <span className="test-archive-text">Delete</span>
               </div>
             ) : !slice[i].isAccess &&
               !slice[i].archive &&
@@ -143,12 +144,16 @@ const Tests = () => {
               <span className="test-state-icon-update">
                 <MdUpdate />
               </span>
+            ) : slice[i].isCancel && userDetails.userType === "teacher" ? (
+              <span className="test-state-icon-update">
+                <GiCancel />
+              </span>
             ) : slice[i].archive && userDetails.userType === "teacher" ? (
               <span className="test-state-icon-archive">
                 <FiArchive />
               </span>
             ) : (!slice[i].archive && userDetails.userType === "teacher") ||
-              (slice[i].studentTest[0].isDone &&
+              ((slice[i].studentTest[0].isDone || slice[i].archive) &&
                 userDetails.userType === "student") ? (
               <span className="test-state-icon-check">
                 <AiOutlineCheckCircle />
@@ -166,41 +171,51 @@ const Tests = () => {
                 : "test-list-item-details show-details"
             }
           >
-            {slice[i].show && slice[i].archive && (
+            {userDetails.userType === "teacher" &&
+            slice[i].show &&
+            slice[i].isCancel ? (
+              <div className="archive-title">
+                <span>CANCELED</span>
+              </div>
+            ) : userDetails.userType === "teacher" &&
+              slice[i].show &&
+              slice[i].archive ? (
               <div className="archive-title">
                 <span>ARCHIVED</span>
               </div>
-            )}
+            ) : null}
             <ul>
               <li>
-                Id Test:
+                <span className="test-details-title">Id:</span>
                 <br />
                 {slice[i].idTest}
               </li>
               {userDetails.userType === "student" && (
                 <li>
-                  Teacher Name:
+                  <span className="test-details-title">Teacher Name:</span>
                   <br />
-                  {slice[i].idUserNavigation.name}
+                  {slice[i].teacherName}
                 </li>
               )}
               <li>
-                Quantity of questions:
+                <span className="test-details-title">
+                  Quantity of questions:
+                </span>
                 <br />
                 {slice[i].quantityOfQuestions}
               </li>
               <li>
-                Profession Name:
+                <span className="test-details-title">Profession:</span>
                 <br />
                 {slice[i].professionName}
               </li>
               <li>
-                Time:
+                <span className="test-details-title">Time:</span>
                 <br />
                 {Math.round(+slice[i].time)} min.
               </li>
               <li>
-                Created Date:
+                <span className="test-details-title">Created Date:</span>
                 <br />
                 {
                   slice[i].dateOfDistribution
@@ -210,7 +225,7 @@ const Tests = () => {
                 }
               </li>
               <li>
-                Submitted Date:
+                <span className="test-details-title">Submitted Date:</span>
                 <br />
                 {
                   slice[i].dateOfSubmission
@@ -222,14 +237,14 @@ const Tests = () => {
               {userDetails.userType === "student" &&
               slice[i].studentTest[0].isDone ? (
                 <li>
-                  Grade:
+                  <span className="test-details-title">Grade:</span>
                   <br />
                   {slice[i].studentTest[0].grade}
                 </li>
               ) : null}
               {userDetails.userType === "teacher" && (
                 <li>
-                  Passing Grade:
+                  <span className="test-details-title">Passing Grade:</span>
                   <br />
                   {slice[i].passingGrade}
                 </li>
@@ -283,13 +298,19 @@ const Tests = () => {
   };
 
   const handleAddTest = () => {
-    dispatch(initialNewTest());
+    dispatch(initialNewTest(userDetails));
     testDesignDashContext.viewSettings();
     dashboardContext.viewTestDesign();
   };
 
   useEffect(() => {
     if (userDetails && tests.length === 0) {
+      dispatch(getAllTest(userDetails));
+    }
+  }, [userDetails]);
+
+  useEffect(() => {
+    if (userDetails.userType === "student") {
       dispatch(getAllTest(userDetails));
     }
   }, [userDetails]);
@@ -337,7 +358,11 @@ const Tests = () => {
           ) : (
             <>
               <ul className="test-list">
-                {postData.length === 0 ? <p>Not tests found...</p> : postData}
+                {postData.length === 0 ? (
+                  <p>Your tests list is empty</p>
+                ) : (
+                  postData
+                )}
               </ul>
               <div className="pagination-content">
                 <ReactPaginate

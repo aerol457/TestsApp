@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SchoolTestManagementApp.Controllers.TeacherSideServices.ClassroomTest;
@@ -100,6 +101,7 @@ namespace SchoolTestManagementApp.Controllers
             return Json(new { success = false });
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Test test)
         {
@@ -111,6 +113,7 @@ namespace SchoolTestManagementApp.Controllers
             return Json(new { success = false });
         }
 
+        [Authorize]
         [HttpPost("[action]/{idStudent}")]
         public async Task<IActionResult> CheckTest([FromBody] Test test, [FromRoute] int idStudent)
         {
@@ -123,6 +126,7 @@ namespace SchoolTestManagementApp.Controllers
 
         }
 
+        [Authorize]
         [HttpPut]
         public IActionResult Update([FromBody] Test test)
         {
@@ -130,20 +134,23 @@ namespace SchoolTestManagementApp.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPut("[action]/{idTest}")]
         public IActionResult UpdateQuantityOfQuestions([FromBody] Test test , int idTest)
         {
             _serviceTest.UpdateQuantity(idTest, test.QuantityOfQuestions);
             return Ok();
         }
-
+         
+        [Authorize]
         [HttpPut("[action]/{idTest}")]
-        public IActionResult TestToArchive(int idTest)
+        public IActionResult TestToCancel(int idTest)
         {
-            _serviceTest.PostTestToArchive(idTest);
+            _serviceTest.PostTestToCancel(idTest);
             return Ok();
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

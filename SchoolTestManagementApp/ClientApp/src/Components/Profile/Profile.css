@@ -1,3 +1,21 @@
+.user-settings-icon {
+  position: fixed;
+  padding: 0px 6px 6px 6px;
+  border: 2px solid darkgrey;
+  border-radius: 10px;
+  font-size: 20px;
+  color: darkgrey;
+  left: 7px;
+  cursor: pointer;
+  transition: all 0.3s linear;
+}
+
+.user-settings-icon:hover {
+  border: 2px solid white;
+  background: white;
+  color: #3d4652;
+}
+
 .dashboard-content-header img {
   width: 80%;
   border-radius: 50%;
@@ -39,7 +57,7 @@
 }
 
 .dashboard-content-header h4 {
-  font-size: 24px;
+  font-size: 18px;
 }
 
 .profile-logout {

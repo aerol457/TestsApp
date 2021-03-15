@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SchoolTestManagementApp.Controllers
 {
@@ -24,6 +25,7 @@ namespace SchoolTestManagementApp.Controllers
             this._serviceUser = serviceUser;
         }
 
+        [Authorize]
         [HttpPost("{idTest}")]
         public IActionResult PublishTestToStudents([FromBody] List<int> idClassrooms, int idTest)
         {
@@ -31,6 +33,7 @@ namespace SchoolTestManagementApp.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateStudentTest(int id, [FromBody] StudentTest studentTest)
         {
@@ -39,6 +42,7 @@ namespace SchoolTestManagementApp.Controllers
 
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStudentTest(int id)
         {
@@ -59,7 +63,7 @@ namespace SchoolTestManagementApp.Controllers
         }
 
         [HttpGet("GetTests/{id}")]
-        public IActionResult GetAllStudentTestsById(int id, [FromQuery] string userType)
+        public IActionResult GetAllStudentTestsById(int id, string userType, int idUser)
         {
             var listTestStudent = _service.GetAllTests(id);
             if (listTestStudent != null)
@@ -69,7 +73,12 @@ namespace SchoolTestManagementApp.Controllers
                 {
                     var test =_serviceTest.GetTestByIdTest(studentTest.IdTest);
                     _serviceUser.GetUserById(test.IdUser);
-                    if ((test.IsAccess && !test.Archive)|| userType  == "teacher")
+                    string teacherName = test.IdUserNavigation.Name;
+                    test.IdUserNavigation = null;
+                    test.TeacherName = teacherName;
+
+                    if ((test.IsAccess && !test.IsCancel && userType != "teacher") || 
+                        (userType  == "teacher" && test.IdUser == idUser))
                     {
                         tests.Add(test);
                     }

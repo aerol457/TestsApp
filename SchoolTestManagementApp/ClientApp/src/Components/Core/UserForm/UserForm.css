@@ -1,4 +1,4 @@
-﻿.signup-content {
+.signup-content {
   width: 65%;
   height: 95%;
   margin: 0 auto;
@@ -50,11 +50,11 @@
 .signup-form-select {
   margin-bottom: 15px;
   width: 100%;
-  border-radius: 2px;
+  border-radius: 6px;
   border: 0;
   padding: 3px;
   font-size: 18px;
-  border: 2px solid transparent;
+  border: 2px solid gray;
 }
 
 .signup-form-input-error {
@@ -73,6 +73,22 @@
   display: flex;
 }
 
+.signup-submit-btn Button {
+  width: 100% !important;
+}
+
+.signup-submit-btn-auth-disabled {
+  cursor: not-allowed;
+}
+
+.signup-submit-btn-auth {
+  display: flex;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 0 15px 15px 0px;
+}
+
 .form-input-password {
   position: relative;
   margin-bottom: 15px;
@@ -87,10 +103,11 @@
   right: 0;
   margin: -32px -20px 0 0;
   cursor: pointer;
+  color: black;
 }
 
 .popUp-password-validate-icon:hover {
-  color: white;
+  color: gray;
 }
 
 .popUp-password-validate {

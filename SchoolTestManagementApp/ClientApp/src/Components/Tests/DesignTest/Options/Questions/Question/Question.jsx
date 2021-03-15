@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { BsArrowRight } from "react-icons/bs";
 
 import "./Question.css";
 import Button from "../../../../../Core/Button/Button";
+import blankOption1 from "../../../../../../assets/blankOption1.png";
+import blankOption2 from "../../../../../../assets/blankOption2.png";
+import blankOption3 from "../../../../../../assets/blankOption3.png";
 import Error from "../../../../../Core/Error/Error";
 import InputImage from "../../../../../Core/InputImage/InputImage";
 import { required, range } from "../../../../../../utils/validators";
@@ -27,10 +31,13 @@ const Question = ({ questionContent, type, index }) => {
   const [imageFile, setImageFile] = useState(null);
   const [imageBlob, setImageBlob] = useState(null);
   const [defaultImage, setDefaultImage] = useState("defaultQuestion.png");
+  const [blankType, setBlankType] = useState(0);
   const [value, setValue] = useState(0);
   const [oldValue, setOldValue] = useState(0);
   const [isUpdate, setIsUpdate] = useState(true);
   const [errors, setErrors] = useState([
+    false,
+    false,
     false,
     false,
     false,
@@ -51,8 +58,6 @@ const Question = ({ questionContent, type, index }) => {
       var questionForm = new FormData();
       questionForm.append("id", id);
       questionForm.append("content1", question);
-      questionForm.append("content2", partialQuestion1);
-      questionForm.append("content3", partialQuestion2);
       questionForm.append("answer1", answer1);
       questionForm.append("option1", option1);
       questionForm.append("option2", option2);
@@ -69,6 +74,14 @@ const Question = ({ questionContent, type, index }) => {
         questionForm.append("imageUrl", imageUrl);
         questionForm.append("imageFile", imageFile);
         questionForm.append("currentImage", defaultImage);
+      }
+
+      if (type === "blank") {
+        questionForm.append("blankType", blankType);
+        questionForm.append("content2", partialQuestion1);
+        if (blankType === 0) {
+          questionForm.append("content3", partialQuestion2);
+        }
       }
 
       if (isUpdate) {
@@ -100,11 +113,24 @@ const Question = ({ questionContent, type, index }) => {
     setOldValue(0);
     setValue(0);
     setIsUpdate(false);
-    setErrors([false, false, false, false, false, false, false, false]);
+    setErrors([
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ]);
   };
 
   const validateForm = () => {
     const updateErrors = [
+      false,
+      false,
       false,
       false,
       false,
@@ -118,6 +144,18 @@ const Question = ({ questionContent, type, index }) => {
     if (!required(question)) {
       updateErrors[0] = true;
       isValid = false;
+    }
+    if (type === "blank") {
+      if (!required(partialQuestion1)) {
+        updateErrors[8] = true;
+        isValid = false;
+      }
+      if (blankType === 0) {
+        if (!required(partialQuestion2)) {
+          updateErrors[9] = true;
+          isValid = false;
+        }
+      }
     }
 
     if (!required(option1)) {
@@ -177,6 +215,13 @@ const Question = ({ questionContent, type, index }) => {
     }
   };
 
+  const handleChooseBlankType = (type) => {
+    setBlankType(type);
+    if (type !== 0) {
+      setPartialQuestion2("");
+    }
+  };
+
   useEffect(() => {
     initialForm();
   }, [type, questions.length]);
@@ -195,11 +240,15 @@ const Question = ({ questionContent, type, index }) => {
       if (type === "image") {
         setImageUrl(questionContent.imageUrl);
         setDefaultImage(questionContent.imageUrl);
-      } else if (type === "check" || type === "blank") {
+      } else if (type === "check") {
         setAnswer2(questionContent.answer2);
       } else if (type === "blank") {
+        setAnswer2(questionContent.answer2);
+        setBlankType(+questionContent.blankType);
         setPartialQuestion1(questionContent.content2);
-        setPartialQuestion2(questionContent.content3);
+        if (+questionContent.blankType === 0) {
+          setPartialQuestion2(questionContent.content3);
+        }
       }
     } else {
       if (type === "check" || type === "blank") {
@@ -211,8 +260,42 @@ const Question = ({ questionContent, type, index }) => {
 
   return (
     <form className="question">
+      {type === "blank" && (
+        <div className="question-black-struct">
+          <div
+            onClick={() => handleChooseBlankType(0)}
+            className={
+              blankType === 0
+                ? "blank-option blank-option-active"
+                : "blank-option"
+            }
+          >
+            <img src={blankOption1} alt="option1" />
+          </div>
+          <div
+            onClick={() => handleChooseBlankType(1)}
+            className={
+              blankType === 1
+                ? "blank-option blank-option-active"
+                : "blank-option"
+            }
+          >
+            <img src={blankOption2} alt="option2" />
+          </div>
+          <div
+            onClick={() => handleChooseBlankType(2)}
+            className={
+              blankType === 2
+                ? "blank-option blank-option-active"
+                : "blank-option"
+            }
+          >
+            <img src={blankOption3} alt="option3" />
+          </div>
+        </div>
+      )}
       <div>
-        <label>Content:</label>
+        <label>Content {type === "blank" && "1"}:</label>
         <input
           className={
             errors[0] ? "question-input question-input-error" : "question-input"
@@ -226,25 +309,35 @@ const Question = ({ questionContent, type, index }) => {
       {type === "blank" && (
         <React.Fragment>
           <div>
-            <label>Content2:</label>
+            <label>Content 2:</label>
             <input
-              className="question-input"
+              className={
+                errors[8]
+                  ? "question-input question-input-error"
+                  : "question-input"
+              }
               type="text"
               onChange={(e) => setPartialQuestion1(e.target.value)}
               value={partialQuestion1}
             />
-            <span></span>
+            <span>{errors[8] && <Error error="Must fill attribure" />}</span>
           </div>
-          <div>
-            <label>Content3:</label>
-            <input
-              className="question-input"
-              type="text"
-              onChange={(e) => setPartialQuestion2(e.target.value)}
-              value={partialQuestion2}
-            />
-            <span></span>
-          </div>
+          {blankType === 0 && (
+            <div>
+              <label>Content 3:</label>
+              <input
+                className={
+                  errors[9]
+                    ? "question-input question-input-error"
+                    : "question-input"
+                }
+                type="text"
+                onChange={(e) => setPartialQuestion2(e.target.value)}
+                value={partialQuestion2}
+              />
+              <span>{errors[9] && <Error error="Must fill attribure" />}</span>
+            </div>
+          )}
         </React.Fragment>
       )}
       <div>

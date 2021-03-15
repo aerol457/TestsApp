@@ -19,6 +19,7 @@ namespace SchoolTestManagementApp.Models
         public string Content3 { get; set; }
         public string ImageUrl { get; set; }
         public int Value { get; set; }
+        public int BlankType { get; set; }
         public int IdTest { get; set; }
         [NotMapped]
         public string Option1 { get; set; }

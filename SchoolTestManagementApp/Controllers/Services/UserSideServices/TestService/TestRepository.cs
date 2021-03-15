@@ -117,12 +117,12 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TestService
             context.SaveChanges();
         }
 
-        public void PostTestToArchive(int idTest)
+        public void PostTestToCancel(int idTest)
         {
             var test = context.Test.Find(idTest);
             if (test != null)
             {
-                test.Archive = true;
+                test.IsCancel = true;
                 context.Test.Update(test);
                 context.SaveChanges();
             }

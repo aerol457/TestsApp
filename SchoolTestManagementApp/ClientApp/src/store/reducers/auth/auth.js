@@ -7,6 +7,7 @@ const initialState = {
   error: null,
   loading: false,
   userProfile: {},
+  notify: false,
 };
 
 const authReducer = (state = initialState, action) => {
@@ -18,7 +19,15 @@ const authReducer = (state = initialState, action) => {
     case actionTypes.AUTH_SUCCESS:
       return updateState(state, { token: action.token, idUser: action.idUser });
     case actionTypes.AUTH_FAIL:
-      return updateState(state, { loading: false, error: action.error });
+      return updateState(state, {
+        loading: false,
+        notify: false,
+        error: action.error,
+      });
+    case actionTypes.AUTH_RESET_NOTIFY:
+      return updateState(state, { notify: false });
+    case actionTypes.AUTH_NOTIFY:
+      return updateState(state, { notify: true });
     case actionTypes.AUTH_LOGOUT:
       return updateState(state, { token: null, idUser: null, userProfile: {} });
     case actionTypes.SET_USER_DETAILS:

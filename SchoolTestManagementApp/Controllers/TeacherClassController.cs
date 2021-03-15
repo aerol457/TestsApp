@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SchoolTestManagementApp.Controllers.TeacherSideServices.ClassroomTest;
 using SchoolTestManagementApp.Data.Services.TeacerSideServices.TeacherClassService;
 using SchoolTestManagementApp.Models;
@@ -32,6 +33,7 @@ namespace SchoolTestManagementApp.Controllers
             return Unauthorized();
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] User user)
         {
@@ -43,6 +45,7 @@ namespace SchoolTestManagementApp.Controllers
             return Json(new { success = false });
         }
 
+        [Authorize]
         [HttpPost("[action]")]
         public IActionResult Remove([FromBody] User user)
         {

@@ -2,7 +2,6 @@ import * as actionTypes from "../../actions/student/actionTypes";
 import updateState from "../../utils/utility";
 
 const initialState = {
-  search: [],
   students: [],
   student: {},
   tests: [],
@@ -27,12 +26,10 @@ const studentReducer = (state = initialState, action) => {
         students: [],
         student: {},
         tests: [],
-        search: [],
       });
     case actionTypes.GET_ALL_STUDENTS:
       return updateState(state, {
         students: action.students,
-        search: action.students,
       });
     case actionTypes.GET_ALL_STUDENT_TESTS:
       return updateState(state, {

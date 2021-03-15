@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SchoolTestManagementApp.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SchoolTestManagementApp.Controllers
 {
@@ -40,6 +41,7 @@ namespace SchoolTestManagementApp.Controllers
             return NotFound();
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Create([FromBody] Profession profession)
         {

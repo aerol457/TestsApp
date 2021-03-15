@@ -15,6 +15,6 @@ namespace SchoolTestManagementApp.Data.Services.TeacerSideServices.TestService
         Test GetTestById (string idTest);
         Test GetTestByIdTest (int idTest);
         List<Test> GetTestsByIdTeacher (int idTeacher);
-        void PostTestToArchive (int idTest);
+        void PostTestToCancel(int idTest);
     }
 }

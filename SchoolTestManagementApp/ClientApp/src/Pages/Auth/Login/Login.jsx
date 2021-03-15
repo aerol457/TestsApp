@@ -39,7 +39,6 @@ const Login = ({ stateAuth, updateState }) => {
         })
       );
       dispatch(initGeneral());
-      dashboardContext.viewTests();
     }
   };
 

@@ -50,3 +50,7 @@
 .login-submit-btn {
   display: flex;
 }
+
+.login-submit-btn Button {
+  width: 100% !important;
+}

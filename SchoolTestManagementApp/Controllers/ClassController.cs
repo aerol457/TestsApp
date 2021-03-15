@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SchoolTestManagementApp.Data.Services.AdminSideServices.ClassService;
 using SchoolTestManagementApp.Models;
 using System;
@@ -40,6 +41,7 @@ namespace SchoolTestManagementApp.Controllers
             return NotFound();
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Create([FromBody] Classroom classroom)
         {

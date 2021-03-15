@@ -12,7 +12,7 @@ import { TestDesignDashContext } from "../../../../../context/TestDesignDashCont
 
 const Questions = () => {
   const [questionType, setQuestionType] = useState("option");
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(-1);
   const [questionView, setQuestionView] = useState(null);
   const perPage = useState(6)[0];
   const [offset, setOffset] = useState(perPage);
@@ -44,6 +44,12 @@ const Questions = () => {
       setPage(updatePage);
       setPosition(position - 1);
     }
+  };
+
+  const handleChooseQuestionType = (type) => {
+    setQuestionView(null);
+    setIndex(-1);
+    setQuestionType(type);
   };
 
   const handleViewQuestion = (question, index) => {
@@ -103,25 +109,25 @@ const Questions = () => {
           <div className="tabs">
             <div
               className={questionType === "option" ? "tab-active" : null}
-              onClick={() => setQuestionType("option")}
+              onClick={() => handleChooseQuestionType("option")}
             >
               Option
             </div>
             <div
               className={questionType === "image" ? "tab-active" : null}
-              onClick={() => setQuestionType("image")}
+              onClick={() => handleChooseQuestionType("image")}
             >
               Image
             </div>
             <div
               className={questionType === "check" ? "tab-active" : null}
-              onClick={() => setQuestionType("check")}
+              onClick={() => handleChooseQuestionType("check")}
             >
               Check
             </div>
             <div
               className={questionType === "blank" ? "tab-active" : null}
-              onClick={() => setQuestionType("blank")}
+              onClick={() => handleChooseQuestionType("blank")}
             >
               Blank
             </div>

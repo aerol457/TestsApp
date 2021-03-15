@@ -24,8 +24,6 @@ const Table = () => {
           <thead>
             <tr>
               <th>Test Name</th>
-              <th>Profession</th>
-              <th>Teacher</th>
               <th>Date Of Distribution</th>
               <th>Date Of Submission</th>
               <th>Grade</th>
@@ -37,8 +35,6 @@ const Table = () => {
             {tests.map((test, index) => (
               <tr key={index}>
                 <td>{test.name}</td>
-                <td>{test.professionName}</td>
-                <td>{test.idUserNavigation.name}</td>
                 <td>
                   {
                     test.dateOfDistribution

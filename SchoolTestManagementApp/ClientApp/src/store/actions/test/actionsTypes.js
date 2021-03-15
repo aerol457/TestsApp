@@ -18,7 +18,7 @@ export const CLEAR_TEST = "CLEAR_TEST";
 export const CLEAR_TESTS = "CLEAR_TESTS";
 export const SET_FULL_TEST = "SET_FULL_TEST";
 export const FINISH_TEST = "FINISH_TEST";
-export const ARCHIVE_TEST = "ARCHIVE_TEST";
+export const CANCEL_TEST = "CANCEL_TEST";
 
 export const INITIAL_SEARCH_TEST = "INITIAL_SEARCH_TEST";
 

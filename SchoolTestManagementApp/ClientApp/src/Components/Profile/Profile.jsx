@@ -1,18 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { GoLocation } from "react-icons/go";
 import { MdPermIdentity } from "react-icons/md";
 import { AiOutlinePhone } from "react-icons/ai";
-import { RiLogoutBoxLine } from "react-icons/ri";
+import { RiLogoutBoxLine, RiUserSettingsLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 
 import "./Profile.css";
 import Spinner from "../Core/Spinner/Spinner";
 import { getUserProfile, authLogout } from "../../store/actions/index";
+import { DashboardContext } from "../../context/DashboardContext";
 
 const Profile = () => {
   const userProfile = useSelector((state) => state.auth.userProfile);
   const loading = useSelector((state) => state.general.loading);
-
+  const dashboardContext = useContext(DashboardContext);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -21,6 +22,12 @@ const Profile = () => {
 
   return (
     <>
+      <span
+        className="user-settings-icon"
+        onClick={dashboardContext.viewUserSettings}
+      >
+        <RiUserSettingsLine />
+      </span>
       <div className="dashboard-content-header">
         {loading ? (
           <Spinner />

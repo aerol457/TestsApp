@@ -19,7 +19,7 @@ export {
   finishTest,
   resetErrorTest,
   publishClassrooms,
-  archiveTest,
+  cancelTest,
 } from "./test/test";
 
 export {
@@ -39,6 +39,7 @@ export {
   getUserProfile,
   actionAuthSuccess,
   authFail,
+  authResetNotify,
 } from "./auth/auth";
 
 export {

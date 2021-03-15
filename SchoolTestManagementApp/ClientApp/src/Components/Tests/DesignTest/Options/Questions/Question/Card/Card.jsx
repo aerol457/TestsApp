@@ -26,7 +26,7 @@ const QuestionCard = ({ content, click, index }) => {
         onClick={() => click(content, index)}
       >
         <h2>{index + 1}</h2>
-        <h3>{content.questionType}</h3>
+        <h3 style={{ textTransform: "capitalize" }}>{content.questionType}</h3>
         <h6>Value: {content.value}</h6>
       </div>
       <div className="remove-card">

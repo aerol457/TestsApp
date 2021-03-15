@@ -10,7 +10,7 @@ const InputImage = ({
   isEmpty = false,
 }) => {
   return (
-    <div className="input-image">
+    <div className="input-image-layout">
       <div className="img-container">
         <label
           className={isQuestion ? "img-label background-white" : "img-label"}

@@ -10,17 +10,13 @@
   padding: 10px 20px;
   text-align: center;
   background: linear-gradient(#3d4652, #6d6d6d);
-  flex: 0.5;
-}
-
-.dashboard-layout-center {
   flex: 2;
-  height: 100%;
 }
 
 .dashboard-content-center {
   width: calc(100% - 70px);
   height: 100%;
+  flex: 8;
 }
 
 .dashboard-content-center-test {
@@ -39,7 +35,7 @@
 
 .show-dashboard-content-right {
   width: 230px;
-  z-index: 10;
+  z-index: 12;
 }
 
 .toggle-left {

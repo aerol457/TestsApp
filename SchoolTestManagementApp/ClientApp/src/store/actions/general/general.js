@@ -108,16 +108,23 @@ export const setClassroom = (classroom) => {
 };
 
 export const addProfession = (name) => {
+  const token = localStorage.getItem("token");
   return (dispatch) => {
     dispatch(actionStart());
-    axios.post("https://localhost:44356/api/Profession", name).then((res) => {
-      if (res.data.success === true) {
-        dispatch(setAddProfession(res.data.profession.result));
-        dispatch(actionSuccess());
-      } else {
-        dispatch(actionFail());
-      }
-    });
+    axios
+      .post("https://localhost:44356/api/Profession", name, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((res) => {
+        if (res.data.success === true && res.status !== 401) {
+          dispatch(setAddProfession(res.data.profession.result));
+          dispatch(actionSuccess());
+        } else {
+          dispatch(actionFail());
+        }
+      });
   };
 };
 
@@ -129,16 +136,23 @@ const setAddProfession = (profession) => {
 };
 
 export const addClassroom = (name) => {
+  const token = localStorage.getItem("token");
   return (dispatch) => {
     dispatch(actionStart());
-    axios.post("https://localhost:44356/api/Class", name).then((res) => {
-      if (res.data.success === true) {
-        dispatch(setAddClassroom(res.data.classroom.result));
-        dispatch(actionSuccess());
-      } else {
-        dispatch(actionFail());
-      }
-    });
+    axios
+      .post("https://localhost:44356/api/Class", name, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then((res) => {
+        if (res.data.success === true && res.status !== 401) {
+          dispatch(setAddClassroom(res.data.classroom.result));
+          dispatch(actionSuccess());
+        } else {
+          dispatch(actionFail());
+        }
+      });
   };
 };
 

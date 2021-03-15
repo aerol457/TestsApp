@@ -38,6 +38,11 @@ const Overview = () => {
     testDesignDashContext.viewSettings();
   };
 
+  const onExitOverview = () => {
+    dispatch(clearTest());
+    dashboardContext.viewTests();
+  };
+
   useEffect(() => {
     if (classrooms) {
       let isView = false;
@@ -89,11 +94,39 @@ const Overview = () => {
           {questions.map((q, i) => {
             return (
               <li key={i} className="question-overview">
-                <div className="question-content-overview">
-                  <h5>Question {q.position}:</h5>
-                  <p>
-                    {q.content1} ({q.value} POINTS)
-                  </p>
+                <div
+                  className={
+                    q.questionType === "image"
+                      ? "question-content-overview-image"
+                      : "question-content-overview"
+                  }
+                >
+                  <h5>Question {i + 1}:</h5>
+                  <h4 className="question-content-overview-type">
+                    {"[" + q.questionType + "]"}
+                  </h4>
+                  {q.questionType === "blank" ? (
+                    +q.blankType === 0 ? (
+                      <p>
+                        {q.content1} _____ {q.content2} _____ {q.content3} _____
+                        ? <span>({q.value} POINTS)</span>
+                      </p>
+                    ) : +q.blankType === 1 ? (
+                      <p>
+                        {q.content1} _____ {q.content2} _____ ?{" "}
+                        <span>({q.value} POINTS)</span>
+                      </p>
+                    ) : (
+                      <p>
+                        _____ {q.content1} _____ {q.content2} ?{" "}
+                        <span>({q.value} POINTS)</span>
+                      </p>
+                    )
+                  ) : (
+                    <p>
+                      {q.content1}? <span>({q.value} POINTS)</span>
+                    </p>
+                  )}
                   <p>1) {q.option1}</p>
                   <p>2) {q.option2}</p>
                   <p>3) {q.option3}</p>
@@ -138,7 +171,7 @@ const Overview = () => {
       </div>
       <div className="overview-btn">
         {test.isAccess ? (
-          <Button clicked={dashboardContext.viewTests}>EXIT</Button>
+          <Button clicked={onExitOverview}>EXIT</Button>
         ) : (
           <>
             <Button clicked={testDesignDashContext.viewPublish}>BACK</Button>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import "./CardInfo.css";
@@ -25,6 +25,9 @@ const CardInfo = () => {
             </h6>
             <h6>
               Address: <span> {student.address}</span>
+            </h6>
+            <h6>
+              Classroom: <span> {student.classroomName}</span>
             </h6>
           </div>
         </div>

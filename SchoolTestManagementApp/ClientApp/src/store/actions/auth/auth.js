@@ -18,7 +18,19 @@ export const actionAuthSuccess = () => {
 export const authFail = (error = null) => {
   return {
     type: actionTypes.AUTH_FAIL,
-    error: error,
+    error,
+  };
+};
+
+const AuthNotify = () => {
+  return {
+    type: actionTypes.AUTH_NOTIFY,
+  };
+};
+
+export const authResetNotify = () => {
+  return {
+    type: actionTypes.AUTH_RESET_NOTIFY,
   };
 };
 
@@ -62,7 +74,7 @@ export const auth = (user) => {
   };
 };
 
-export const signUp = (user) => {
+export const signUp = (user, isLogin) => {
   let token;
   let expiresIn;
   const formData = new FormData();
@@ -71,7 +83,7 @@ export const signUp = (user) => {
   } else {
     formData.append("idProfession", user.idProfession);
   }
-  if (user.imageUrl !== "" && user.image !== "") {
+  if (user.imageUrl !== "" && user.image !== null) {
     formData.append("imageFile", user.image, user.imageUrl);
     formData.append("imageUrl", user.imageUrl);
   }
@@ -83,26 +95,37 @@ export const signUp = (user) => {
   formData.append("city", user.city);
   formData.append("address", user.address);
   formData.append("userType", user.userType);
-
+  let api;
+  if (isLogin) {
+    const idUser = localStorage.getItem("idUser");
+    formData.append("id", idUser);
+    api = axios.put("https://localhost:44356/api/User/Update", formData);
+  } else {
+    api = axios.post("https://localhost:44356/api/User", formData);
+  }
   return (dispatch) => {
     dispatch(actionStart());
-    axios
-      .post("https://localhost:44356/api/User", formData)
+    api
       .then((res) => {
         if (res.data.errors) {
           return dispatch(authFail(res.data.errors));
         }
-        token = res.data.token;
-        expiresIn = res.data.expiresIn;
-        const expirationDate = new Date(
-          new Date().getTime() + expiresIn * 1000
-        );
-        localStorage.setItem("token", token);
-        localStorage.setItem("idUser", res.data.id);
-        localStorage.setItem("expirationDate", expirationDate);
-        dispatch(authSuccess(token, res.data.id));
         dispatch(setProfileSuccess(res.data.user));
-        dispatch(checkAuthTimeout(expiresIn));
+        if (!isLogin) {
+          token = res.data.token;
+          expiresIn = res.data.expiresIn;
+          const expirationDate = new Date(
+            new Date().getTime() + expiresIn * 1000
+          );
+          localStorage.setItem("token", token);
+          localStorage.setItem("idUser", res.data.user.id);
+          localStorage.setItem("expirationDate", expirationDate);
+          dispatch(checkAuthTimeout(expiresIn));
+          dispatch(authSuccess(token, res.data.user.id));
+        } else {
+          dispatch(AuthNotify());
+        }
+        dispatch(actionAuthSuccess());
       })
       .catch(() => dispatch(authFail()));
   };
@@ -134,7 +157,8 @@ export const authCheckState = () => {
   return (dispatch) => {
     const token = localStorage.getItem("token");
     const idUser = localStorage.getItem("idUser");
-    if (!token || !idUser) {
+    const state = localStorage.getItem("state");
+    if (!token || !idUser || !state) {
       dispatch(authLogout());
     } else {
       const expirationDate = new Date(localStorage.getItem("expirationDate"));
@@ -154,13 +178,20 @@ export const authCheckState = () => {
 
 export const getUserProfile = () => {
   const idUser = localStorage.getItem("idUser");
+  const token = localStorage.getItem("token");
   return (dispatch) => {
     dispatch(actionStart());
     axios
-      .get(`https://localhost:44356/api/User/${idUser}`)
+      .get(`https://localhost:44356/api/User/${idUser}`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
       .then((res) => {
-        dispatch(setProfileSuccess(res.data.user));
-        dispatch(actionAuthSuccess());
+        if (res.status !== 401) {
+          dispatch(setProfileSuccess(res.data.user));
+          dispatch(actionAuthSuccess());
+        }
       })
       .catch(() => dispatch(authFail()));
   };

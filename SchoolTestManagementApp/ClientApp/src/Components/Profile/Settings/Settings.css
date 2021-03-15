@@ -1,0 +1,24 @@
+.user-settings {
+  width: calc(100% - 70px);
+  height: 100%;
+}
+
+.user-settings-content {
+  width: 85%;
+  height: 100%;
+  position: relative;
+  margin: 0 auto;
+  padding: 50px 20px;
+  background-color: white;
+  box-shadow: 0px 0px 10px 1px grey;
+}
+
+.user-settings-form {
+  margin-top: 6vh;
+}
+
+.btn-back-tests {
+  position: absolute;
+  bottom: 15px;
+  right: 10vw;
+}

@@ -1,5 +1,5 @@
 .btn-outlined {
-  width: 100%;
+  width: fit-content;
   color: #3d4652;
   background: none;
   border: 3px solid #3d4652;
@@ -13,21 +13,21 @@
 }
 
 .btn-outlined-white {
-  width: 100%;
-  color: white;
+  width: fit-content;
+  color: #adb5bd;
   background: none;
-  border: 3px solid white;
+  border: 3px solid #adb5bd;
   padding: 5px 10px;
   transition: all 0.3s linear;
 }
 .btn-outlined-white:hover,
 .btn-outlined-white:active {
-  border: 3px solid #3d4652;
-  color: #3d4652;
+  border: 3px solid white;
+  color: white;
 }
 
 .btn-filled {
-  width: 100%;
+  width: fit-content;
   background-color: #3d4652;
   padding: 5px 10px;
   color: white;
@@ -45,4 +45,9 @@
 .btn-filled-red:hover,
 .btn-filled-red:active {
   color: white;
+}
+
+.btn-disabled {
+  pointer-events: none;
+  cursor: not-allowed;
 }

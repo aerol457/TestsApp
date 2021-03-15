@@ -11,11 +11,13 @@ export const DashboardContext = React.createContext({
   viewClassroom: () => {},
   viewTeacher: () => {},
   viewStudent: () => {},
+  viewUserSettings: () => {},
 });
 
 const DashboardContextProvider = (props) => {
   const [stateDashboard, setStateDashboard] = useState("");
   const isAuth = useSelector((state) => state.auth.token !== null);
+  const userProfile = useSelector((state) => state.auth.userProfile);
 
   const handleViewTests = () => {
     setStateDashboard("tests");
@@ -57,13 +59,26 @@ const DashboardContextProvider = (props) => {
     localStorage.setItem("dashboard", "student");
   };
 
+  const handleViewUserSettings = () => {
+    setStateDashboard("userSettings");
+    localStorage.setItem("dashboard", "userSettings");
+  };
+
   useEffect(() => {
     if (isAuth) {
       const dashboard = localStorage.getItem("dashboard");
-      if (!dashboard) return handleViewTests();
+      if (!dashboard && userProfile.userType) {
+        if (userProfile.userType === "admin") {
+          return handleViewClassroom();
+        } else {
+          return handleViewTests();
+        }
+      }
       setStateDashboard(dashboard);
+    } else {
+      setStateDashboard("");
     }
-  }, [isAuth]);
+  }, [isAuth, userProfile]);
 
   return (
     <DashboardContext.Provider
@@ -77,6 +92,7 @@ const DashboardContextProvider = (props) => {
         viewClassroom: handleViewClassroom,
         viewTeacher: handleViewTeacher,
         viewStudent: handleViewStudent,
+        viewUserSettings: handleViewUserSettings,
       }}
     >
       {props.children}

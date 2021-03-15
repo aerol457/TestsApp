@@ -15,10 +15,6 @@
   background-color: black;
 }
 
-/* .test-design-menu-active button {
-  background-color: #fcfcfc;
-} */
-
 .test-design-layout span {
   line-height: 10px;
   padding-right: 10px;
@@ -40,7 +36,7 @@
 }
 
 .icon-option {
-  width: 3vw;
+  width: 2vw;
 }
 .icon-option-active {
   color: #3d4652;

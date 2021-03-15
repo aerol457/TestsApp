@@ -47,17 +47,16 @@
 }
 
 .test-list p {
-  text-align: center;
-  font-size: 25px;
-  font-weight: 700;
+  font-size: 30px;
+  font-weight: 100;
 }
 
 .test-list-item {
   margin-bottom: 10px;
   padding: 10px;
   border: 2px solid #3d4652;
-  cursor: pointer;
   color: #3d4652;
+  text-transform: capitalize;
 }
 
 .test-list-item-details {
@@ -84,6 +83,10 @@
   font-size: 17px;
 }
 
+.test-details-title {
+  font-weight: 600;
+}
+
 .show-details {
   height: 20vh;
 }
@@ -102,6 +105,7 @@
   padding: 4px 10px;
   border-radius: 5px;
   background: red;
+  cursor: pointer;
 }
 
 .test-archive-enabled {
@@ -156,7 +160,7 @@
 }
 
 .btn-test {
-  width: 13vw;
+  z-index: 8;
 }
 
 .test-grade-state-pass {

@@ -5,6 +5,43 @@
   border: 2px solid white;
 }
 
+.question-black-struct {
+  height: 12vh;
+  display: flex !important;
+  padding: 10px 0;
+}
+
+.blank-option:first-child {
+  margin-left: 0;
+}
+
+.blank-option {
+  width: 16vw;
+  display: flex;
+  margin-left: 20px;
+  border: 2px solid darkgray;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.blank-option:hover,
+.blank-option-active {
+  border: 2px solid white;
+}
+
+.blank-option img {
+  width: 12vw;
+  margin: auto;
+}
+
+.question-blank-content {
+  width: 5vw;
+}
+
+.question-blank-answer {
+  width: 5vw;
+}
+
 .question div {
   display: grid;
 }

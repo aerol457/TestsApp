@@ -75,6 +75,7 @@ const setStudents = (students) => {
 
 export const getAllTestsByIdStudent = (student, userType) => {
   const token = localStorage.getItem("token");
+  const idUser = localStorage.getItem("idUser");
   return (dispatch) => {
     if (!token) {
       return dispatch(authLogout());
@@ -84,13 +85,19 @@ export const getAllTestsByIdStudent = (student, userType) => {
       .get(`https://localhost:44356/api/StudentTest/GetTests/${student.id}`, {
         params: {
           userType,
+          idUser,
         },
       })
       .then((res) => {
         if (res.data.success === false) {
           return dispatch(actionFail());
         }
-        dispatch(setTests(res.data.tests, student));
+        dispatch(
+          setTests(res.data.tests, {
+            ...student,
+            classroomName: student.idClassroomNavigation.name,
+          })
+        );
         dispatch(actionSuccessStudent());
       })
       .catch((err) => actionFail(err));

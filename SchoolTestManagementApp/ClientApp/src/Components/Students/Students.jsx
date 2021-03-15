@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 import "./Students.css";
 
 import Modal from "../Core/Modal/Modal";
-import Button from "../Core/Button/Button";
 import Card from "./Card/Card";
 import Spinner from "../Core/Spinner/Spinner";
 import CardInfo from "./Card/CardInfo/CardInfo";
@@ -29,6 +28,7 @@ const Students = () => {
   const [showModal, setShowModal] = useState(false);
 
   const students = useSelector((state) => state.student.students);
+  const userProfile = useSelector((state) => state.auth.userProfile);
   const loading = useSelector((state) => state.student.loading);
   const error = useSelector((state) => state.student.error);
   const dispatch = useDispatch();
@@ -72,10 +72,13 @@ const Students = () => {
     setShowModal(false);
   };
 
-  const designPageCard = () => {
+  const designPageCard = (sortType) => {
+    let currentStudents = [...students];
+    if (+sortType !== 0) {
+      currentStudents = students.filter((s) => s.idClassroom === +sortType);
+    }
     const start = perPage * position;
-    const slice = students.slice(start, offset);
-    console.log(slice[0]);
+    const slice = currentStudents.slice(start, offset);
     const postDataView = Object.keys(slice).map((i, index) => (
       <Card key={index} clicked={handleShowModal} studentInfo={slice[i]} />
     ));
@@ -88,7 +91,7 @@ const Students = () => {
 
   useEffect(() => {
     if (students) {
-      designPageCard();
+      designPageCard(0);
     }
     if (totalPages === 0) {
       let pages = 0;
@@ -113,6 +116,10 @@ const Students = () => {
     return () => clearTimeout(timer);
   }, [error]);
 
+  useEffect(() => {
+    dispatch(clearStudentAndTests());
+  }, []);
+
   return (
     <div className="students-content">
       {showModal && (
@@ -130,17 +137,25 @@ const Students = () => {
             error={error}
           />
         </div>
+        <div className="students-sort-by-class">
+          <label>Sort by:</label>
+          <select
+            className="students-sort-by-class-select"
+            onChange={(e) => designPageCard(e.target.value)}
+          >
+            <option value={0}>All</option>
+            {userProfile.classrooms.map((c, i) => (
+              <option key={i} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {postData.length === 0 ? (
-        <p
-          style={{
-            margin: "6vh 0 0 2vw",
-            fontSize: "30px",
-            fontWeight: "400",
-          }}
-        >
-          Sorry, Not found students are related.
+        <p className="students-related-empty">
+          Sorry, Not found students are related
         </p>
       ) : (
         <div className="student-layout">

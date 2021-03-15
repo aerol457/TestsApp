@@ -18,10 +18,10 @@ namespace SchoolTestManagementApp.Data.Services.AuthService
             this.webHostEnvironment = hostEnvironment;
         }
 
-        public List<string> ValidateUser(User user)
+        public List<string> ValidateUser(User user, bool isAdd, int idUser)
         {
             Validators validate = new Validators(_context);
-            return validate.ValidateUser(user);
+            return validate.ValidateUser(user, isAdd, idUser);
         }
 
         public async Task<User> Add(User user)
@@ -34,8 +34,11 @@ namespace SchoolTestManagementApp.Data.Services.AuthService
                 user.PasswordSalt = salt;
                 user.PasswordHash = hash;
                 user.DateJoined = DateTime.Now;
-                ImageFile image = new ImageFile(webHostEnvironment);
-                image.Save(user.ImageFile, user.ImageUrl);
+                if (user.ImageFile != null && user.ImageUrl != "")
+                {
+                    ImageFile image = new ImageFile(webHostEnvironment);
+                    image.Save(user.ImageFile, user.ImageUrl);
+                }
                 _context.User.Add(user);
                 await _context.SaveChangesAsync();
                 return user;
@@ -60,24 +63,33 @@ namespace SchoolTestManagementApp.Data.Services.AuthService
             }
         }
 
-        public async Task<User> Update(int idUser, User user)
+        public async Task<User> UpdateUser(User user)
         {
             try
             {
-                var oldUser = _context.User.FirstOrDefault(t => t.Id == idUser);
-                if (oldUser != null)
+                var updateUser = _context.User.Find(user.Id);
+                if(user.PasswordHash != "")
                 {
-                    oldUser.IdCard = user.IdCard;
-                    oldUser.City = user.City;
-                    oldUser.Address = user.Address;
-                    oldUser.Name = user.Name;
-                    oldUser.PhoneNumber = user.PhoneNumber;
-                    oldUser.ImageUrl= user.ImageUrl;
-                    oldUser.IdProfession = user.IdProfession;
-                    await _context.SaveChangesAsync();
-                    return oldUser;
+                    Auth encryptPass = new Auth(null);
+                    var salt = encryptPass.CreateSalt(10);
+                    var hash = encryptPass.GenerateSHA256Hash(user.PasswordHash, salt);
+                    updateUser.PasswordSalt = salt;
+                    updateUser.PasswordHash = hash;
                 }
-                return null;
+                if(user.ImageFile != null && user.ImageUrl != null)
+                {
+                    ImageFile image = new ImageFile(webHostEnvironment);
+                    image.Save(user.ImageFile, user.ImageUrl);
+                    updateUser.ImageUrl = user.ImageUrl;
+                }
+                updateUser.Name = user.Name;
+                updateUser.PhoneNumber = user.PhoneNumber;
+                updateUser.IdCard = user.IdCard;
+                updateUser.Email = user.Email;
+                updateUser.City = user.City;
+                updateUser.Address = user.Address;
+                await _context.SaveChangesAsync();
+                return updateUser;
             }
             catch(Exception ex)
             {

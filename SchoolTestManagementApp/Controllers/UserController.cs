@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -49,8 +50,10 @@ namespace SchoolTestManagementApp.Controllers
                 if (authUser.UserType == "teacher")
                 {
                     _serviceProfession.getProfessionById((int)authUser.IdProfession);
+                    authUser.Classrooms = _serviceTeacherClass.GetConnectedClassroomsByIdUser(authUser.Id);
 
-                }else if(authUser.UserType == "student")
+                }
+                else if(authUser.UserType == "student")
                 {
                     _serviceClass.getClassById((int)authUser.IdClassroom);
                 }
@@ -64,28 +67,31 @@ namespace SchoolTestManagementApp.Controllers
         [HttpPost]
         public async Task<IActionResult> SignUp([FromForm] User user)
         {
-            var isValid = _service.ValidateUser(user);
+            var isValid = _service.ValidateUser(user, true, -1);
             if(isValid.Count == 0)
             {
                 var createdUser = await _service.Add(user); 
                 if (createdUser.UserType == "teacher")
                 {
                     _serviceProfession.getProfessionById((int)createdUser.IdProfession);
+                    _serviceTeacherClass.GetConnectedClassroomsByIdUser(user.Id);
 
                 }
                 else if (createdUser.UserType == "student")
                 {
                     _serviceClass.getClassById((int)createdUser.IdClassroom);
                 }
+                createdUser.PasswordHash = "";
+                createdUser.PasswordSalt = "";
                 Auth auth = new Auth(_config);
                 var tokenString = auth.GenerateJSONWebToken(createdUser.Email, createdUser.DateJoined);
-                return CreatedAtAction(nameof(SignUp), new { user = createdUser, token = tokenString, expiresIn = 3600 * 24 });
+                return Ok(new { success = true, user = createdUser, token = tokenString, expiresIn = 3600 * 24 });
             }
-            return Json(new {errors= isValid });
+            return Json(new {success = false, errors= isValid });
         }
 
 
-
+        [Authorize]
         [HttpGet("{id}")]
         public IActionResult GetUser(int id)
         {
@@ -107,6 +113,7 @@ namespace SchoolTestManagementApp.Controllers
             return Json(new { success = false });
         }
 
+        [Authorize]
         [HttpGet("[action]/{id}")]
         public IActionResult GetUserAndConnectedClassrooms(string id)
         {
@@ -130,6 +137,7 @@ namespace SchoolTestManagementApp.Controllers
             return Json(new { success = false });
         }
 
+        [Authorize]
         [HttpGet("[action]/{id}")]
         public IActionResult GetStudent(string id)
          {
@@ -138,30 +146,52 @@ namespace SchoolTestManagementApp.Controllers
             {
                 student.PasswordHash = "";
                 student.PasswordSalt = "";
+
                 return Ok(new { success = false, student });
             }
             return Json(new { success = false });
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
+        [Authorize]
+        [HttpPut("[action]")]
+        public async Task<IActionResult> Update([FromForm] User user)
         {
-            var updatedUser = await _service.Update(id, user);
-            if(updatedUser != null)
+             var isValid = _service.ValidateUser(user, false, user.Id);
+            if (isValid.Count == 0)
             {
+                var updatedUser = await _service.UpdateUser(user);
                 updatedUser.PasswordHash = "";
                 updatedUser.PasswordSalt = "";
-                return Ok(new { success = true, user = updatedUser });
+                if (updatedUser.UserType == "teacher")
+                {
+                    updatedUser.IdProfessionNavigation =  _serviceProfession.getProfessionById((int)updatedUser.IdProfession);
+
+                }
+                else if (updatedUser.UserType == "student")
+                {
+                    updatedUser.IdClassroomNavigation =  _serviceClass.getClassById((int)updatedUser.IdClassroom);
+                }
+                return Ok(new { success = true, user = updatedUser});
             }
-            return Json(new { success = false});
+            return Json(new { success = false, errors = isValid});
         }
 
+        [HttpPut("[action]")]
+        public IActionResult CheckValidCredentials([FromBody] User user)
+        {
+            var authUser =  _service.AuthenticateUser(user.Email, user.PasswordHash);
+            return Ok(new { success = authUser != null });
+        }
+
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateClass([FromBody] User user)
         {
             var isUpdate = await _service.UpdateUserClass(user);
             return Ok(new { success = isUpdate });
         }
+
+
 
     }
 }

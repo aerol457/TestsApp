@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 import "./General.css";
 import Button from "../../Core/Button/Button";
+import ErrorHandler from "../../../hoc/ErrorHandler/ErrorHandler";
 import {
   addClassroom,
   addProfession,
@@ -74,4 +76,4 @@ const Profession = () => {
   );
 };
 
-export default Profession;
+export default ErrorHandler(Profession, axios);
