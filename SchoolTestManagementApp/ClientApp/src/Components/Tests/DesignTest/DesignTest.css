@@ -5,7 +5,6 @@
 }
 
 .test-design-menu {
-  height: 100%;
   background-color: #3d4652;
   flex: 0.3;
 }
@@ -69,4 +68,10 @@
   padding: 10px;
   background-color: white;
   box-shadow: 0px 0px 10px 1px grey;
+}
+
+@media (max-height: 620px) {
+  .test-design-option {
+    height: 10vh;
+  }
 }

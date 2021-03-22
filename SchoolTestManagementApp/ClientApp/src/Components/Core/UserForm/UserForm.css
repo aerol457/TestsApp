@@ -4,6 +4,8 @@
   margin: 0 auto;
   border-radius: 6px;
   background: #00000040;
+  overflow-y: auto;
+  padding-bottom: 10px;
 }
 
 .signup-title {
@@ -33,12 +35,12 @@
 }
 
 .signup-form {
-  width: 70%;
-  margin: auto;
+  padding: 20px;
 }
 
 .signup-error {
   height: 4vh;
+  margin-bottom: 10px;
   overflow: auto;
 }
 
@@ -120,4 +122,11 @@
   color: white;
   padding: 6px 5px;
   font-size: 12px;
+}
+
+@media (max-height: 620px) {
+  .signup-form {
+    height: 230px;
+    overflow-y: auto;
+  }
 }

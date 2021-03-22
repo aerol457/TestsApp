@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./Login.css";
 
@@ -10,7 +10,6 @@ import {
   authFail,
   initGeneral,
 } from "../../../store/actions/index";
-import { DashboardContext } from "../../../context/DashboardContext";
 import {
   required,
   emailValidate,
@@ -21,9 +20,7 @@ const Login = ({ stateAuth, updateState }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [validateInputs, setValidateInputs] = useState([false, false]);
-  const dashboardContext = useContext(DashboardContext);
   const loading = useSelector((state) => state.auth.loading);
-  const userProfile = useSelector((state) => state.auth.userProfile);
   const error = useSelector((state) => state.auth.error);
   const dispatch = useDispatch();
 
@@ -49,10 +46,10 @@ const Login = ({ stateAuth, updateState }) => {
       validators[0] = true;
       isValid = false;
     }
-    // if (!passwordValidate(password) || !required(password)) {
-    //   validators[1] = true;
-    //   isValid = false;
-    // }
+    if (!passwordValidate(password) || !required(password)) {
+      validators[1] = true;
+      isValid = false;
+    }
     setValidateInputs(validators);
     if (!isValid) {
       dispatch(authFail("Error: Invalid user inputs"));

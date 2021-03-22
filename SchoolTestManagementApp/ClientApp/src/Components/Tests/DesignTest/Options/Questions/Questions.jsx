@@ -136,7 +136,7 @@ const Questions = () => {
             Total Grade: <span>{test.grade}</span>
           </div>
         </div>
-        <div className="question-config-">
+        <div className="question-config">
           <Question
             type={questionType}
             questionContent={questionView}

@@ -20,5 +20,11 @@
 .btn-back-tests {
   position: absolute;
   bottom: 15px;
-  right: 10vw;
+  right: 7vw;
+}
+
+@media (max-height: 620px) {
+  .btn-back-tests {
+    right: 12vw;
+  }
 }

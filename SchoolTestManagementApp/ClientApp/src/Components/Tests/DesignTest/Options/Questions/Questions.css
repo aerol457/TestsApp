@@ -46,8 +46,8 @@
   color: white;
 }
 
-.question-config- {
-  height: calc(100% - 4vh);
+.question-config {
+  height: calc(100% - 6vh);
   padding: 10px;
   display: flex;
 }

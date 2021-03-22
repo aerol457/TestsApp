@@ -50,24 +50,24 @@ const Profile = () => {
       </div>
       {userProfile.userType !== "admin" && (
         <div className="dashboard-content-end">
-          <h5>
+          <p className="profile-user-details">
             <span>
               <MdPermIdentity />
             </span>
             {userProfile.idCard}
-          </h5>
-          <h5>
+          </p>
+          <p className="profile-user-details">
             <span>
               <GoLocation />
             </span>
             {userProfile.city}, {userProfile.address}
-          </h5>
-          <h5>
+          </p>
+          <p className="profile-user-details">
             <span>
               <AiOutlinePhone />
             </span>
             {userProfile.phoneNumber}
-          </h5>
+          </p>
         </div>
       )}
       <div className="profile-logout">

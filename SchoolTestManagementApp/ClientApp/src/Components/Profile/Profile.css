@@ -34,21 +34,24 @@
 }
 
 .dashboard-content-end {
+  height: 22vh;
+  position: absolute;
+  bottom: 9vh;
   color: aliceblue;
-  margin-top: 44vh;
-  padding: 5px;
   text-align: left;
   text-transform: capitalize;
+  overflow-y: auto;
 }
 
-.dashboard-content-end h5 {
+.profile-user-details {
   display: flex;
   color: aliceblue;
   letter-spacing: 2px;
-  font-size: 1.2rem;
+  font-size: 15px;
+  margin-bottom: 10px;
 }
 
-.dashboard-content-end span {
+.profile-user-details span {
   margin-right: 13px;
 }
 
